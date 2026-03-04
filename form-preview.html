@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkinSpirit — Form Preview</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f2f1ef; margin: 0; padding: 40px 20px 80px; color: #1a1a1a; }
+    .page-wrap { max-width: 640px; margin: 0 auto; }
+    .preview-badge { background:#1a1a1a; color:#fff; font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:4px 12px; border-radius:20px; display:inline-block; margin-bottom:16px; }
+    h1 { font-size:1.7rem; font-weight:800; margin:0 0 6px; }
+    .page-sub { font-size:.92rem; color:#777; margin:0 0 28px; }
+
+    /* ── CARD ── */
+    .card { background:#fff; border-radius:16px; padding:24px 24px; margin-bottom:14px; border:1px solid #e6e6e4; }
+    .card-label { font-size:.67rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#c0c0c0; margin:0 0 16px; }
+    .divider { border:none; border-top:1px solid #f0f0f0; margin:22px 0; }
+    .section-title { font-size:1rem; font-weight:600; color:#1a1a1a; margin:0 0 3px; }
+    .section-sub { font-size:.82rem; color:#aaa; margin:0 0 14px; }
+
+    /* ── FORM ── */
+    .field-group { margin-bottom:18px; }
+    .field-group:last-child { margin-bottom:0; }
+    .field-label { display:block; font-size:.87rem; font-weight:600; color:#333; margin-bottom:7px; }
+    .field-label small { font-weight:400; color:#bbb; }
+    .field-input { width:100%; padding:10px 13px; border:1.5px solid #e4e4e4; border-radius:8px; font-size:.92rem; color:#1a1a1a; outline:none; transition:border-color .15s; }
+    .field-input:focus { border-color:#1a1a1a; }
+    .name-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+    /* ── RADIO PILLS ── */
+    .radio-group { display:flex; flex-wrap:wrap; gap:7px; }
+    .radio-pill { display:none; }
+    .radio-pill + label { display:inline-flex; align-items:center; padding:7px 15px; border:1.5px solid #e4e4e4; border-radius:20px; font-size:.87rem; font-weight:500; cursor:pointer; color:#666; transition:all .15s; user-select:none; }
+    .radio-pill:checked + label { background:#1a1a1a; color:#fff; border-color:#1a1a1a; }
+    .radio-pill + label:hover { border-color:#aaa; }
+
+    /* ──────────────────────────────────────────
+       TONE TILES (Fitzpatrick + Hair)
+    ────────────────────────────────────────── */
+    .tone-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin-bottom:14px; }
+    .tone-radio { display:none; }
+    .tone-tile {
+      display:flex; flex-direction:column; align-items:center; gap:5px;
+      padding:10px 4px; border:2px solid #eee; border-radius:10px;
+      cursor:pointer; text-align:center; background:#fafafa;
+      transition:all .15s; user-select:none;
+    }
+    .tone-tile:hover { border-color:#ccc; background:#fff; transform:translateY(-1px); }
+    .tone-radio:checked + .tone-tile { border-color:#1a1a1a; background:#fff; box-shadow:0 0 0 1px #1a1a1a; transform:translateY(-2px); }
+    .tone-circle { width:38px; height:38px; border-radius:50%; border:2px solid rgba(0,0,0,0.07); flex-shrink:0; }
+    .tone-main { font-size:.73rem; font-weight:700; color:#1a1a1a; line-height:1.2; }
+    .tone-sub  { font-size:.62rem; color:#bbb; line-height:1.3; }
+
+    /* ── TONE RESULT CARD ── */
+    .tone-result { display:flex; align-items:flex-start; gap:14px; background:#fafafa; border:1px solid #eee; border-radius:10px; padding:14px 16px; margin-top:0; animation:fadeIn .2s ease; }
+    .res-circle { width:44px; height:44px; border-radius:50%; flex-shrink:0; border:2px solid rgba(0,0,0,0.07); }
+    .hair-swatch-inner { width:40px; height:40px; border-radius:50%; border:2px solid rgba(0,0,0,0.07); position:relative; overflow:hidden; }
+    .hair-swatch-inner::before,.hair-swatch-inner::after { content:''; position:absolute; left:50%; top:-4px; width:2px; height:200%; border-radius:2px; background:rgba(255,255,255,.22); transform-origin:top center; }
+    .hair-swatch-inner::before { transform:translateX(-8px) rotate(-15deg); }
+    .hair-swatch-inner::after  { transform:translateX(4px) rotate(10deg); }
+    .res-text { flex:1; min-width:0; }
+    .res-type { font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:#bbb; margin:0 0 2px; font-weight:600; }
+    .res-desc { font-size:.93rem; font-weight:600; color:#1a1a1a; margin:0 0 6px; }
+    .res-proto { font-size:.85rem; color:#555; margin:0; line-height:1.5; }
+
+    .eff-fill { height:100%; border-radius:3px; transition:width .5s ease; }
+    .eff-pct { font-size:.7rem; font-weight:700; color:#555; text-align:right; }
+
+    /* ── COMPATIBILITY BOX ── */
+    .compat-placeholder { margin-top:18px; padding:14px 16px; background:#f8f8f8; border-radius:10px; font-size:.84rem; color:#bbb; text-align:center; }
+    .compat-box { margin-top:18px; padding:14px 18px; border-radius:10px; display:flex; align-items:center; gap:13px; border:1.5px solid; transition:all .3s; }
+    .compat-box.ok      { background:#f0fdf4; border-color:#86efac; }
+    .compat-box.consult { background:#fffbeb; border-color:#fcd34d; }
+    .compat-box.special { background:#fff7ed; border-color:#fdba74; }
+    .compat-box.notok   { background:#fff5f5; border-color:#fca5a5; }
+    .compat-icon { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+    .compat-box.ok      .compat-icon { background:#dcfce7; }
+    .compat-box.consult .compat-icon { background:#fef9c3; }
+    .compat-box.special .compat-icon { background:#ffedd5; }
+    .compat-box.notok   .compat-icon { background:#fee2e2; }
+    .compat-status { font-size:.9rem; font-weight:700; color:#1a1a1a; margin:0 0 2px; }
+    .compat-detail { font-size:.82rem; color:#555; margin:0; line-height:1.4; }
+
+    /* ──────────────────────────────────────────
+       SESSION TOGGLE
+    ────────────────────────────────────────── */
+    .session-toggle-wrap { margin-bottom:18px; }
+    .session-toggle-label { font-size:.87rem; font-weight:600; color:#333; margin-bottom:8px; display:block; }
+    .session-toggle { display:inline-flex; background:#f0f0f0; border-radius:9px; padding:3px; gap:2px; }
+    .sess-btn { border:none; background:transparent; border-radius:7px; padding:7px 18px; font-size:.87rem; font-weight:600; cursor:pointer; color:#888; transition:all .15s; }
+    .sess-btn.active { background:#1a1a1a; color:#fff; }
+
+    /* ──────────────────────────────────────────
+       PACKAGE CARDS
+    ────────────────────────────────────────── */
+    .treatment-section { display:none; animation:fadeIn .2s ease; }
+    .treatment-section.visible { display:block; }
+    .treat-group-label { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#ccc; margin:16px 0 10px; }
+    .treat-group-label:first-child { margin-top:0; }
+
+    .pkg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+    .pkg-check { display:none; }
+    .pkg-check + .pkg-lbl { display:flex; flex-direction:column; height:100%; border:2px solid #eee; border-radius:12px; padding:13px 11px; cursor:pointer; transition:all .15s; background:#fafafa; user-select:none; position:relative; }
+    .pkg-check:checked + .pkg-lbl { border-color:#1a1a1a; background:#fff; box-shadow:0 0 0 1px #1a1a1a; }
+    .pkg-lbl:hover { border-color:#bbb; background:#fff; }
+    .pkg-checkmark { position:absolute; top:9px; right:9px; width:17px; height:17px; border-radius:50%; border:1.5px solid #ddd; transition:all .15s; }
+    .pkg-check:checked + .pkg-lbl .pkg-checkmark { background:#1a1a1a; border-color:#1a1a1a; }
+    .pkg-check:checked + .pkg-lbl .pkg-checkmark::after { content:'✓'; color:#fff; font-size:.6rem; display:flex; align-items:center; justify-content:center; height:100%; }
+    .pkg-tier { font-size:.6rem; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:#fff; padding:2px 7px; border-radius:4px; display:inline-block; margin-bottom:7px; align-self:flex-start; }
+    .pkg-tier.soft    { background:#9ca3af; }
+    .pkg-tier.comfort { background:#4b5563; }
+    .pkg-tier.premium { background:#111; }
+    .pkg-name { font-size:.84rem; font-weight:700; color:#1a1a1a; margin-bottom:7px; }
+    .pkg-areas { list-style:none; padding:0; margin:0 0 9px; flex:1; }
+    .pkg-areas li { font-size:.76rem; color:#666; padding:1px 0; display:flex; align-items:center; gap:4px; }
+    .pkg-areas li::before { content:'—'; color:#ddd; font-size:.65rem; }
+    .pkg-price { font-size:.82rem; font-weight:700; color:#1a1a1a; margin-top:auto; }
+    .pkg-per { font-size:.7rem; color:#bbb; font-weight:400; }
+
+    /* ── INDIVIDUAL TREATMENT PILLS ── */
+    .single-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:7px; }
+    .single-check { display:none; }
+    .single-check + .single-lbl { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:11px 8px; border:1.5px solid #eee; border-radius:10px; cursor:pointer; transition:all .15s; background:#fafafa; user-select:none; min-height:58px; }
+    .single-check:checked + .single-lbl { background:#1a1a1a; border-color:#1a1a1a; color:#fff; }
+    .single-lbl:hover { border-color:#bbb; background:#fff; }
+    .single-check:checked + .single-lbl .single-price { color:#aaa; }
+    .single-name { font-size:.87rem; font-weight:600; }
+    .single-price { font-size:.72rem; color:#aaa; margin-top:2px; transition:color .15s; }
+
+    /* ──────────────────────────────────────────
+       ELIGIBILITY / CALENDAR / PHONE
+    ────────────────────────────────────────── */
+    .ss-not-eligible { border-radius:12px; padding:22px 20px; text-align:center; background:#fff5f5; border:1.5px solid #fca5a5; }
+    .ss-not-icon { font-size:1.8rem; margin-bottom:10px; color:#dc2626; }
+    .ss-not-title { font-size:1rem; font-weight:700; margin:0 0 7px; }
+    .ss-not-reason { font-size:.88rem; color:#555; margin:0 0 10px; line-height:1.55; }
+    .ss-not-sub { font-size:.81rem; color:#aaa; margin:0 0 14px; }
+    .ss-cta-btn { display:inline-block; padding:8px 20px; background:#1a1a1a; color:#fff; border-radius:7px; font-size:.87rem; font-weight:600; text-decoration:none; }
+
+    .ss-cal-title { font-size:1rem; font-weight:700; margin:0 0 3px; }
+    .ss-cal-sub { font-size:.84rem; color:#777; margin:0 0 13px; }
+    .ss-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; max-width:390px; }
+    .ss-cal-hdr { font-size:.67rem; font-weight:700; color:#ccc; text-align:center; padding:3px 0; text-transform:uppercase; }
+    .ss-cal-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:7px; font-size:.84rem; font-weight:500; cursor:pointer; border:1.5px solid transparent; transition:all .15s; background:#f5f5f5; }
+    .ss-cal-day:hover:not(.ss-disabled):not(.ss-empty) { background:#1a1a1a; color:#fff; }
+    .ss-cal-day.ss-selected { background:#1a1a1a; color:#fff; }
+    .ss-cal-day.ss-disabled { background:transparent; color:#e0e0e0; cursor:default; }
+    .ss-cal-day.ss-empty { background:transparent; cursor:default; }
+    .ss-nav-btn { background:#f5f5f5; border:none; border-radius:6px; padding:4px 10px; cursor:pointer; font-size:.9rem; }
+    .ss-nav-btn:hover { background:#e8e8e8; }
+    .ss-month-label { font-size:.9rem; font-weight:600; }
+    .ss-time-wrap { margin-top:16px; }
+    .ss-time-title { font-size:.9rem; font-weight:600; margin:0 0 9px; }
+    .ss-time-grid { display:flex; flex-wrap:wrap; gap:7px; }
+    .ss-time-btn { padding:8px 13px; border-radius:7px; border:1.5px solid #e0e0e0; background:#fff; font-size:.85rem; font-weight:500; cursor:pointer; transition:all .15s; }
+    .ss-time-btn:hover { border-color:#1a1a1a; }
+    .ss-time-btn.ss-time-sel { background:#1a1a1a; color:#fff; border-color:#1a1a1a; }
+
+    .ss-phone-title { font-size:1rem; font-weight:700; margin:0 0 3px; }
+    .ss-phone-sub { font-size:.84rem; color:#777; margin:0 0 12px; }
+    .ss-cb-group { display:flex; flex-direction:column; gap:9px; }
+    .ss-cb-label { display:flex; align-items:center; gap:9px; font-size:.9rem; color:#333; cursor:pointer; }
+    .ss-cb-label input[type="checkbox"] { width:17px; height:17px; cursor:pointer; accent-color:#1a1a1a; }
+
+    /* ── SUBMIT ── */
+    .submit-btn { width:100%; padding:13px; background:#1a1a1a; color:#fff; border:none; border-radius:9px; font-size:.97rem; font-weight:700; cursor:pointer; letter-spacing:.03em; transition:opacity .15s; }
+    .submit-btn:hover { opacity:.85; }
+
+    /* ── DEBUG ── */
+    #debug-panel { display:none; background:#0e0e0e; color:#7eff7e; border-radius:12px; padding:18px 20px; font-family:'Courier New',monospace; font-size:.8rem; line-height:1.7; margin-top:14px; white-space:pre-wrap; word-break:break-all; }
+    .debug-title { color:#fff; font-weight:700; font-size:.83rem; margin-bottom:10px; display:block; }
+
+    @keyframes fadeIn { from { opacity:0; transform:translateY(-3px); } to { opacity:1; transform:translateY(0); } }
+    @media (max-width:460px) {
+      .tone-grid { grid-template-columns:repeat(3,1fr); }
+      .pkg-grid  { grid-template-columns:1fr; }
+      .name-row  { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <span class="preview-badge">⚙ Preview — nem éles oldal</span>
+  <h1>SkinSpirit<br>Lézer szőrtelenítés</h1>
+  <p class="page-sub">Kérdőív</p>
+
+  <!-- ═══════════════════════════════════════
+       KÁRTYA 1: BŐRTÍPUS + SZŐRSZÍN
+  ═══════════════════════════════════════ -->
+  <div class="card">
+    <p class="card-label">Bőrtípus &amp; szőrszín</p>
+
+    <!-- FITZPATRICK TILES -->
+    <p class="section-title">Milyen a bőrtónusod?</p>
+    <p class="section-sub">Válaszd ki a bőrszínedhez és napozási szokásodhoz legközelebb álló típust</p>
+    <div class="tone-grid" id="fitz-grid"></div>
+    <div id="fitz-result" style="display:none;" class="tone-result">
+      <div class="res-circle" id="fitz-swatch"></div>
+      <div class="res-text">
+        <p class="res-type" id="fitz-type"></p>
+        <p class="res-desc" id="fitz-desc"></p>
+        <p class="res-proto" id="fitz-proto"></p>
+      </div>
+    </div>
+    <input type="hidden" id="fitz-val" name="form_fields[fitzpatrick_type]" value="" />
+
+    <hr class="divider" />
+
+    <!-- HAIR COLOR TILES -->
+    <p class="section-title">Milyen színű a szőrzeted?</p>
+    <p class="section-sub">A természetes, nem festett szőrzeted árnyalatát válaszd ki</p>
+    <div class="tone-grid" id="hair-grid"></div>
+    <div id="hair-result" style="display:none;" class="tone-result">
+      <div style="width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+        <div class="hair-swatch-inner" id="hair-swatch"></div>
+      </div>
+      <div class="res-text">
+        <p class="res-type" id="hair-type"></p>
+        <p class="res-desc" id="hair-desc"></p>
+        <p class="res-proto" id="hair-proto"></p>
+      </div>
+    </div>
+    <input type="hidden" id="hair-val" name="form_fields[hair_color]" value="" />
+
+    <!-- COMPATIBILITY -->
+    <div class="compat-placeholder" id="compat-ph">Válaszd ki a bőr- és szőrszínt a kompatibilitás megtekintéséhez</div>
+    <div class="compat-box" id="compat-box" style="display:none;">
+      <div class="compat-icon" id="compat-icon"></div>
+      <div>
+        <p class="compat-status" id="compat-status"></p>
+        <p class="compat-detail" id="compat-detail"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       KÁRTYA 2: SZEMÉLYES ADATOK
+  ═══════════════════════════════════════ -->
+  <div class="card">
+    <p class="card-label">Személyes adatok</p>
+    <div class="name-row">
+      <div class="field-group">
+        <label class="field-label">Vezetéknév *</label>
+        <input type="text" name="form_fields[vezeteknev]" class="field-input" placeholder="Kovács" />
+      </div>
+      <div class="field-group">
+        <label class="field-label">Keresztnév *</label>
+        <input type="text" name="form_fields[keresztnev]" class="field-input" placeholder="Anna" />
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Email cím *</label>
+      <input type="email" name="form_fields[email]" class="field-input" placeholder="kovacs.anna@email.hu" />
+    </div>
+    <div class="field-group">
+      <label class="field-label">Telefonszám *</label>
+      <input type="tel" name="form_fields[telefon]" class="field-input" placeholder="+36 30 123 4567" />
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       KÁRTYA 3: NÉHÁNY KÉRDÉS
+  ═══════════════════════════════════════ -->
+  <div class="card">
+    <p class="card-label">Néhány kérdés</p>
+    <div class="field-group">
+      <label class="field-label">Mivel szőrtelenítesz jelenleg? *</label>
+      <div class="radio-group">
+        <input type="radio" class="radio-pill" id="szort-b" name="form_fields[szortelenites]" value="Borotva" /><label for="szort-b">Borotva</label>
+        <input type="radio" class="radio-pill" id="szort-e" name="form_fields[szortelenites]" value="Epilátor" /><label for="szort-e">Epilátor</label>
+        <input type="radio" class="radio-pill" id="szort-g" name="form_fields[szortelenites]" value="Gyanta" /><label for="szort-g">Gyanta</label>
+        <input type="radio" class="radio-pill" id="szort-c" name="form_fields[szortelenites]" value="Csipesz" /><label for="szort-c">Csipesz</label>
+      </div>
+    </div>
+    <hr class="divider" />
+    <div class="field-group">
+      <label class="field-label">Szedsz fényérzékeny gyógyszert? *</label>
+      <div class="radio-group">
+        <input type="radio" class="radio-pill" id="feny-i" name="form_fields[fenyerzekeny]" value="Igen" /><label for="feny-i">Igen</label>
+        <input type="radio" class="radio-pill" id="feny-n" name="form_fields[fenyerzekeny]" value="Nem szedek" /><label for="feny-n">Nem szedek</label>
+      </div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">Van-e aktív bőrbetegséged? <small>(szőrtüszőgyulladás nem zárja ki)</small> *</label>
+      <div class="radio-group">
+        <input type="radio" class="radio-pill" id="bor-i" name="form_fields[borbetegseg]" value="Igen" /><label for="bor-i">Igen</label>
+        <input type="radio" class="radio-pill" id="bor-n" name="form_fields[borbetegseg]" value="Nem" /><label for="bor-n">Nem</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       KÁRTYA 4: KEZELÉS VÁLASZTÓ
+  ═══════════════════════════════════════ -->
+  <div class="card">
+    <p class="card-label">Kezelés</p>
+    <div class="field-group">
+      <label class="field-label">Nemed *</label>
+      <div class="radio-group">
+        <input type="radio" class="radio-pill" id="nem-no" name="form_fields[nem]" value="Nő" /><label for="nem-no">Nő</label>
+        <input type="radio" class="radio-pill" id="nem-fi" name="form_fields[nem]" value="Férfi" /><label for="nem-fi">Férfi</label>
+      </div>
+    </div>
+
+    <!-- SESSION TOGGLE -->
+    <div class="session-toggle-wrap" id="sess-wrap" style="display:none;">
+      <hr class="divider" />
+      <label class="field-label">Melyik kezelés érdekel? <small>(több is választható)</small></label>
+      <div style="margin-bottom:14px;">
+        <div class="session-toggle">
+          <button type="button" class="sess-btn active" data-sess="6" id="sess-6">6 alkalom</button>
+          <button type="button" class="sess-btn" data-sess="1" id="sess-1">1 alkalom</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NŐI KEZELÉSEK -->
+    <div class="treatment-section" id="treat-no"></div>
+    <!-- FÉRFI KEZELÉSEK -->
+    <div class="treatment-section" id="treat-ferfi"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       KÁRTYA 5: SZÁNDÉK
+  ═══════════════════════════════════════ -->
+  <div class="card">
+    <p class="card-label">Következő lépés</p>
+    <div class="field-group">
+      <label class="field-label">Mit szeretnél tenni? *</label>
+      <div class="radio-group">
+        <input type="radio" class="radio-pill" id="sz-idopont" name="form_fields[szandek]" value="Időpontot foglalok" /><label for="sz-idopont">Időpontot foglalok</label>
+        <input type="radio" class="radio-pill" id="sz-telefon" name="form_fields[szandek]" value="Telefonos konzultációt kérek" /><label for="sz-telefon">Telefonos konzultációt kérek</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       KÁRTYA 6: ALKALMASSÁGI EREDMÉNY / NAPTÁR / TELEFON
+  ═══════════════════════════════════════ -->
+  <div class="card" id="result-card" style="display:none;">
+    <div id="ss-not-eligible" style="display:none;" class="ss-not-eligible">
+      <div class="ss-not-icon">✗</div>
+      <p class="ss-not-title">Sajnos jelenleg nem tudunk kezelést végezni</p>
+      <p class="ss-not-reason" id="ss-reason"></p>
+      <p class="ss-not-sub">Ha állapotod megváltozik, örömmel várunk!</p>
+      <a href="tel:+36XXXXXXXXX" class="ss-cta-btn">Hívj minket</a>
+    </div>
+    <div id="ss-calendar" style="display:none;">
+      <p class="ss-cal-title">Válassz időpontot</p>
+      <p class="ss-cal-sub">Hétfő és Szerda, legkorábban <strong id="ss-min-date"></strong></p>
+      <div class="ss-cal-grid" id="ss-cal-grid"></div>
+      <div id="ss-time-slots" style="display:none;" class="ss-time-wrap">
+        <p class="ss-time-title">Szabad időpontok <span id="ss-sel-date"></span></p>
+        <div class="ss-time-grid" id="ss-time-grid"></div>
+      </div>
+      <input type="hidden" id="ss-date-field" name="form_fields[appointment_date]" value="" />
+      <input type="hidden" id="ss-time-field" name="form_fields[appointment_time]" value="" />
+    </div>
+    <div id="ss-phone" style="display:none;">
+      <p class="ss-phone-title">Mikor hívhatunk?</p>
+      <p class="ss-phone-sub">Válaszd ki a számodra megfelelő időablakokat</p>
+      <div class="ss-cb-group">
+        <label class="ss-cb-label"><input type="checkbox" name="form_fields[hivasi_ido][]" value="Hétköznap délelőtt (9-12)"> Hétköznap délelőtt</label>
+        <label class="ss-cb-label"><input type="checkbox" name="form_fields[hivasi_ido][]" value="Hétköznap délután (12-17)"> Hétköznap délután</label>
+        <label class="ss-cb-label"><input type="checkbox" name="form_fields[hivasi_ido][]" value="Hétköznap este (17-20)"> Hétköznap este</label>
+        <label class="ss-cb-label"><input type="checkbox" name="form_fields[hivasi_ido][]" value="Hétvége"> Hétvége</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="card">
+    <button type="button" class="submit-btn" onclick="submitPreview()">Küldés →</button>
+  </div>
+
+  <div id="debug-panel">
+    <span class="debug-title">📦 WEBHOOK PAYLOAD — amit az n8n megkap:</span>
+    <span id="debug-content"></span>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<!-- ============================================================
+     DATA + RENDER JS
+============================================================ -->
+<script>
+// ── PRICE FORMATTER ──
+function fmt(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0'); }
+
+// ── FITZPATRICK DATA ──
+var FITZ = [
+  { val:1, swatch:'#F9EAE0', main:'Mindig leég', sub:'Sosem barnul', type:'Fitzpatrick I.', desc:'Nagyon világos, szőke vagy vörös haj', proto:'Világos bőrödre speciálisan kalibrált, alacsonyabb energiájú protokollt alkalmazunk — biztonságos és hatékony kezelés.' },
+  { val:2, swatch:'#F0C8A8', main:'Általában leég', sub:'Néha barnul', type:'Fitzpatrick II.', desc:'Világos bőr, barnás vagy szőke haj', proto:'Világos bőrtónusodhoz finomhangolt beállításokkal dolgozunk — a legjobb eredményt megbízható protokollal érjük el.' },
+  { val:3, swatch:'#D4956A', main:'Néha leég', sub:'Fokozatosan barnul', type:'Fitzpatrick III.', desc:'Közép bőrszín, barna haj', proto:'Ideális bőrtípus lézer szőrtelenítéshez — optimalizált protokollal kiváló eredmény érhető el.' },
+  { val:4, swatch:'#A8693E', main:'Ritkán leég', sub:'Könnyen megbarnul', type:'Fitzpatrick IV.', desc:'Olíva vagy közepes barna bőr', proto:'Gazdag melanintartalmú bőröd kiválóan reagál a lézer kezelésre — professzionális protokollal hosszú tartós eredmény.' },
+  { val:5, swatch:'#7B4228', main:'Szinte sosem ég le', sub:'Mindig megbarnul', type:'Fitzpatrick V.', desc:'Sötétbarna bőr', proto:'Sötétebb bőrtónusodhoz egyedi energiabeállítással dolgozunk — a biztonság és a hatékonyság egyaránt garantált.' },
+  { val:6, swatch:'#3E1F0F', main:'Sosem ég le', sub:'Mélybarna vagy fekete bőr', type:'Fitzpatrick VI.', desc:'Nagyon sötét, mélybarna bőr', proto:'Mélybarna bőrödre specializált protokollt alkalmazunk — maximális biztonság és látható, tartós eredmény.' },
+];
+
+// ── HAIR DATA ──
+var EFF_PER_SESSION = {
+  1: [2,  4,  5,  5,  5,  5 ],
+  2: [7,  12, 17, 21, 24, 27],
+  3: [13, 24, 33, 40, 45, 49],
+  4: [22, 42, 57, 68, 75, 80],
+  5: [28, 52, 68, 79, 87, 91],
+  6: [33, 60, 76, 86, 93, 97],
+};
+var HAIR = [
+  { val:1, swatch:'#ECEAE6', main:'Fehér / Ősz', sub:'Fehér vagy ősz szőrzet', type:'Fehér / Ősz szőrzet', desc:'Fehér vagy ősz szőr', eff:5, effColor:'#ef4444', proto:'Sajnos fehér és ősz szőrzet esetén a lézer szőrtelenítés nem elvégezhető — nincs elegendő melanintartalom a szőrzetben.' },
+  { val:2, swatch:'#EEE5C8', main:'Platinaszőke', sub:'Platina vagy hamuszőke', type:'Platinaszőke szőrzet', desc:'Platina vagy hamuszőke szőr', eff:20, effColor:'#f97316', proto:'Sajnos platinaszőke szőrzet esetén a lézer szőrtelenítés nem elvégezhető.' },
+  { val:3, swatch:'#C9A96E', main:'Szőke', sub:'Szőke vagy aranyszőke', type:'Szőke szőrzet', desc:'Szőke vagy aranyszőke szőr', eff:45, effColor:'#eab308', proto:'Szőke szőrzetnél személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a várható eredményt.' },
+  { val:4, swatch:'#8B5E3C', main:'Barna', sub:'Gesztenye vagy barna', type:'Barna szőrzet', desc:'Gesztenye vagy középbarna szőr', eff:75, effColor:'#84cc16', proto:'Barna szőrzet esetén jó hatékonysággal végezhetjük a lézer szőrtelenítést — megfelelő melanintartalom, szép és tartós eredmény.' },
+  { val:5, swatch:'#3D1F0E', main:'Sötétbarna', sub:'Mélybarna szőrzet', type:'Sötétbarna szőrzet', desc:'Mélybarna szőr', eff:92, effColor:'#22c55e', proto:'Sötétbarna szőrzet — kiváló jelölt vagy lézer szőrtelenítésre! Erős melanintartalom, nagyon hatékony kezelés és tartós eredmény.' },
+  { val:6, swatch:'#100808', main:'Fekete', sub:'Fekete szőrzet', type:'Fekete szőrzet', desc:'Fekete szőr', eff:100, effColor:'#16a34a', proto:'Fekete szőrzet — a legjobb jelölt lézer szőrtelenítésre! Maximum melanintartalom, legjobb hatékonyság, leglátványosabb eredmény.' },
+];
+
+// ── COMPATIBILITY MATRIX [hair-1][fitz-1] ──
+var COMPAT_MATRIX = [
+  ['X','X','X','X','X','X'],  // hair 1
+  ['X','X','X','X','X','X'],  // hair 2
+  ['C','C','C','S','S','S'],  // hair 3
+  ['OK','OK','OK','OK','OK','OK'], // hair 4
+  ['OK','OK','OK','OK','OK','OK'], // hair 5
+  ['OK','OK','OK','OK','OK','OK'], // hair 6
+];
+var COMPAT_TEXT = {
+  OK_gen:  'Ideális kombináció — a kezelés elvégezhető, szép és tartós eredmény várható.',
+  OK_dark: 'Kezelés elvégezhető. Sötétebb bőrtípushoz egyedi energiabeállítással dolgozunk.',
+  C_12:    'Fehér / szőke szőrzetnél egyéni konzultáció szükséges a kezelési terv meghatározásához.',
+  C_3:     'Szőke szőrzetnél a hatékonyság egyéni felmérést igényel — konzultáción pontosítjuk a lehetőségeket.',
+  C_4f6:   'Barna szőr + mélybarna bőr kombinációhoz speciális beállítás szükséges — egyéni konzultáció ajánlott.',
+  S:       'Szőke szőrzet + sötétebb bőrtónus esetén speciális protokoll szükséges — egyéni felmérés alapján dolgozunk.',
+};
+
+// ── TREATMENT DATA ──
+var TREAT_NO = {
+  packages: [
+    { id:'no-soft',    name:'Soft bérlet',    tier:'soft',    areas:['Hónalj','Bikini'],                            p1:20000,  p6:47000   },
+    { id:'no-comfort', name:'Comfort bérlet', tier:'comfort', areas:['Hónalj','Bikini','Lábszár','Comb'],            p1:47500,  p6:115000  },
+    { id:'no-premium', name:'Prémium bérlet', tier:'premium', areas:['Teljes kar','Teljes láb','Bikini','Hónalj'],   p1:60000,  p6:147000  },
+  ],
+  singles: [
+    { id:'no-honalj', name:'Hónalj',  p1:23000,  p6:115000 },
+    { id:'no-bikini', name:'Bikini',  p1:27000,  p6:140000 },
+    { id:'no-intim',  name:'Intim',   p1:35000,  p6:180000 },
+    { id:'no-bajusz', name:'Bajusz',  p1:17000,  p6:84000  },
+    { id:'no-labszar',name:'Lábszár', p1:54000,  p6:270000 },
+    { id:'no-comb',   name:'Comb',    p1:54000,  p6:270000 },
+    { id:'no-alkar',  name:'Alkar',   p1:28000,  p6:138000 },
+    { id:'no-fenek',  name:'Fenék',   p1:54000,  p6:270000 },
+  ]
+};
+var TREAT_FERFI = {
+  packages: [
+    { id:'fi-soft',    name:'Soft bérlet',    tier:'soft',    areas:['Hát','Nyak','Vállak'],                     p1:76000,  p6:390000  },
+    { id:'fi-comfort', name:'Comfort bérlet', tier:'comfort', areas:['Hát','Nyak + váll','Mellkas','Has'],        p1:108000, p6:540000  },
+    { id:'fi-premium', name:'Prémium bérlet', tier:'premium', areas:['Láb','Kar','Törzs','Hónalj'],              p1:210000, p6:1120000 },
+  ],
+  singles: [
+    { id:'fi-hat',    name:'Hát',        p1:61000,  p6:300000 },
+    { id:'fi-nyak',   name:'Nyak, váll', p1:50000,  p6:250000 },
+    { id:'fi-intim',  name:'Intim',      p1:47000,  p6:240000 },
+    { id:'fi-mellkas',name:'Mellkas',    p1:47000,  p6:240000 },
+    { id:'fi-has',    name:'Has',        p1:45000,  p6:225000 },
+    { id:'fi-honalj', name:'Hónalj',     p1:29000,  p6:145000 },
+    { id:'fi-fenek',  name:'Fenék',      p1:54000,  p6:270000 },
+    { id:'fi-comb',   name:'Comb',       p1:54000,  p6:280000 },
+  ]
+};
+
+// ─────────────────────────────────────────────
+// RENDER TILES
+// ─────────────────────────────────────────────
+var selFitz = null, selHair = null;
+
+function renderFitzTiles() {
+  var grid = document.getElementById('fitz-grid');
+  FITZ.forEach(function(d) {
+    var r = document.createElement('input'); r.type='radio'; r.className='tone-radio'; r.id='fitz'+d.val; r.name='form_fields[fitzpatrick_type]'; r.value=d.val;
+    var l = document.createElement('label'); l.htmlFor='fitz'+d.val; l.className='tone-tile';
+    l.innerHTML = '<div class="tone-circle" style="background:'+d.swatch+'"></div><span class="tone-main">'+d.main+'</span>';
+    r.addEventListener('change', function() { selFitz=d.val; updateFitzResult(d); updateCompat(); });
+    grid.appendChild(r); grid.appendChild(l);
+  });
+}
+
+function updateFitzResult(d) {
+  document.getElementById('fitz-val').value = d.val;
+  document.getElementById('fitz-swatch').style.background = d.swatch;
+  document.getElementById('fitz-type').textContent = d.type;
+  document.getElementById('fitz-desc').textContent = d.desc;
+  document.getElementById('fitz-proto').textContent = d.proto;
+  document.getElementById('fitz-result').style.display = 'flex';
+}
+
+function renderHairTiles() {
+  var grid = document.getElementById('hair-grid');
+  HAIR.forEach(function(d) {
+    var r = document.createElement('input'); r.type='radio'; r.className='tone-radio'; r.id='hair'+d.val; r.name='form_fields[hair_color]'; r.value=d.val;
+    var l = document.createElement('label'); l.htmlFor='hair'+d.val; l.className='tone-tile';
+    l.innerHTML = '<div class="tone-circle" style="background:'+d.swatch+'"></div><span class="tone-main">'+d.main+'</span>';
+    r.addEventListener('change', function() { selHair=d.val; updateHairResult(d); updateCompat(); });
+    grid.appendChild(r); grid.appendChild(l);
+  });
+}
+
+function updateHairResult(d) {
+  document.getElementById('hair-val').value = d.val;
+  document.getElementById('hair-swatch').style.background = d.swatch;
+  document.getElementById('hair-type').textContent = d.type;
+  document.getElementById('hair-desc').textContent = d.desc;
+  document.getElementById('hair-proto').textContent = d.proto;
+  document.getElementById('hair-result').style.display = 'flex';
+}
+
+// ─────────────────────────────────────────────
+// COMPATIBILITY MATRIX
+// ─────────────────────────────────────────────
+function updateCompat() {
+  var ph  = document.getElementById('compat-ph');
+  var box = document.getElementById('compat-box');
+  if (!selFitz || !selHair) { ph.style.display='block'; box.style.display='none'; return; }
+  ph.style.display='none'; box.style.display='flex';
+
+  var code = COMPAT_MATRIX[selHair-1][selFitz-1];
+  box.classList.remove('ok','consult','special');
+  var icon=document.getElementById('compat-icon'), status=document.getElementById('compat-status'), detail=document.getElementById('compat-detail');
+
+  if (code==='OK') {
+    box.classList.add('ok'); icon.textContent='✓';
+    status.textContent='Alkalmas kombináció';
+    detail.textContent=(selHair>=5&&selFitz>=5)?COMPAT_TEXT.OK_dark:COMPAT_TEXT.OK_gen;
+  } else if (code==='X') {
+    box.classList.add('notok'); icon.textContent='✗';
+    status.textContent='Nem alkalmas';
+    detail.textContent='Sajnos fehér/ősz vagy platinaszőke szőrzet esetén a lézer szőrtelenítés nem elvégezhető.';
+  } else if (code==='C') {
+    box.classList.add('consult'); icon.textContent='~';
+    status.textContent='Egyéni konzultáció ajánlott';
+    detail.textContent=selHair===3?COMPAT_TEXT.C_3:COMPAT_TEXT.C_4f6;
+  } else {
+    box.classList.add('special'); icon.textContent='!';
+    status.textContent='Speciális protokoll szükséges';
+    detail.textContent=COMPAT_TEXT.S;
+  }
+}
+
+// ─────────────────────────────────────────────
+// RENDER TREATMENTS
+// ─────────────────────────────────────────────
+var currentSess = 6;
+
+function renderTreatments(data, containerId) {
+  var cont = document.getElementById(containerId);
+  cont.innerHTML = '';
+
+  // Packages
+  var pkgLabel = document.createElement('p'); pkgLabel.className='treat-group-label'; pkgLabel.textContent='Bérletek';
+  cont.appendChild(pkgLabel);
+  var pkgGrid = document.createElement('div'); pkgGrid.className='pkg-grid';
+  data.packages.forEach(function(d) {
+    var areas = d.areas.map(function(a){return '<li>'+a+'</li>';}).join('');
+    var wrap = document.createElement('div');
+    wrap.innerHTML = '<input type="checkbox" class="pkg-check" id="'+d.id+'" name="form_fields[kivalasztott_kezelesek][]" value="'+d.name+' — 6 alkalom ('+fmt(d.p6)+' Ft)" data-name="'+d.name+'" data-p1="'+d.p1+'" data-p6="'+d.p6+'" />'
+      +'<label class="pkg-lbl" for="'+d.id+'"><div class="pkg-checkmark"></div>'
+      +'<span class="pkg-tier '+d.tier+'">'+d.tier.toUpperCase()+'</span>'
+      +'<span class="pkg-name">'+d.name+'</span>'
+      +'<ul class="pkg-areas">'+areas+'</ul>'
+      +'<span class="pkg-price"><span class="pkg-disp-price">'+fmt(d.p6)+'</span> Ft '
+      +'<span class="pkg-per pkg-sess-label">/ 6 alkalom</span></span></label>';
+    pkgGrid.appendChild(wrap);
+  });
+  cont.appendChild(pkgGrid);
+
+  // Singles
+  var sLabel = document.createElement('p'); sLabel.className='treat-group-label'; sLabel.style.marginTop='20px'; sLabel.textContent='Egy alkalmas kezelések';
+  cont.appendChild(sLabel);
+  var sGrid = document.createElement('div'); sGrid.className='single-grid';
+  data.singles.forEach(function(d) {
+    var wrap = document.createElement('div'); wrap.className='single-item'; wrap.setAttribute('data-name',d.name); wrap.setAttribute('data-p1',d.p1); wrap.setAttribute('data-p6',d.p6);
+    wrap.innerHTML = '<input type="checkbox" class="single-check" id="'+d.id+'" name="form_fields[kivalasztott_kezelesek][]" value="'+d.name+' — 6 alkalom ('+fmt(d.p6)+' Ft)" />'
+      +'<label class="single-lbl" for="'+d.id+'">'
+      +'<span class="single-name">'+d.name+'</span>'
+      +'<span class="single-price single-disp-price">'+fmt(d.p6)+' Ft</span>'
+      +'</label>';
+    sGrid.appendChild(wrap);
+  });
+  cont.appendChild(sGrid);
+}
+
+function applySession(sess) {
+  currentSess = sess;
+  document.querySelectorAll('#sess-6,#sess-1').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('sess-'+sess).classList.add('active');
+
+  // Update package prices
+  document.querySelectorAll('.pkg-check').forEach(function(chk) {
+    var p = sess===1 ? parseInt(chk.getAttribute('data-p1')) : parseInt(chk.getAttribute('data-p6'));
+    var name = chk.getAttribute('data-name');
+    var sessLabel = sess===1?'1 alkalom':'6 alkalom';
+    chk.value = name+' — '+sessLabel+' ('+fmt(p)+' Ft)';
+    chk.nextElementSibling.querySelector('.pkg-disp-price').textContent = fmt(p);
+    chk.nextElementSibling.querySelector('.pkg-sess-label').textContent = '/ '+sessLabel;
+  });
+
+  // Update single prices
+  document.querySelectorAll('.single-item').forEach(function(item) {
+    var p = sess===1 ? parseInt(item.getAttribute('data-p1')) : parseInt(item.getAttribute('data-p6'));
+    var name = item.getAttribute('data-name');
+    var sessLabel = sess===1?'1 alkalom':'6 alkalom';
+    var chk = item.querySelector('.single-check');
+    chk.value = name+' — '+sessLabel+' ('+fmt(p)+' Ft)';
+    item.querySelector('.single-disp-price').textContent = fmt(p)+' Ft';
+  });
+}
+
+document.getElementById('sess-6').addEventListener('click', function(){ applySession(6); });
+document.getElementById('sess-1').addEventListener('click', function(){ applySession(1); });
+
+// Gender → show treatments
+document.querySelectorAll('[name="form_fields[nem]"]').forEach(function(el) {
+  el.addEventListener('change', function() {
+    var v = el.value;
+    document.getElementById('treat-no').classList.toggle('visible',    v==='Nő');
+    document.getElementById('treat-ferfi').classList.toggle('visible', v==='Férfi');
+    document.getElementById('sess-wrap').style.display = 'block';
+  });
+});
+
+// ─────────────────────────────────────────────
+// ELIGIBILITY + CALENDAR
+// ─────────────────────────────────────────────
+var cal = { year:null, month:null, selDate:null, selTime:null };
+var HU_MONTHS = ['Január','Február','Március','Április','Május','Június','Július','Augusztus','Szeptember','Október','November','December'];
+var HU_DAYS   = ['H','K','Sze','Cs','P','Szo','V'];
+
+function checkEligibility() {
+  var medF    = document.querySelector('[name="form_fields[fenyerzekeny]"]:checked');
+  var skinF   = document.querySelector('[name="form_fields[borbetegseg]"]:checked');
+  var intentF = document.querySelector('[name="form_fields[szandek]"]:checked');
+  if (!medF && !skinF && !intentF) return;
+
+  var notOk=false, reason='';
+  if (medF&&medF.value==='Igen') { notOk=true; reason='Fényérzékeny gyógyszer szedése esetén sajnos nem végezhetünk lézer kezelést — a gyógyszer fokozza a bőr fényérzékenységét. Ha abbahagyod a szedését, örömmel fogadunk!'; }
+  else if (skinF&&skinF.value==='Igen') { notOk=true; reason='Aktív bőrbetegség esetén (kivéve szőrtüszőgyulladás) a kezelés nem végezhető. Gyógyulás után szeretettel várunk!'; }
+
+  var rc=document.getElementById('result-card'), ne=document.getElementById('ss-not-eligible'), cl=document.getElementById('ss-calendar'), ph=document.getElementById('ss-phone');
+  rc.style.display='block';
+
+  if (notOk) {
+    document.getElementById('ss-reason').textContent=reason;
+    ne.style.display='block'; cl.style.display='none'; ph.style.display='none';
+  } else {
+    ne.style.display='none';
+    if (intentF) {
+      if (intentF.value==='Időpontot foglalok') { cl.style.display='block'; ph.style.display='none'; if(!cal.year) initCal(); }
+      else { cl.style.display='none'; ph.style.display='block'; }
+    }
+  }
+}
+
+function getMinDate() { var d=new Date(); d.setDate(d.getDate()+14); return d; }
+
+function initCal() {
+  var m=getMinDate(); cal.year=m.getFullYear(); cal.month=m.getMonth();
+  var lbl=document.getElementById('ss-min-date');
+  if(lbl) lbl.textContent=m.toLocaleDateString('hu-HU',{year:'numeric',month:'long',day:'numeric'});
+  renderCal();
+}
+
+function renderCal() {
+  var grid=document.getElementById('ss-cal-grid'); if(!grid) return; grid.innerHTML='';
+  var y=cal.year,m=cal.month,min=getMinDate(); min.setHours(0,0,0,0);
+
+  var nav=document.createElement('div'); nav.style.cssText='grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-bottom:7px;';
+  var prev=document.createElement('button'); prev.textContent='‹'; prev.className='ss-nav-btn'; prev.type='button';
+  prev.onclick=function(){cal.month--;if(cal.month<0){cal.month=11;cal.year--;}renderCal();};
+  var next=document.createElement('button'); next.textContent='›'; next.className='ss-nav-btn'; next.type='button';
+  next.onclick=function(){cal.month++;if(cal.month>11){cal.month=0;cal.year++;}renderCal();};
+  var ml=document.createElement('span'); ml.className='ss-month-label'; ml.textContent=y+'. '+HU_MONTHS[m];
+  nav.appendChild(prev); nav.appendChild(ml); nav.appendChild(next); grid.appendChild(nav);
+
+  HU_DAYS.forEach(function(d){var h=document.createElement('div');h.className='ss-cal-hdr';h.textContent=d;grid.appendChild(h);});
+
+  var fd=new Date(y,m,1).getDay();
+  var off=(fd===0)?6:fd-1;
+  for(var i=0;i<off;i++){var e=document.createElement('div');e.className='ss-cal-day ss-empty';grid.appendChild(e);}
+
+  var dim=new Date(y,m+1,0).getDate();
+  for(var dd=1;dd<=dim;dd++){
+    var date=new Date(y,m,dd),wd=date.getDay();
+    var ok=[1,3].indexOf(wd)!==-1,before=date<min;
+    var iso=y+'-'+String(m+1).padStart(2,'0')+'-'+String(dd).padStart(2,'0');
+    var cell=document.createElement('div'); cell.textContent=dd; cell.className='ss-cal-day';
+    if(!ok||before){cell.classList.add('ss-disabled');}
+    else {
+      if(iso===cal.selDate) cell.classList.add('ss-selected');
+      (function(iv,dobj){cell.onclick=function(){
+        cal.selDate=iv; document.getElementById('ss-date-field').value=iv;
+        document.getElementById('ss-sel-date').textContent='— '+dobj.toLocaleDateString('hu-HU',{month:'long',day:'numeric',weekday:'long'});
+        renderCal(); renderTimes(); document.getElementById('ss-time-slots').style.display='block';
+      };})(iso,date);
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function renderTimes() {
+  var grid=document.getElementById('ss-time-grid'); if(!grid) return; grid.innerHTML='';
+  ['09:00','10:00','11:00','12:00','14:00','15:00','16:00','17:00'].forEach(function(t){
+    var btn=document.createElement('button'); btn.type='button'; btn.textContent=t; btn.className='ss-time-btn';
+    if(t===cal.selTime) btn.classList.add('ss-time-sel');
+    btn.onclick=function(){cal.selTime=t;document.getElementById('ss-time-field').value=t;renderTimes();};
+    grid.appendChild(btn);
+  });
+}
+
+['fenyerzekeny','borbetegseg','szandek'].forEach(function(f){
+  document.querySelectorAll('[name="form_fields['+f+']"]').forEach(function(el){ el.addEventListener('change',checkEligibility); });
+});
+
+// ─────────────────────────────────────────────
+// SUBMIT DEBUG
+// ─────────────────────────────────────────────
+function submitPreview() {
+  var pl={};
+  document.querySelectorAll('[name^="form_fields"]').forEach(function(el){
+    if(el.type==='radio'&&!el.checked) return;
+    if(el.type==='checkbox'){
+      if(!el.checked) return;
+      var k=el.name.replace(/^form_fields\[/,'').replace(/\].*$/,'');
+      if(!pl[k]) pl[k]=[];
+      pl[k].push(el.value); return;
+    }
+    var k=el.name.replace(/^form_fields\[/,'').replace(/\]$/,'');
+    pl[k]=el.value;
+  });
+  pl.bekuldes_datum=new Date().toLocaleString('hu-HU');
+  var panel=document.getElementById('debug-panel');
+  document.getElementById('debug-content').textContent=JSON.stringify(pl,null,2);
+  panel.style.display='block';
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+renderFitzTiles();
+renderHairTiles();
+renderTreatments(TREAT_NO,    'treat-no');
+renderTreatments(TREAT_FERFI, 'treat-ferfi');
+</script>
+</body>
+</html>
