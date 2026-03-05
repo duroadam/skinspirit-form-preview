@@ -4,36 +4,38 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SkinSpirit — Form Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Playfair+Display:wght@500;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f2f1ef; margin: 0; padding: 40px 20px 80px; color: #1a1a1a; }
+    body { font-family: 'Oswald', sans-serif; background: #EBE6DC; margin: 0; padding: 40px 20px 80px; color: #685736; }
     .page-wrap { max-width: 640px; margin: 0 auto; }
-    .preview-badge { background:#1a1a1a; color:#fff; font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:4px 12px; border-radius:20px; display:inline-block; margin-bottom:16px; }
-    h1 { font-size:1.7rem; font-weight:800; margin:0 0 6px; }
-    .page-sub { font-size:.92rem; color:#777; margin:0 0 28px; }
+    .preview-badge { background:#8B7346; color:#fff; font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:4px 12px; border-radius:20px; display:inline-block; margin-bottom:16px; }
+    h1 { font-family:'Playfair Display', serif; font-size:1.7rem; font-weight:800; margin:0 0 6px; color:#685736; }
+    .page-sub { font-size:.92rem; color:#575757; margin:0 0 28px; }
 
     /* ── CARD ── */
-    .card { background:#fff; border-radius:16px; padding:24px 24px; margin-bottom:14px; border:1px solid #e6e6e4; }
-    .card-label { font-size:.67rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#c0c0c0; margin:0 0 16px; }
-    .divider { border:none; border-top:1px solid #f0f0f0; margin:22px 0; }
-    .section-title { font-size:1rem; font-weight:600; color:#1a1a1a; margin:0 0 3px; }
-    .section-sub { font-size:.82rem; color:#aaa; margin:0 0 14px; }
+    .card { background:#fff; border-radius:8px; padding:24px; margin-bottom:14px; border:1px solid #EBE6DC; }
+    .card-label { font-size:.67rem; font-weight:500; text-transform:uppercase; letter-spacing:.1em; color:#978A73; margin:0 0 16px; }
+    .divider { border:none; border-top:1px solid #EBE6DC; margin:22px 0; }
+    .section-title { font-size:1rem; font-weight:500; color:#685736; margin:0 0 3px; }
+    .section-sub { font-size:.82rem; color:#978A73; margin:0 0 14px; }
 
     /* ── FORM ── */
     .field-group { margin-bottom:18px; }
     .field-group:last-child { margin-bottom:0; }
-    .field-label { display:block; font-size:.87rem; font-weight:600; color:#333; margin-bottom:7px; }
-    .field-label small { font-weight:400; color:#bbb; }
-    .field-input { width:100%; padding:10px 13px; border:1.5px solid #e4e4e4; border-radius:8px; font-size:.92rem; color:#1a1a1a; outline:none; transition:border-color .15s; }
-    .field-input:focus { border-color:#1a1a1a; }
+    .field-label { display:block; font-size:.87rem; font-weight:400; color:#685736; margin-bottom:7px; }
+    .field-label small { font-weight:400; color:#978A73; }
+    .field-input { width:100%; padding:10px 13px; border:1.5px solid #EBE6DC; border-radius:6px; font-size:.92rem; color:#685736; outline:none; transition:border-color .15s; font-family:'Oswald',sans-serif; }
+    .field-input:focus { border-color:#bb9f6d; }
     .name-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 
     /* ── RADIO PILLS ── */
     .radio-group { display:flex; flex-wrap:wrap; gap:7px; }
     .radio-pill { display:none; }
-    .radio-pill + label { display:inline-flex; align-items:center; padding:7px 15px; border:1.5px solid #e4e4e4; border-radius:20px; font-size:.87rem; font-weight:500; cursor:pointer; color:#666; transition:all .15s; user-select:none; }
-    .radio-pill:checked + label { background:#1a1a1a; color:#fff; border-color:#1a1a1a; }
-    .radio-pill + label:hover { border-color:#aaa; }
+    .radio-pill + label { display:inline-flex; align-items:center; padding:7px 15px; border:1.5px solid #EBE6DC; border-radius:20px; font-size:.87rem; font-weight:500; cursor:pointer; color:#685736; transition:all .15s; user-select:none; }
+    .radio-pill:checked + label { background:#627476; color:#fff; border-color:#627476; }
+    .radio-pill + label:hover { border-color:#bb9f6d; }
 
     /* ──────────────────────────────────────────
        TONE TILES (Fitzpatrick + Hair)
@@ -42,34 +44,34 @@
     .tone-radio { display:none; }
     .tone-tile {
       display:flex; flex-direction:column; align-items:center; gap:5px;
-      padding:10px 4px; border:2px solid #eee; border-radius:10px;
-      cursor:pointer; text-align:center; background:#fafafa;
+      padding:10px 4px; border:2px solid #EBE6DC; border-radius:8px;
+      cursor:pointer; text-align:center; background:#f7f4ee;
       transition:all .15s; user-select:none;
     }
-    .tone-tile:hover { border-color:#ccc; background:#fff; transform:translateY(-1px); }
-    .tone-radio:checked + .tone-tile { border-color:#1a1a1a; background:#fff; box-shadow:0 0 0 1px #1a1a1a; transform:translateY(-2px); }
+    .tone-tile:hover { border-color:#bb9f6d; background:#fff; transform:translateY(-1px); }
+    .tone-radio:checked + .tone-tile { border-color:#bb9f6d; background:#fff; box-shadow:0 0 0 1px #8B7346; transform:translateY(-2px); }
     .tone-circle { width:38px; height:38px; border-radius:50%; border:2px solid rgba(0,0,0,0.07); flex-shrink:0; }
-    .tone-main { font-size:.73rem; font-weight:700; color:#1a1a1a; line-height:1.2; }
-    .tone-sub  { font-size:.62rem; color:#bbb; line-height:1.3; }
+    .tone-main { font-size:.73rem; font-weight:500; color:#685736; line-height:1.2; }
+    .tone-sub  { font-size:.62rem; color:#978A73; line-height:1.3; }
 
     /* ── TONE RESULT CARD ── */
-    .tone-result { display:flex; align-items:flex-start; gap:14px; background:#fafafa; border:1px solid #eee; border-radius:10px; padding:14px 16px; margin-top:0; animation:fadeIn .2s ease; }
+    .tone-result { display:flex; align-items:flex-start; gap:14px; background:#f7f4ee; border:1px solid #EBE6DC; border-radius:8px; padding:14px 16px; margin-top:0; animation:fadeIn .2s ease; }
     .res-circle { width:44px; height:44px; border-radius:50%; flex-shrink:0; border:2px solid rgba(0,0,0,0.07); }
     .hair-swatch-inner { width:40px; height:40px; border-radius:50%; border:2px solid rgba(0,0,0,0.07); position:relative; overflow:hidden; }
     .hair-swatch-inner::before,.hair-swatch-inner::after { content:''; position:absolute; left:50%; top:-4px; width:2px; height:200%; border-radius:2px; background:rgba(255,255,255,.22); transform-origin:top center; }
     .hair-swatch-inner::before { transform:translateX(-8px) rotate(-15deg); }
     .hair-swatch-inner::after  { transform:translateX(4px) rotate(10deg); }
     .res-text { flex:1; min-width:0; }
-    .res-type { font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:#bbb; margin:0 0 2px; font-weight:600; }
-    .res-desc { font-size:.93rem; font-weight:600; color:#1a1a1a; margin:0 0 6px; }
-    .res-proto { font-size:.85rem; color:#555; margin:0; line-height:1.5; }
+    .res-type { font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; color:#bb9f6d; margin:0 0 2px; font-weight:500; }
+    .res-desc { font-size:.93rem; font-weight:500; color:#685736; margin:0 0 6px; }
+    .res-proto { font-size:.85rem; color:#575757; margin:0; line-height:1.5; }
 
     .eff-fill { height:100%; border-radius:3px; transition:width .5s ease; }
-    .eff-pct { font-size:.7rem; font-weight:700; color:#555; text-align:right; }
+    .eff-pct { font-size:.7rem; font-weight:700; color:#685736; text-align:right; }
 
     /* ── COMPATIBILITY BOX ── */
-    .compat-placeholder { margin-top:18px; padding:14px 16px; background:#f8f8f8; border-radius:10px; font-size:.84rem; color:#bbb; text-align:center; }
-    .compat-box { margin-top:18px; padding:14px 18px; border-radius:10px; display:flex; align-items:center; gap:13px; border:1.5px solid; transition:all .3s; }
+    .compat-placeholder { margin-top:18px; padding:14px 16px; background:#f7f4ee; border-radius:8px; font-size:.84rem; color:#978A73; text-align:center; }
+    .compat-box { margin-top:18px; padding:14px 18px; border-radius:8px; display:flex; align-items:center; gap:13px; border:1.5px solid; transition:all .3s; }
     .compat-box.ok      { background:#f0fdf4; border-color:#86efac; }
     .compat-box.consult { background:#fffbeb; border-color:#fcd34d; }
     .compat-box.special { background:#fff7ed; border-color:#fdba74; }
@@ -79,96 +81,96 @@
     .compat-box.consult .compat-icon { background:#fef9c3; }
     .compat-box.special .compat-icon { background:#ffedd5; }
     .compat-box.notok   .compat-icon { background:#fee2e2; }
-    .compat-status { font-size:.9rem; font-weight:700; color:#1a1a1a; margin:0 0 2px; }
-    .compat-detail { font-size:.82rem; color:#555; margin:0; line-height:1.4; }
+    .compat-status { font-size:.9rem; font-weight:500; color:#685736; margin:0 0 2px; }
+    .compat-detail { font-size:.82rem; color:#575757; margin:0; line-height:1.4; }
 
     /* ──────────────────────────────────────────
        SESSION TOGGLE
     ────────────────────────────────────────── */
     .session-toggle-wrap { margin-bottom:18px; }
-    .session-toggle-label { font-size:.87rem; font-weight:600; color:#333; margin-bottom:8px; display:block; }
-    .session-toggle { display:inline-flex; background:#f0f0f0; border-radius:9px; padding:3px; gap:2px; }
-    .sess-btn { border:none; background:transparent; border-radius:7px; padding:7px 18px; font-size:.87rem; font-weight:600; cursor:pointer; color:#888; transition:all .15s; }
-    .sess-btn.active { background:#1a1a1a; color:#fff; }
+    .session-toggle-label { font-size:.87rem; font-weight:600; color:#685736; margin-bottom:8px; display:block; }
+    .session-toggle { display:inline-flex; background:#EBE6DC; border-radius:8px; padding:3px; gap:2px; }
+    .sess-btn { border:none; background:transparent; border-radius:6px; padding:7px 18px; font-size:.87rem; font-weight:600; cursor:pointer; color:#978A73; transition:all .15s; font-family:'Oswald',sans-serif; }
+    .sess-btn.active { background:#627476; color:#fff; }
 
     /* ──────────────────────────────────────────
        PACKAGE CARDS
     ────────────────────────────────────────── */
     .treatment-section { display:none; animation:fadeIn .2s ease; }
     .treatment-section.visible { display:block; }
-    .treat-group-label { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#ccc; margin:16px 0 10px; }
+    .treat-group-label { font-size:.7rem; font-weight:500; text-transform:uppercase; letter-spacing:.08em; color:#978A73; margin:16px 0 10px; }
     .treat-group-label:first-child { margin-top:0; }
 
     .pkg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
     .pkg-check { display:none; }
-    .pkg-check + .pkg-lbl { display:flex; flex-direction:column; height:100%; border:2px solid #eee; border-radius:12px; padding:13px 11px; cursor:pointer; transition:all .15s; background:#fafafa; user-select:none; position:relative; }
-    .pkg-check:checked + .pkg-lbl { border-color:#1a1a1a; background:#fff; box-shadow:0 0 0 1px #1a1a1a; }
-    .pkg-lbl:hover { border-color:#bbb; background:#fff; }
-    .pkg-checkmark { position:absolute; top:9px; right:9px; width:17px; height:17px; border-radius:50%; border:1.5px solid #ddd; transition:all .15s; }
-    .pkg-check:checked + .pkg-lbl .pkg-checkmark { background:#1a1a1a; border-color:#1a1a1a; }
+    .pkg-check + .pkg-lbl { display:flex; flex-direction:column; height:100%; border:2px solid #EBE6DC; border-radius:8px; padding:13px 11px; cursor:pointer; transition:all .15s; background:#f7f4ee; user-select:none; position:relative; }
+    .pkg-check:checked + .pkg-lbl { border-color:#bb9f6d; background:#fff; box-shadow:0 0 0 1px #8B7346; }
+    .pkg-lbl:hover { border-color:#bb9f6d; background:#fff; }
+    .pkg-checkmark { position:absolute; top:9px; right:9px; width:17px; height:17px; border-radius:50%; border:1.5px solid #EBE6DC; transition:all .15s; }
+    .pkg-check:checked + .pkg-lbl .pkg-checkmark { background:#bb9f6d; border-color:#8B7346; }
     .pkg-check:checked + .pkg-lbl .pkg-checkmark::after { content:'✓'; color:#fff; font-size:.6rem; display:flex; align-items:center; justify-content:center; height:100%; }
-    .pkg-tier { font-size:.6rem; font-weight:800; letter-spacing:.09em; text-transform:uppercase; color:#fff; padding:2px 7px; border-radius:4px; display:inline-block; margin-bottom:7px; align-self:flex-start; }
-    .pkg-tier.soft    { background:#9ca3af; }
-    .pkg-tier.comfort { background:#4b5563; }
-    .pkg-tier.premium { background:#111; }
-    .pkg-name { font-size:.84rem; font-weight:700; color:#1a1a1a; margin-bottom:7px; }
+    .pkg-tier { font-size:.6rem; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:#fff; padding:2px 7px; border-radius:4px; display:inline-block; margin-bottom:7px; align-self:flex-start; }
+    .pkg-tier.soft    { background:#978A73; }
+    .pkg-tier.comfort { background:#627476; }
+    .pkg-tier.premium { background:#685736; }
+    .pkg-name { font-size:.84rem; font-weight:500; color:#685736; margin-bottom:7px; }
     .pkg-areas { list-style:none; padding:0; margin:0 0 9px; flex:1; }
-    .pkg-areas li { font-size:.76rem; color:#666; padding:1px 0; display:flex; align-items:center; gap:4px; }
-    .pkg-areas li::before { content:'—'; color:#ddd; font-size:.65rem; }
-    .pkg-price { font-size:.82rem; font-weight:700; color:#1a1a1a; margin-top:auto; }
-    .pkg-per { font-size:.7rem; color:#bbb; font-weight:400; }
+    .pkg-areas li { font-size:.76rem; color:#575757; padding:1px 0; display:flex; align-items:center; gap:4px; }
+    .pkg-areas li::before { content:'—'; color:#EBE6DC; font-size:.65rem; }
+    .pkg-price { font-size:.82rem; font-weight:700; color:#685736; margin-top:auto; }
+    .pkg-per { font-size:.7rem; color:#978A73; font-weight:400; }
 
     /* ── INDIVIDUAL TREATMENT PILLS ── */
     .single-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:7px; }
     .single-check { display:none; }
-    .single-check + .single-lbl { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:11px 8px; border:1.5px solid #eee; border-radius:10px; cursor:pointer; transition:all .15s; background:#fafafa; user-select:none; min-height:58px; }
-    .single-check:checked + .single-lbl { background:#1a1a1a; border-color:#1a1a1a; color:#fff; }
-    .single-lbl:hover { border-color:#bbb; background:#fff; }
-    .single-check:checked + .single-lbl .single-price { color:#aaa; }
-    .single-name { font-size:.87rem; font-weight:600; }
-    .single-price { font-size:.72rem; color:#aaa; margin-top:2px; transition:color .15s; }
+    .single-check + .single-lbl { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:11px 8px; border:1.5px solid #EBE6DC; border-radius:8px; cursor:pointer; transition:all .15s; background:#f7f4ee; user-select:none; min-height:58px; }
+    .single-check:checked + .single-lbl { background:#bb9f6d; border-color:#8B7346; color:#fff; }
+    .single-lbl:hover { border-color:#bb9f6d; background:#fff; }
+    .single-check:checked + .single-lbl .single-price { color:rgba(255,255,255,0.75); }
+    .single-name { font-size:.87rem; font-weight:400; }
+    .single-price { font-size:.72rem; color:#978A73; margin-top:2px; transition:color .15s; }
 
     /* ──────────────────────────────────────────
        ELIGIBILITY / CALENDAR / PHONE
     ────────────────────────────────────────── */
-    .ss-not-eligible { border-radius:12px; padding:22px 20px; text-align:center; background:#fff5f5; border:1.5px solid #fca5a5; }
+    .ss-not-eligible { border-radius:8px; padding:22px 20px; text-align:center; background:#fff5f5; border:1.5px solid #fca5a5; }
     .ss-not-icon { font-size:1.8rem; margin-bottom:10px; color:#dc2626; }
-    .ss-not-title { font-size:1rem; font-weight:700; margin:0 0 7px; }
-    .ss-not-reason { font-size:.88rem; color:#555; margin:0 0 10px; line-height:1.55; }
-    .ss-not-sub { font-size:.81rem; color:#aaa; margin:0 0 14px; }
-    .ss-cta-btn { display:inline-block; padding:8px 20px; background:#1a1a1a; color:#fff; border-radius:7px; font-size:.87rem; font-weight:600; text-decoration:none; }
+    .ss-not-title { font-size:1rem; font-weight:500; margin:0 0 7px; color:#685736; }
+    .ss-not-reason { font-size:.88rem; color:#575757; margin:0 0 10px; line-height:1.55; }
+    .ss-not-sub { font-size:.81rem; color:#978A73; margin:0 0 14px; }
+    .ss-cta-btn { display:inline-block; padding:10px 30px; background:#627476; color:#fff; border-radius:6px; font-size:.85rem; font-weight:600; text-decoration:none; text-transform:uppercase; letter-spacing:.04em; }
 
-    .ss-cal-title { font-size:1rem; font-weight:700; margin:0 0 3px; }
-    .ss-cal-sub { font-size:.84rem; color:#777; margin:0 0 13px; }
+    .ss-cal-title { font-size:1rem; font-weight:500; margin:0 0 3px; color:#685736; }
+    .ss-cal-sub { font-size:.84rem; color:#575757; margin:0 0 13px; }
     .ss-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; max-width:390px; }
-    .ss-cal-hdr { font-size:.67rem; font-weight:700; color:#ccc; text-align:center; padding:3px 0; text-transform:uppercase; }
-    .ss-cal-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:7px; font-size:.84rem; font-weight:500; cursor:pointer; border:1.5px solid transparent; transition:all .15s; background:#f5f5f5; }
-    .ss-cal-day:hover:not(.ss-disabled):not(.ss-empty) { background:#1a1a1a; color:#fff; }
-    .ss-cal-day.ss-selected { background:#1a1a1a; color:#fff; }
-    .ss-cal-day.ss-disabled { background:transparent; color:#e0e0e0; cursor:default; }
+    .ss-cal-hdr { font-size:.67rem; font-weight:700; color:#bb9f6d; text-align:center; padding:3px 0; text-transform:uppercase; }
+    .ss-cal-day { aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:6px; font-size:.84rem; font-weight:500; cursor:pointer; border:1.5px solid transparent; transition:all .15s; background:#f7f4ee; color:#685736; }
+    .ss-cal-day:hover:not(.ss-disabled):not(.ss-empty) { background:#bb9f6d; color:#fff; }
+    .ss-cal-day.ss-selected { background:#fff; color:#685736; border-color:#bb9f6d; box-shadow:0 0 0 1px #bb9f6d; }
+    .ss-cal-day.ss-disabled { background:transparent; color:#EBE6DC; cursor:default; }
     .ss-cal-day.ss-empty { background:transparent; cursor:default; }
-    .ss-nav-btn { background:#f5f5f5; border:none; border-radius:6px; padding:4px 10px; cursor:pointer; font-size:.9rem; }
-    .ss-nav-btn:hover { background:#e8e8e8; }
-    .ss-month-label { font-size:.9rem; font-weight:600; }
+    .ss-nav-btn { background:#f7f4ee; border:1px solid #EBE6DC; border-radius:6px; padding:4px 10px; cursor:pointer; font-size:.9rem; color:#685736; transition:background .15s; }
+    .ss-nav-btn:hover { background:#EBE6DC; }
+    .ss-month-label { font-size:.9rem; font-weight:600; color:#685736; }
     .ss-time-wrap { margin-top:16px; }
-    .ss-time-title { font-size:.9rem; font-weight:600; margin:0 0 9px; }
+    .ss-time-title { font-size:.9rem; font-weight:600; margin:0 0 9px; color:#685736; }
     .ss-time-grid { display:flex; flex-wrap:wrap; gap:7px; }
-    .ss-time-btn { padding:8px 13px; border-radius:7px; border:1.5px solid #e0e0e0; background:#fff; font-size:.85rem; font-weight:500; cursor:pointer; transition:all .15s; }
-    .ss-time-btn:hover { border-color:#1a1a1a; }
-    .ss-time-btn.ss-time-sel { background:#1a1a1a; color:#fff; border-color:#1a1a1a; }
+    .ss-time-btn { padding:8px 13px; border-radius:6px; border:1.5px solid #EBE6DC; background:#fff; font-size:.85rem; font-weight:500; cursor:pointer; transition:all .15s; color:#685736; font-family:'Oswald',sans-serif; }
+    .ss-time-btn:hover { border-color:#bb9f6d; color:#bb9f6d; }
+    .ss-time-btn.ss-time-sel { background:#fff; color:#685736; border-color:#bb9f6d; box-shadow:0 0 0 1px #bb9f6d; }
 
-    .ss-phone-title { font-size:1rem; font-weight:700; margin:0 0 3px; }
-    .ss-phone-sub { font-size:.84rem; color:#777; margin:0 0 12px; }
+    .ss-phone-title { font-size:1rem; font-weight:500; margin:0 0 3px; color:#685736; }
+    .ss-phone-sub { font-size:.84rem; color:#575757; margin:0 0 12px; }
     .ss-cb-group { display:flex; flex-direction:column; gap:9px; }
-    .ss-cb-label { display:flex; align-items:center; gap:9px; font-size:.9rem; color:#333; cursor:pointer; }
-    .ss-cb-label input[type="checkbox"] { width:17px; height:17px; cursor:pointer; accent-color:#1a1a1a; }
+    .ss-cb-label { display:flex; align-items:center; gap:9px; font-size:.9rem; color:#575757; cursor:pointer; }
+    .ss-cb-label input[type="checkbox"] { width:17px; height:17px; cursor:pointer; accent-color:#bb9f6d; }
 
     /* ── SUBMIT ── */
-    .submit-btn { width:100%; padding:13px; background:#1a1a1a; color:#fff; border:none; border-radius:9px; font-size:.97rem; font-weight:700; cursor:pointer; letter-spacing:.03em; transition:opacity .15s; }
-    .submit-btn:hover { opacity:.85; }
+    .submit-btn { width:100%; padding:13px 40px; background:#627476; color:#fff; border:none; border-radius:6px; font-size:.97rem; font-weight:700; cursor:pointer; letter-spacing:.05em; text-transform:uppercase; transition:background .15s; font-family:'Oswald',sans-serif; }
+    .submit-btn:hover { background:#8B7346; }
 
     /* ── DEBUG ── */
-    #debug-panel { display:none; background:#0e0e0e; color:#7eff7e; border-radius:12px; padding:18px 20px; font-family:'Courier New',monospace; font-size:.8rem; line-height:1.7; margin-top:14px; white-space:pre-wrap; word-break:break-all; }
+    #debug-panel { display:none; background:#0e0e0e; color:#7eff7e; border-radius:8px; padding:18px 20px; font-family:'Courier New',monospace; font-size:.8rem; line-height:1.7; margin-top:14px; white-space:pre-wrap; word-break:break-all; }
     .debug-title { color:#fff; font-weight:700; font-size:.83rem; margin-bottom:10px; display:block; }
 
     @keyframes fadeIn { from { opacity:0; transform:translateY(-3px); } to { opacity:1; transform:translateY(0); } }
@@ -185,6 +187,8 @@
   <span class="preview-badge">⚙ Preview — nem éles oldal</span>
   <h1>SkinSpirit<br>Lézer szőrtelenítés</h1>
   <p class="page-sub">Kérdőív</p>
+
+<form autocomplete="on" onsubmit="return false;">
 
   <!-- ═══════════════════════════════════════
        KÁRTYA 1: BŐRTÍPUS + SZŐRSZÍN
@@ -242,21 +246,21 @@
     <p class="card-label">Személyes adatok</p>
     <div class="name-row">
       <div class="field-group">
-        <label class="field-label">Vezetéknév *</label>
-        <input type="text" name="form_fields[vezeteknev]" class="field-input" placeholder="Kovács" />
+        <label class="field-label" for="last-name">Vezetéknév *</label>
+        <input type="text" id="last-name" name="form_fields[vezeteknev]" class="field-input" placeholder="Kovács" autocomplete="family-name" />
       </div>
       <div class="field-group">
-        <label class="field-label">Keresztnév *</label>
-        <input type="text" name="form_fields[keresztnev]" class="field-input" placeholder="Anna" />
+        <label class="field-label" for="first-name">Keresztnév *</label>
+        <input type="text" id="first-name" name="form_fields[keresztnev]" class="field-input" placeholder="Anna" autocomplete="given-name" />
       </div>
     </div>
     <div class="field-group">
-      <label class="field-label">Email cím *</label>
-      <input type="email" name="form_fields[email]" class="field-input" placeholder="kovacs.anna@email.hu" />
+      <label class="field-label" for="email">Email cím *</label>
+      <input type="email" id="email" name="form_fields[email]" class="field-input" placeholder="kovacs.anna@email.hu" autocomplete="email" />
     </div>
     <div class="field-group">
-      <label class="field-label">Telefonszám *</label>
-      <input type="tel" name="form_fields[telefon]" class="field-input" placeholder="+36 30 123 4567" />
+      <label class="field-label" for="phone">Telefonszám *</label>
+      <input type="tel" id="phone" name="form_fields[telefon]" class="field-input" placeholder="+36 30 123 4567" autocomplete="tel" />
     </div>
   </div>
 
@@ -272,6 +276,7 @@
         <input type="radio" class="radio-pill" id="szort-e" name="form_fields[szortelenites]" value="Epilátor" /><label for="szort-e">Epilátor</label>
         <input type="radio" class="radio-pill" id="szort-g" name="form_fields[szortelenites]" value="Gyanta" /><label for="szort-g">Gyanta</label>
         <input type="radio" class="radio-pill" id="szort-c" name="form_fields[szortelenites]" value="Csipesz" /><label for="szort-c">Csipesz</label>
+        <input type="radio" class="radio-pill" id="szort-k" name="form_fields[szortelenites]" value="Krém" /><label for="szort-k">Krém</label>
       </div>
     </div>
     <hr class="divider" />
@@ -283,7 +288,7 @@
       </div>
     </div>
     <div class="field-group">
-      <label class="field-label">Van-e aktív bőrbetegséged? <small>(szőrtüszőgyulladás nem zárja ki)</small> *</label>
+      <label class="field-label">Van-e aktív bőrbetegséged? <small>(kivéve szőrtüszőgyulladás)</small> *</label>
       <div class="radio-group">
         <input type="radio" class="radio-pill" id="bor-i" name="form_fields[borbetegseg]" value="Igen" /><label for="bor-i">Igen</label>
         <input type="radio" class="radio-pill" id="bor-n" name="form_fields[borbetegseg]" value="Nem" /><label for="bor-n">Nem</label>
@@ -380,6 +385,8 @@
     <span id="debug-content"></span>
   </div>
 
+</form>
+
 </div><!-- /page-wrap -->
 
 <!-- ============================================================
@@ -410,8 +417,8 @@ var EFF_PER_SESSION = {
 };
 var HAIR = [
   { val:1, swatch:'#ECEAE6', main:'Fehér / Ősz', sub:'Fehér vagy ősz szőrzet', type:'Fehér / Ősz szőrzet', desc:'Fehér vagy ősz szőr', eff:5, effColor:'#ef4444', proto:'Sajnos fehér és ősz szőrzet esetén a lézer szőrtelenítés nem elvégezhető — nincs elegendő melanintartalom a szőrzetben.' },
-  { val:2, swatch:'#EEE5C8', main:'Platinaszőke', sub:'Platina vagy hamuszőke', type:'Platinaszőke szőrzet', desc:'Platina vagy hamuszőke szőr', eff:20, effColor:'#f97316', proto:'Sajnos platinaszőke szőrzet esetén a lézer szőrtelenítés nem elvégezhető.' },
-  { val:3, swatch:'#C9A96E', main:'Szőke', sub:'Szőke vagy aranyszőke', type:'Szőke szőrzet', desc:'Szőke vagy aranyszőke szőr', eff:45, effColor:'#eab308', proto:'Szőke szőrzetnél személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a várható eredményt.' },
+  { val:2, swatch:'#C9A96E', main:'Szőke', sub:'Szőke vagy aranyszőke', type:'Szőke szőrzet', desc:'Szőke vagy aranyszőke szőr', eff:45, effColor:'#eab308', proto:'Szőke szőrzetnél személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a várható eredményt.' },
+  { val:3, swatch:'#B5564D', main:'Vörös', sub:'Vörös vagy rézvörös', type:'Vörös szőrzet', desc:'Vörös vagy rézvörös szőr', eff:20, effColor:'#f97316', proto:'Vörös szőrzetnél személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a várható eredményt.' },
   { val:4, swatch:'#8B5E3C', main:'Barna', sub:'Gesztenye vagy barna', type:'Barna szőrzet', desc:'Gesztenye vagy középbarna szőr', eff:75, effColor:'#84cc16', proto:'Barna szőrzet esetén jó hatékonysággal végezhetjük a lézer szőrtelenítést — megfelelő melanintartalom, szép és tartós eredmény.' },
   { val:5, swatch:'#3D1F0E', main:'Sötétbarna', sub:'Mélybarna szőrzet', type:'Sötétbarna szőrzet', desc:'Mélybarna szőr', eff:92, effColor:'#22c55e', proto:'Sötétbarna szőrzet — kiváló jelölt vagy lézer szőrtelenítésre! Erős melanintartalom, nagyon hatékony kezelés és tartós eredmény.' },
   { val:6, swatch:'#100808', main:'Fekete', sub:'Fekete szőrzet', type:'Fekete szőrzet', desc:'Fekete szőr', eff:100, effColor:'#16a34a', proto:'Fekete szőrzet — a legjobb jelölt lézer szőrtelenítésre! Maximum melanintartalom, legjobb hatékonyság, leglátványosabb eredmény.' },
@@ -419,12 +426,12 @@ var HAIR = [
 
 // ── COMPATIBILITY MATRIX [hair-1][fitz-1] ──
 var COMPAT_MATRIX = [
-  ['X','X','X','X','X','X'],  // hair 1
-  ['X','X','X','X','X','X'],  // hair 2
-  ['C','C','C','S','S','S'],  // hair 3
-  ['OK','OK','OK','OK','OK','OK'], // hair 4
-  ['OK','OK','OK','OK','OK','OK'], // hair 5
-  ['OK','OK','OK','OK','OK','OK'], // hair 6
+  ['X','X','X','X','X','X'],       // hair 1 — Fehér/Ősz
+  ['X','X','X','X','X','X'],       // hair 2 — Szőke (nem kezelhető)
+  ['C','C','C','S','S','S'],       // hair 3 — Vörös (konzultáció / speciális)
+  ['OK','OK','OK','OK','OK','OK'], // hair 4 — Barna
+  ['OK','OK','OK','OK','OK','OK'], // hair 5 — Sötétbarna
+  ['OK','OK','OK','OK','OK','OK'], // hair 6 — Fekete
 ];
 var COMPAT_TEXT = {
   OK_gen:  'Ideális kombináció — a kezelés elvégezhető, szép és tartós eredmény várható.',
@@ -435,12 +442,17 @@ var COMPAT_TEXT = {
   S:       'Szőke szőrzet + sötétebb bőrtónus esetén speciális protokoll szükséges — egyéni felmérés alapján dolgozunk.',
 };
 
-// ── TREATMENT DATA ──
+// ══════════════════════════════════════════════════════════
+// ÁRLISTA — ITT MÓDOSÍTSD A KEZELÉSI ÁRAKAT
+//   p1 = 1 alkalmas ár (Ft)
+//   p6 = 6 alkalmas bérlet ára (Ft)
+//   areas = a bérletbe tartozó területek (lista)
+// ══════════════════════════════════════════════════════════
 var TREAT_NO = {
   packages: [
-    { id:'no-soft',    name:'Soft bérlet',    tier:'soft',    areas:['Hónalj','Bikini'],                            p1:20000,  p6:47000   },
-    { id:'no-comfort', name:'Comfort bérlet', tier:'comfort', areas:['Hónalj','Bikini','Lábszár','Comb'],            p1:47500,  p6:115000  },
-    { id:'no-premium', name:'Prémium bérlet', tier:'premium', areas:['Teljes kar','Teljes láb','Bikini','Hónalj'],   p1:60000,  p6:147000  },
+    { id:'no-soft',    name:'Soft bérlet',    tier:'soft',    areas:['Hónalj','Bikini'],                            p1:47000,  p6:240000   },
+    { id:'no-comfort', name:'Comfort bérlet', tier:'comfort', areas:['Hónalj','Bikini','Lábszár','Comb'],            p1:115000,  p6:570000  },
+    { id:'no-premium', name:'Prémium bérlet', tier:'premium', areas:['Teljes kar','Teljes láb','Bikini','Hónalj'],   p1:147000,  p6:720000  },
   ],
   singles: [
     { id:'no-honalj', name:'Hónalj',  p1:23000,  p6:115000 },
@@ -519,14 +531,17 @@ function updateHairResult(d) {
 // ─────────────────────────────────────────────
 // COMPATIBILITY MATRIX
 // ─────────────────────────────────────────────
+var currentCompatCode = null;
+
 function updateCompat() {
   var ph  = document.getElementById('compat-ph');
   var box = document.getElementById('compat-box');
-  if (!selFitz || !selHair) { ph.style.display='block'; box.style.display='none'; return; }
+  if (!selFitz || !selHair) { ph.style.display='block'; box.style.display='none'; currentCompatCode=null; return; }
   ph.style.display='none'; box.style.display='flex';
 
   var code = COMPAT_MATRIX[selHair-1][selFitz-1];
-  box.classList.remove('ok','consult','special');
+  currentCompatCode = code;
+  box.classList.remove('ok','consult','special','notok');
   var icon=document.getElementById('compat-icon'), status=document.getElementById('compat-status'), detail=document.getElementById('compat-detail');
 
   if (code==='OK') {
@@ -536,7 +551,7 @@ function updateCompat() {
   } else if (code==='X') {
     box.classList.add('notok'); icon.textContent='✗';
     status.textContent='Nem alkalmas';
-    detail.textContent='Sajnos fehér/ősz vagy platinaszőke szőrzet esetén a lézer szőrtelenítés nem elvégezhető.';
+    detail.textContent='Sajnos fehér/ősz vagy szőke szőrzet esetén a lézer szőrtelenítés nem elvégezhető.';
   } else if (code==='C') {
     box.classList.add('consult'); icon.textContent='~';
     status.textContent='Egyéni konzultáció ajánlott';
@@ -546,6 +561,9 @@ function updateCompat() {
     status.textContent='Speciális protokoll szükséges';
     detail.textContent=COMPAT_TEXT.S;
   }
+
+  // Frissíti az alkalmassági eredményt is (kártya 6) ha már ki van töltve
+  checkEligibility();
 }
 
 // ─────────────────────────────────────────────
@@ -644,7 +662,8 @@ function checkEligibility() {
   if (!medF && !skinF && !intentF) return;
 
   var notOk=false, reason='';
-  if (medF&&medF.value==='Igen') { notOk=true; reason='Fényérzékeny gyógyszer szedése esetén sajnos nem végezhetünk lézer kezelést — a gyógyszer fokozza a bőr fényérzékenységét. Ha abbahagyod a szedését, örömmel fogadunk!'; }
+  if (currentCompatCode==='X') { notOk=true; reason='A kiválasztott szőrszín alapján sajnos nem elvégezhető a lézer szőrtelenítés — nincs elegendő melanintartalom. Konzultáción személyre szabott megoldást keresünk!'; }
+  else if (medF&&medF.value==='Igen') { notOk=true; reason='Fényérzékeny gyógyszer szedése esetén sajnos nem végezhetünk lézer kezelést — a gyógyszer fokozza a bőr fényérzékenységét. Ha abbahagyod a szedését, örömmel fogadunk!'; }
   else if (skinF&&skinF.value==='Igen') { notOk=true; reason='Aktív bőrbetegség esetén (kivéve szőrtüszőgyulladás) a kezelés nem végezhető. Gyógyulás után szeretettel várunk!'; }
 
   var rc=document.getElementById('result-card'), ne=document.getElementById('ss-not-eligible'), cl=document.getElementById('ss-calendar'), ph=document.getElementById('ss-phone');
