@@ -1,0 +1,148 @@
+{
+  "name": "SkinSpirit — WP CF7 Kapcsolat → CRM",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "skinspirit-cf7",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-cf7",
+      "name": "Webhook — CF7 Beküldés",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "1", "name": "nev",     "value": "={{ $json.body['your-name'] ?? $json['your-name'] ?? '' }}", "type": "string" },
+            { "id": "2", "name": "email",   "value": "={{ $json.body['your-email'] ?? $json['your-email'] ?? '' }}", "type": "string" },
+            { "id": "3", "name": "telefon", "value": "={{ $json.body['your-phone'] ?? $json['your-phone'] ?? '' }}", "type": "string" },
+            { "id": "4", "name": "targy",   "value": "={{ $json.body['your-subject'] ?? $json['your-subject'] ?? '' }}", "type": "string" },
+            { "id": "5", "name": "uzenet",  "value": "={{ $json.body['your-message'] ?? $json['your-message'] ?? '' }}", "type": "string" },
+            { "id": "6", "name": "forras",  "value": "WordPress — Kapcsolat form", "type": "string" },
+            { "id": "7", "name": "bekuldes_datum", "value": "={{ $now.toFormat('yyyy-MM-dd HH:mm') }}", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-cf7-adatok",
+      "name": "Set — CF7 Adatok",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "documentId": { "value": "GOOGLE_SHEETS_DOCUMENT_ID", "__rl": true, "mode": "id" },
+        "sheetName": { "value": "Leads", "__rl": true, "mode": "name" },
+        "options": {}
+      },
+      "id": "sheets-get-last-id",
+      "name": "Google Sheets — Utolsó ID",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [680, 300],
+      "credentials": { "googleSheetsOAuth2Api": { "id": "SHEETS_CREDENTIAL_ID", "name": "Google Sheets" } }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Új vendég ID generálás\nconst rows = items;\nconst formData = $('Set — CF7 Adatok').item.json;\n\nlet lastId = '';\nfor (let i = rows.length - 1; i >= 0; i--) {\n  const id = rows[i].json?.['Vendég ID'];\n  if (id && id.toString().includes('-')) {\n    lastId = id.toString().trim();\n    break;\n  }\n}\n\nconst currentYear = new Date().getFullYear().toString();\nlet newId;\n\nif (!lastId) {\n  newId = `${currentYear}-001`;\n} else {\n  const parts = lastId.split('-');\n  const lastYear = parts[0];\n  const lastNum = parseInt(parts[1]) || 0;\n  const newNum = currentYear === lastYear ? lastNum + 1 : 1;\n  newId = `${currentYear}-${String(newNum).padStart(3, '0')}`;\n}\n\nreturn [{ json: { ...formData, vendeg_id: newId } }];"
+      },
+      "id": "code-vendeg-id",
+      "name": "Code — Új vendég ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "value": "GOOGLE_SHEETS_DOCUMENT_ID", "__rl": true, "mode": "id" },
+        "sheetName": { "value": "Leads", "__rl": true, "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Vendég ID":        "={{ $json.vendeg_id }}",
+            "Beküldés dátuma":  "={{ $json.bekuldes_datum }}",
+            "Vezetéknév":       "",
+            "Keresztnév":       "",
+            "Név":              "={{ $json.nev }}",
+            "Telefon":          "={{ $json.telefon }}",
+            "Email":            "={{ $json.email }}",
+            "Tárgy":            "={{ $json.targy }}",
+            "Üzenet":           "={{ $json.uzenet }}",
+            "Forrás":           "={{ $json.forras }}",
+            "Státusz":          "Új"
+          },
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "sheets-append",
+      "name": "Google Sheets — CRM sor",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1120, 300],
+      "credentials": { "googleSheetsOAuth2Api": { "id": "SHEETS_CREDENTIAL_ID", "name": "Google Sheets" } }
+    },
+    {
+      "parameters": {
+        "chatId": "TELEGRAM_CHAT_ID",
+        "text": "=📩 Új WordPress kapcsolat\n\n👤 {{ $json.nev }}\n📞 {{ $json.telefon }}\n📧 {{ $json.email }}\n📋 Tárgy: {{ $json.targy }}\n💬 {{ $json.uzenet }}\n\n📆 {{ $json.bekuldes_datum }}",
+        "additionalFields": { "parse_mode": "HTML" }
+      },
+      "id": "telegram-ertesito",
+      "name": "Telegram — Értesítő",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1340, 300],
+      "credentials": { "telegramApi": { "id": "SS_TELEGRAM_CREDENTIAL_ID", "name": "SS Bot" } }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"success\": true }",
+        "options": { "responseCode": 200 }
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1560, 300]
+    }
+  ],
+  "connections": {
+    "Webhook — CF7 Beküldés": {
+      "main": [[{ "node": "Set — CF7 Adatok", "type": "main", "index": 0 }]]
+    },
+    "Set — CF7 Adatok": {
+      "main": [[{ "node": "Google Sheets — Utolsó ID", "type": "main", "index": 0 }]]
+    },
+    "Google Sheets — Utolsó ID": {
+      "main": [[{ "node": "Code — Új vendég ID", "type": "main", "index": 0 }]]
+    },
+    "Code — Új vendég ID": {
+      "main": [[{ "node": "Google Sheets — CRM sor", "type": "main", "index": 0 }]]
+    },
+    "Google Sheets — CRM sor": {
+      "main": [[{ "node": "Telegram — Értesítő", "type": "main", "index": 0 }]]
+    },
+    "Telegram — Értesítő": {
+      "main": [[{ "node": "Webhook Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["SkinSpirit", "WordPress", "CF7", "CRM"],
+  "meta": {
+    "instanceId": "skinspirit-cf7-crm-v1"
+  }
+}

@@ -1,0 +1,267 @@
+{
+  "name": "SkinSpirit — Weboldal Lead Feldolgozás",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "skinspirit-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook — Form Beküldés",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "1",  "name": "vezeteknev",         "value": "={{ $json.body.form_fields?.vezeteknev ?? $json.body.vezeteknev ?? '' }}", "type": "string" },
+            { "id": "2",  "name": "keresztnev",         "value": "={{ $json.body.form_fields?.keresztnev ?? $json.body.keresztnev ?? '' }}", "type": "string" },
+            { "id": "3",  "name": "teljes_nev",         "value": "={{ $('Set — Adatok').item.json.vezeteknev }} {{ $('Set — Adatok').item.json.keresztnev }}", "type": "string" },
+            { "id": "4",  "name": "nem",                "value": "={{ $json.body.form_fields?.nem ?? $json.body.nem ?? '' }}", "type": "string" },
+            { "id": "5",  "name": "szortelenites",      "value": "={{ $json.body.form_fields?.szortelenites ?? $json.body.szortelenites ?? '' }}", "type": "string" },
+            { "id": "6",  "name": "fenyerzekeny",       "value": "={{ $json.body.form_fields?.fenyerzekeny ?? $json.body.fenyerzekeny ?? '' }}", "type": "string" },
+            { "id": "7",  "name": "borbetegseg",        "value": "={{ $json.body.form_fields?.borbetegseg ?? $json.body.borbetegseg ?? '' }}", "type": "string" },
+            { "id": "8",  "name": "erdeklodes",         "value": "={{ $json.body.form_fields?.erdeklodes ?? $json.body.erdeklodes ?? '' }}", "type": "string" },
+            { "id": "9",  "name": "kivalasztott_termek","value": "={{ $json.body.form_fields?.berlet_no ?? $json.body.form_fields?.berlet_ferfi ?? $json.body.form_fields?.kezeles_no ?? $json.body.form_fields?.kezeles_ferfi ?? '' }}", "type": "string" },
+            { "id": "10", "name": "email",              "value": "={{ $json.body.form_fields?.email ?? $json.body.email ?? '' }}", "type": "string" },
+            { "id": "11", "name": "telefon",            "value": "={{ $json.body.form_fields?.telefon ?? $json.body.telefon ?? '' }}", "type": "string" },
+            { "id": "12", "name": "szandek",            "value": "={{ $json.body.form_fields?.szandek ?? $json.body.szandek ?? '' }}", "type": "string" },
+            { "id": "13", "name": "hivasi_ido",         "value": "={{ $json.body.form_fields?.hivasi_ido ?? $json.body.hivasi_ido ?? '' }}", "type": "string" },
+            { "id": "14", "name": "appointment_date",   "value": "={{ $json.body.form_fields?.appointment_date ?? $json.body.appointment_date ?? '' }}", "type": "string" },
+            { "id": "15", "name": "appointment_time",   "value": "={{ $json.body.form_fields?.appointment_time ?? $json.body.appointment_time ?? '' }}", "type": "string" },
+            { "id": "16", "name": "fitzpatrick_type",   "value": "={{ $json.body.form_fields?.fitzpatrick_type ?? $json.body.fitzpatrick_type ?? '' }}", "type": "string" },
+            { "id": "17", "name": "hair_color",         "value": "={{ $json.body.form_fields?.hair_color ?? $json.body.hair_color ?? '' }}", "type": "string" },
+            { "id": "18", "name": "bekuldes_datum",     "value": "={{ $now.toFormat('yyyy-MM-dd HH:mm') }}", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-adatok",
+      "name": "Set — Adatok",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.fenyerzekeny }}",
+              "rightValue": "Igen",
+              "operator": { "type": "string", "operation": "equals" }
+            },
+            {
+              "leftValue": "={{ $json.borbetegseg }}",
+              "rightValue": "Igen",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "if-alkalmas",
+      "name": "IF — Alkalmas?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// NEM ALKALMAS ág — Telegram értesítő\nconst d = items[0].json;\n\nlet ok = '';\nif (d.fenyerzekeny === 'Igen') ok = 'fényérzékeny gyógyszert szed';\nelse if (d.borbetegseg === 'Igen') ok = 'aktív bőrbetegsége van';\n\nconst msg = `⚠️ Nem alkalmas érdeklődő\n\n👤 ${d.teljes_nev}\n📞 ${d.telefon}\n📧 ${d.email}\n\n❌ Ok: ${ok}\n\n📅 ${d.bekuldes_datum}`;\n\nreturn [{ json: { telegram_msg: msg, ...d } }];"
+      },
+      "id": "code-nem-alkalmas-telegram",
+      "name": "Code — Nem alkalmas Telegram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 180]
+    },
+    {
+      "parameters": {
+        "chatId": "TELEGRAM_CHAT_ID",
+        "text": "={{ $json.telegram_msg }}",
+        "additionalFields": { "parse_mode": "HTML" }
+      },
+      "id": "telegram-nem-alkalmas",
+      "name": "Telegram — Nem alkalmas értesítő",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1120, 180],
+      "credentials": { "telegramApi": { "id": "SS_TELEGRAM_CREDENTIAL_ID", "name": "SS Bot" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ALKALMAS ág — Telegram értesítő a klinikának\nconst d = items[0].json;\n\nconst fitzMap = { '1':'I (nagyon világos)', '2':'II (világos)', '3':'III (közép)', '4':'IV (olíva)', '5':'V (sötétbarna)', '6':'VI (fekete)' };\nconst hairMap = { '1':'Fehér/ősz', '2':'Platinaszőke', '3':'Szőke', '4':'Barna', '5':'Sötétbarna', '6':'Fekete' };\n\nlet idopont = '';\nif (d.szandek === 'Időpontot foglalok') {\n  idopont = `📅 Időpont: ${d.appointment_date} ${d.appointment_time}`;\n} else {\n  idopont = `📞 Telefonos konzultáció\\n🕐 Hívható: ${d.hivasi_ido}`;\n}\n\nconst msg = `🆕 Új érdeklődő — SkinSpirit\n\n👤 ${d.teljes_nev}\n🚻 ${d.nem}\n📞 ${d.telefon}\n📧 ${d.email}\n\n🧬 Bőrtípus: Fitzpatrick ${d.fitzpatrick_type} — ${fitzMap[d.fitzpatrick_type] ?? ''}\n💇 Szőrszín: ${hairMap[d.hair_color] ?? ''}\n✂️ Szőrtelenítés: ${d.szortelenites}\n\n📋 ${d.erdeklodes}: ${d.kivalasztott_termek}\n\n${idopont}\n\n📆 Beküldve: ${d.bekuldes_datum}`;\n\nreturn [{ json: { telegram_msg: msg, ...d } }];"
+      },
+      "id": "code-alkalmas-telegram",
+      "name": "Code — Alkalmas Telegram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "chatId": "TELEGRAM_CHAT_ID",
+        "text": "={{ $json.telegram_msg }}",
+        "additionalFields": { "parse_mode": "HTML" }
+      },
+      "id": "telegram-alkalmas",
+      "name": "Telegram — Alkalmas értesítő",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1120, 400],
+      "credentials": { "telegramApi": { "id": "SS_TELEGRAM_CREDENTIAL_ID", "name": "SS Bot" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Email az érdeklődőnek — template alapú\nconst d = items[0].json;\n\nlet tartalom = '';\n\nif (d.szandek === 'Időpontot foglalok') {\n  tartalom = `Köszönjük, hogy időpontot foglaltál a SkinSpiritnél!\n\n📅 Foglalt időpontod: ${d.appointment_date}, ${d.appointment_time}\n📍 Helyszín: Budapest, [KLINIKA CÍM]\n\nAz időpont megerősítéséhez rövid időn belül felvesszük veled a kapcsolatot.\n\nHa bármilyen kérdésed van, hívj minket: +36 XX XXX XXXX\n\nVárunk szeretettel,\nSkinSpirit csapata`;\n} else {\n  tartalom = `Köszönjük, hogy felvettél velünk kapcsolatot!\n\nMegkaptuk kérésedet, hamarosan telefonon keresünk téged.\nElérhető időablakaid: ${d.hivasi_ido}\n\nHa sürgős a kérdésed, hívj minket te is: +36 XX XXX XXXX\n\nVárunk szeretettel,\nSkinSpirit csapata`;\n}\n\nconst emailBody = `Kedves ${d.keresztnev}!\n\n${tartalom}`;\n\nreturn [{ json: { email_body: emailBody, email_subject: 'SkinSpirit — Foglalásod visszaigazolása', ...d } }];"
+      },
+      "id": "code-email-erdeklodo",
+      "name": "Code — Email érdeklődőnek",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 400]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "={{ $json.email_subject }}",
+        "message": "={{ $json.email_body }}",
+        "options": {
+          "bccList": "info@skinspirit.hu"
+        }
+      },
+      "id": "gmail-send",
+      "name": "Gmail — Visszaigazolás",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1560, 400],
+      "credentials": { "gmailOAuth2": { "id": "GMAIL_CREDENTIAL_ID", "name": "Gmail" } }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "documentId": { "value": "GOOGLE_SHEETS_DOCUMENT_ID", "__rl": true, "mode": "id" },
+        "sheetName": { "value": "Leads", "__rl": true, "mode": "name" },
+        "options": {}
+      },
+      "id": "sheets-get-last-id",
+      "name": "Google Sheets — Utolsó ID",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1780, 400],
+      "credentials": { "googleSheetsOAuth2Api": { "id": "SHEETS_CREDENTIAL_ID", "name": "Google Sheets" } }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// ── Új vendég ID generálás ──\n// Input: összes sor a Leads sheet-ből (Google Sheets getAll)\n// A form adatokat a Gmail node-ból vesszük vissza\n\nconst rows = items; // Google Sheets getAll outputja\nconst formData = $('Gmail — Visszaigazolás').item.json;\n\n// Keressük a legutolsó érvényes Vendég ID-t (alulról felfelé)\nlet lastId = '';\nfor (let i = rows.length - 1; i >= 0; i--) {\n  const id = rows[i].json?.['Vendég ID'];\n  if (id && id.toString().includes('-')) {\n    lastId = id.toString().trim();\n    break;\n  }\n}\n\n// Új ID generálás\nconst currentYear = new Date().getFullYear().toString();\nlet newId;\n\nif (!lastId) {\n  // Üres sheet — első vendég\n  newId = `${currentYear}-001`;\n} else {\n  const parts = lastId.split('-');\n  const lastYear = parts[0];\n  const lastNum = parseInt(parts[1]) || 0;\n  // Ha új év → 001-től kezdjük, ha ugyanaz az év → +1\n  const newNum = currentYear === lastYear ? lastNum + 1 : 1;\n  newId = `${currentYear}-${String(newNum).padStart(3, '0')}`;\n}\n\nreturn [{ json: { ...formData, vendeg_id: newId } }];"
+      },
+      "id": "code-uj-vendeg-id",
+      "name": "Code — Új vendég ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 400]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "value": "GOOGLE_SHEETS_DOCUMENT_ID", "__rl": true, "mode": "id" },
+        "sheetName": { "value": "Leads", "__rl": true, "mode": "name" },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Vendég ID":        "={{ $json.vendeg_id }}",
+            "Beküldés dátuma":  "={{ $json.bekuldes_datum }}",
+            "Vezetéknév":       "={{ $json.vezeteknev }}",
+            "Keresztnév":       "={{ $json.keresztnev }}",
+            "Nem":              "={{ $json.nem }}",
+            "Telefon":          "={{ $json.telefon }}",
+            "Email":            "={{ $json.email }}",
+            "Szőrtelenítés":    "={{ $json.szortelenites }}",
+            "Fitzpatrick":      "={{ $json.fitzpatrick_type }}",
+            "Szőrszín":         "={{ $json.hair_color }}",
+            "Érdeklődés":       "={{ $json.erdeklodes }}",
+            "Termék":           "={{ $json.kivalasztott_termek }}",
+            "Szándék":          "={{ $json.szandek }}",
+            "Időpont":          "={{ $json.appointment_date }} {{ $json.appointment_time }}",
+            "Hívható":          "={{ $json.hivasi_ido }}",
+            "Státusz":          "Új"
+          },
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "sheets-append",
+      "name": "Google Sheets — Leads sor",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [2220, 400],
+      "credentials": { "googleSheetsOAuth2Api": { "id": "SHEETS_CREDENTIAL_ID", "name": "Google Sheets" } }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "{\"success\": true}",
+        "options": { "responseCode": 200 }
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2440, 400]
+    }
+  ],
+  "connections": {
+    "Webhook — Form Beküldés": {
+      "main": [[{ "node": "Set — Adatok", "type": "main", "index": 0 }]]
+    },
+    "Set — Adatok": {
+      "main": [[{ "node": "IF — Alkalmas?", "type": "main", "index": 0 }]]
+    },
+    "IF — Alkalmas?": {
+      "main": [
+        [{ "node": "Code — Nem alkalmas Telegram", "type": "main", "index": 0 }],
+        [{ "node": "Code — Alkalmas Telegram",     "type": "main", "index": 0 }]
+      ]
+    },
+    "Code — Nem alkalmas Telegram": {
+      "main": [[{ "node": "Telegram — Nem alkalmas értesítő", "type": "main", "index": 0 }]]
+    },
+    "Code — Alkalmas Telegram": {
+      "main": [[{ "node": "Telegram — Alkalmas értesítő", "type": "main", "index": 0 }]]
+    },
+    "Telegram — Alkalmas értesítő": {
+      "main": [[{ "node": "Code — Email érdeklődőnek", "type": "main", "index": 0 }]]
+    },
+    "Code — Email érdeklődőnek": {
+      "main": [[{ "node": "Gmail — Visszaigazolás", "type": "main", "index": 0 }]]
+    },
+    "Gmail — Visszaigazolás": {
+      "main": [[{ "node": "Google Sheets — Utolsó ID", "type": "main", "index": 0 }]]
+    },
+    "Google Sheets — Utolsó ID": {
+      "main": [[{ "node": "Code — Új vendég ID", "type": "main", "index": 0 }]]
+    },
+    "Code — Új vendég ID": {
+      "main": [[{ "node": "Google Sheets — Leads sor", "type": "main", "index": 0 }]]
+    },
+    "Google Sheets — Leads sor": {
+      "main": [[{ "node": "Webhook Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["SkinSpirit", "Lead", "Weboldal"],
+  "meta": {
+    "instanceId": "skinspirit-lead-workflow-v1"
+  }
+}

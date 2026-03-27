@@ -1,0 +1,1120 @@
+{
+  "updatedAt": "2026-03-01T19:33:57.457Z",
+  "createdAt": "2026-03-01T18:52:09.175Z",
+  "id": "ixGrW28GTnhtDgMofWDl_",
+  "name": "SkinSpirit Form Agent updated",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "skinspirit-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "87130b5e-fe11-4188-964f-c0cdd56d041c",
+      "name": "Webhook — Form Beküldés",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -2112,
+        400
+      ],
+      "webhookId": "261d0993-6d54-4b7d-b808-1ac5d299eab7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "vezeteknev",
+              "value": "={{ $json.vezeteknev }}",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "keresztnev",
+              "value": "={{ $json.keresztnev }}",
+              "type": "string"
+            },
+            {
+              "id": "3",
+              "name": "teljes_nev",
+              "value": "={{ .vezeteknev }} {{ .keresztnev }}",
+              "type": "string"
+            },
+            {
+              "id": "4",
+              "name": "nem",
+              "value": "={{ $json.nem }}",
+              "type": "string"
+            },
+            {
+              "id": "5",
+              "name": "szortelenites",
+              "value": "={{ $json.szortelenites }}",
+              "type": "string"
+            },
+            {
+              "id": "6",
+              "name": "fenyerzekeny",
+              "value": "={{ $json.fenyerzekeny }}",
+              "type": "string"
+            },
+            {
+              "id": "7",
+              "name": "borbetegseg",
+              "value": "={{ $json.borbetegseg }}",
+              "type": "string"
+            },
+            {
+              "id": "8",
+              "name": "erdeklodes",
+              "value": "={{ .erdeklodes }}",
+              "type": "string"
+            },
+            {
+              "id": "9",
+              "name": "kivalasztott_termek",
+              "value": "={{ .berlet_no || .berlet_ferfi || .kezeles_no || .kezeles_ferfi }}",
+              "type": "string"
+            },
+            {
+              "id": "10",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "11",
+              "name": "telefon",
+              "value": "={{ $json.telefon }}",
+              "type": "string"
+            },
+            {
+              "id": "12",
+              "name": "szandek",
+              "value": "={{ $json.szandek }}",
+              "type": "string"
+            },
+            {
+              "id": "13",
+              "name": "hivasi_ido",
+              "value": "={{ $json.appointment_date }}",
+              "type": "string"
+            },
+            {
+              "id": "14",
+              "name": "appointment_date",
+              "value": "={{ $json.appointment_date }}",
+              "type": "string"
+            },
+            {
+              "id": "15",
+              "name": "appointment_time",
+              "value": "={{ $json.appointment_time }}",
+              "type": "string"
+            },
+            {
+              "id": "16",
+              "name": "fitzpatrick_type",
+              "value": "={{ $json.fitzpatrick_type }}",
+              "type": "string"
+            },
+            {
+              "id": "17",
+              "name": "hair_color",
+              "value": "={{ $json.hair_color }}",
+              "type": "string"
+            },
+            {
+              "id": "18",
+              "name": "bekuldes_datum",
+              "value": "={{ $json.bekuldes_datum }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a6aff85f-ad78-4110-93d1-9463d2d62952",
+      "name": "Set — Adatok",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1904,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.fenyerzekeny }}",
+              "rightValue": "Igen",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "id": "3ac9aea6-a1cc-4d0e-af62-0a67d131b1e7"
+            },
+            {
+              "leftValue": "={{ $json.borbetegseg }}",
+              "rightValue": "Igen",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "id": "f7e80232-fd1f-4458-aed5-12350ea58cb7"
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "2ac09fad-4a8a-4bf6-a35b-501bf3495b08",
+      "name": "IF — Alkalmas?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1680,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// NEM ALKALMAS ág — Telegram értesítő\nconst d = items[0].json;\n\nlet ok = '';\nif (d.fenyerzekeny === 'Igen') ok = 'fényérzékeny gyógyszert szed';\nelse if (d.borbetegseg === 'Igen') ok = 'aktív bőrbetegsége van';\n\nconst msg = `⚠️ Nem alkalmas érdeklődő\n\n👤 ${d.teljes_nev}\n📞 ${d.telefon}\n📧 ${d.email}\n\n❌ Ok: ${ok}\n\n📅 ${d.bekuldes_datum}`;\n\nreturn [{ json: { telegram_msg: msg, ...d } }];"
+      },
+      "id": "fa1f617b-d182-439e-9648-fff419ca4c61",
+      "name": "Code — Nem alkalmas Telegram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1456,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "TELEGRAM_CHAT_ID",
+        "text": "={{ $json.telegram_msg }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "fd35678f-a375-4e99-aa45-5e056510cdd4",
+      "name": "Telegram — Nem alkalmas értesítő",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1232,
+        272
+      ],
+      "webhookId": "87438447-6593-4c2a-82cc-537ebd16a0e8",
+      "credentials": {
+        "telegramApi": {
+          "id": "9OePZ4iGdQQrtFRL",
+          "name": "SkinSpirit2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ALKALMAS ág — Telegram értesítő a klinikának\nconst d = items[0].json;\n\nconst fitzMap = { '1':'I (nagyon világos)', '2':'II (világos)', '3':'III (közép)', '4':'IV (olíva)', '5':'V (sötétbarna)', '6':'VI (fekete)' };\nconst hairMap = { '1':'Fehér/ősz', '2':'Platinaszőke', '3':'Szőke', '4':'Barna', '5':'Sötétbarna', '6':'Fekete' };\n\nlet idopont = '';\nif (d.szandek === 'Időpontot foglalok') {\n  idopont = `📅 Időpont: ${d.appointment_date} ${d.appointment_time}`;\n} else {\n  idopont = `📞 Telefonos konzultáció\\n🕐 Hívható: ${d.hivasi_ido}`;\n}\n\nconst msg = `🆕 Új érdeklődő — SkinSpirit\n\n👤 ${d.teljes_nev}\n🚻 ${d.nem}\n📞 ${d.telefon}\n📧 ${d.email}\n\n🧬 Bőrtípus: Fitzpatrick ${d.fitzpatrick_type} — ${fitzMap[d.fitzpatrick_type] ?? ''}\n💇 Szőrszín: ${hairMap[d.hair_color] ?? ''}\n✂️ Szőrtelenítés: ${d.szortelenites}\n\n📋 ${d.erdeklodes}: ${d.kivalasztott_termek}\n\n${idopont}\n\n📆 Beküldve: ${d.bekuldes_datum}`;\n\nreturn [{ json: { telegram_msg: msg, ...d } }];"
+      },
+      "id": "95b775a4-0a59-43d4-92d1-004402ce06da",
+      "name": "Code — Alkalmas Telegram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1456,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "5199599709",
+        "text": "={{ $json.telegram_msg }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "024eb4cc-e6df-4163-96a7-33a16696ea54",
+      "name": "Telegram — Alkalmas értesítő",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1232,
+        496
+      ],
+      "webhookId": "c9009391-3526-4562-b019-c38bada9dc40",
+      "credentials": {
+        "telegramApi": {
+          "id": "9OePZ4iGdQQrtFRL",
+          "name": "SkinSpirit2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Email az érdeklődőnek — template alapú\nconst d = items[0].json;\n\nlet tartalom = '';\n\nif (d.szandek === 'Időpontot foglalok') {\n  tartalom = `Köszönjük, hogy időpontot foglaltál a SkinSpiritnél!\n\n📅 Foglalt időpontod: ${d.appointment_date}, ${d.appointment_time}\n📍 Helyszín: Budapest, [KLINIKA CÍM]\n\nAz időpont megerősítéséhez rövid időn belül felvesszük veled a kapcsolatot.\n\nHa bármilyen kérdésed van, hívj minket: +36 XX XXX XXXX\n\nVárunk szeretettel,\nSkinSpirit csapata`;\n} else {\n  tartalom = `Köszönjük, hogy felvettél velünk kapcsolatot!\n\nMegkaptuk kérésedet, hamarosan telefonon keresünk téged.\nElérhető időablakaid: ${d.hivasi_ido}\n\nHa sürgős a kérdésed, hívj minket te is: +36 XX XXX XXXX\n\nVárunk szeretettel,\nSkinSpirit csapata`;\n}\n\nconst emailBody = `Kedves ${d.keresztnev}!\n\n${tartalom}`;\n\nreturn [{ json: { email_body: emailBody, email_subject: 'SkinSpirit — Foglalásod visszaigazolása', ...d } }];"
+      },
+      "id": "69c89677-a108-4958-b90f-fd765ca6ded9",
+      "name": "Code — Email érdeklődőnek",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1i-7elsL-4g_XrxdDOzxR14fwnX5oVwCc6Kol2FBao1w",
+          "mode": "list",
+          "cachedResultName": "SS CRM test",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1i-7elsL-4g_XrxdDOzxR14fwnX5oVwCc6Kol2FBao1w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "value": "Leads",
+          "__rl": true,
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Vendég ID": "={{ $json.vendeg_id }}",
+            "Vezetéknév": "={{ $('Set — Adatok').item.json.vezeteknev }}",
+            "Keresztnév": "={{ $('Set — Adatok').item.json.keresztnev }}",
+            "Nem": "={{ $('Set — Adatok').item.json.nem }}",
+            "Teljes Név": "={{ $(\"Set — Adatok\").item.json.teljes_nev }}",
+            "Email": "={{ $('Set — Adatok').item.json.email }}",
+            "First_Contact_Method": "Form",
+            "n8n_Első naptárbejegyzés": "={{ $('Set — Adatok').item.json.hivasi_ido }}",
+            "n8n_Telefon Calendar": "={{ $(\"Set — Adatok\").item.json.szandek === \"Telefonos konzultációt kérek\" }}",
+            "Kezelés dátuma": "={{ $(\"Set — Adatok\").item.json.szandek === \"Időpontot foglalok\" ? $(\"Set — Adatok\").item.json.appointment_date : \"\" }}",
+            "Kezelés kezdete": "={{ $(\"Set — Adatok\").item.json.szandek === \"Időpontot foglalok\" ? $(\"Set — Adatok\").item.json.appointment_time : \"\" }}",
+            "Timestamp": "={{ $('Webhook — Form Beküldés').item.json.bekuldes_datum }}",
+            "Telefon": "={{ $(\"Set — Adatok\").item.json.telefon }}",
+            "Kezelés típusa": "={{ $(\"Set — Adatok\").item.json.erdeklodes }}",
+            "Treatment_Details": "={{ $(\"Set — Adatok\").item.json.kivalasztott_termek }}",
+            "Status": "Új"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Keresztnév",
+              "displayName": "Keresztnév",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Vezetéknév",
+              "displayName": "Vezetéknév",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Teljes Név",
+              "displayName": "Teljes Név",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nem",
+              "displayName": "Nem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Bérlet",
+              "displayName": "Bérlet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Bérlet Ár",
+              "displayName": "Bérlet Ár",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "1 db kezelés",
+              "displayName": "1 db kezelés",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "1 db kezelés ár",
+              "displayName": "1 db kezelés ár",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Próbakezelés",
+              "displayName": "Próbakezelés",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Prioritás",
+              "displayName": "Prioritás",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Következő lépés",
+              "displayName": "Következő lépés",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "n8n_Telefon Státusz",
+              "displayName": "n8n_Telefon Státusz",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "n8n_Árajánlat Elküldve",
+              "displayName": "n8n_Árajánlat Elküldve",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Időpont egyeztetve",
+              "displayName": "Időpont egyeztetve",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Megjelent",
+              "displayName": "Megjelent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ügyfél lett",
+              "displayName": "Ügyfél lett",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Vendég ID",
+              "displayName": "Vendég ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefon jegyzet",
+              "displayName": "Telefon jegyzet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "n8n_Telefon Calendar",
+              "displayName": "n8n_Telefon Calendar",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Kezelés dátuma",
+              "displayName": "Kezelés dátuma",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Kezelés kezdete",
+              "displayName": "Kezelés kezdete",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Kezelés ideje",
+              "displayName": "Kezelés ideje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Kezelés típusa",
+              "displayName": "Kezelés típusa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "n8n_Első naptárbejegyzés",
+              "displayName": "n8n_Első naptárbejegyzés",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Treatment_Details",
+              "displayName": "Treatment_Details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "n8n_Utalvány dátuma",
+              "displayName": "n8n_Utalvány dátuma",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "n8n_Utalvány lejárt",
+              "displayName": "n8n_Utalvány lejárt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "n8n_Email utánkövetés utolsó dátuma",
+              "displayName": "n8n_Email utánkövetés utolsó dátuma",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "n8n_Utánkövetések száma",
+              "displayName": "n8n_Utánkövetések száma",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Lead_Source",
+              "displayName": "Lead_Source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "First_Contact_Method",
+              "displayName": "First_Contact_Method",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last_Interaction_Date",
+              "displayName": "Last_Interaction_Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status_Details",
+              "displayName": "Status_Details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Loss_Reason",
+              "displayName": "Loss_Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Webhook_Trigger",
+              "displayName": "Webhook_Trigger",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Last_Webhook_Date",
+              "displayName": "Last_Webhook_Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Becsült érték",
+              "displayName": "Becsült érték",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Fizetési státusz",
+              "displayName": "Fizetési státusz",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Vásárolt kezelések száma",
+              "displayName": "Vásárolt kezelések száma",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Lejárt kezelések száma",
+              "displayName": "Lejárt kezelések száma",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "f66c32d1-6b0b-468c-a973-f24010f1eabe",
+      "name": "Google Sheets — Leads sor",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -144,
+        496
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "BDK43PcepOa2ApxE",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "{\"success\": true}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "99dc9eca-d576-4867-a7df-05108dae2e26",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        96,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@skinspirit.hu",
+        "toEmail": "=adam {{ $('Set — Adatok').item.json.email }}",
+        "subject": "={{ $json.email_subject }}",
+        "html": "={{ $json.email_body }}",
+        "options": {
+          "appendAttribution": false,
+          "bccEmail": "info@skinspirit.hu"
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -800,
+        496
+      ],
+      "id": "b54cb77c-d5fe-4dfe-b8e6-66c285f23e4a",
+      "name": "Send an Email",
+      "webhookId": "65bc27c0-911e-4387-85ab-908451b31904",
+      "credentials": {
+        "smtp": {
+          "id": "IgQU9XvXTsgTRchf",
+          "name": "SkinSpirit"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1i-7elsL-4g_XrxdDOzxR14fwnX5oVwCc6Kol2FBao1w",
+          "mode": "list",
+          "cachedResultName": "SS CRM test",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1i-7elsL-4g_XrxdDOzxR14fwnX5oVwCc6Kol2FBao1w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1048312576,
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1i-7elsL-4g_XrxdDOzxR14fwnX5oVwCc6Kol2FBao1w/edit#gid=1048312576"
+        },
+        "options": {}
+      },
+      "id": "3095f6a5-578b-4cba-a29c-2524347aefa5",
+      "name": "Google Sheets — Utolsó ID",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -576,
+        496
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "BDK43PcepOa2ApxE",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ── Új vendég ID generálás ──\n// Input: a Leads sheet összes sora (getAll)\n// A form adatokat a Google Sheets node $('Set — Adatok')-ból húzza majd\n\nconst rows = items;\nconst currentYear = new Date().getFullYear().toString();\n\n// Legutolsó érvényes Vendég ID megkeresése (alulról felfelé)\nlet lastId = '';\nfor (let i = rows.length - 1; i >= 0; i--) {\n  const id = rows[i].json?.['Vendég ID'];\n  if (id && id.toString().includes('-')) {\n    lastId = id.toString().trim();\n    break;\n  }\n}\n\n// Új ID generálás\nlet newId;\nif (!lastId) {\n  // Üres sheet — az első vendég\n  newId = `${currentYear}-001`;\n} else {\n  const parts = lastId.split('-');\n  const lastYear = parts[0];\n  const lastNum = parseInt(parts[1]) || 0;\n  // Ha újév kezdődött → 001-től, különben +1\n  const newNum = currentYear === lastYear ? lastNum + 1 : 1;\n  newId = `${currentYear}-${String(newNum).padStart(3, '0')}`;\n}\n\nreturn [{ json: { vendeg_id: newId } }];"
+      },
+      "id": "399530c1-3323-446a-ae62-eb705a51d562",
+      "name": "Code — Új vendég ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        496
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook — Form Beküldés": {
+      "main": [
+        [
+          {
+            "node": "Set — Adatok",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set — Adatok": {
+      "main": [
+        [
+          {
+            "node": "IF — Alkalmas?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — Alkalmas?": {
+      "main": [
+        [
+          {
+            "node": "Code — Nem alkalmas Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code — Alkalmas Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Nem alkalmas Telegram": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Nem alkalmas értesítő",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Alkalmas Telegram": {
+      "main": [
+        [
+          {
+            "node": "Telegram — Alkalmas értesítő",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram — Alkalmas értesítő": {
+      "main": [
+        [
+          {
+            "node": "Code — Email érdeklődőnek",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Email érdeklődőnek": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets — Leads sor": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an Email": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets — Utolsó ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets — Utolsó ID": {
+      "main": [
+        [
+          {
+            "node": "Code — Új vendég ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code — Új vendég ID": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets — Leads sor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Webhook — Form Beküldés": [
+      {
+        "json": {
+          "fitzpatrick_type": "4",
+          "hair_color": "4",
+          "vezeteknev": "Adam",
+          "keresztnev": "Duro",
+          "email": "adam.duro11@gmail.com",
+          "telefon": "+36308721830",
+          "szortelenites": "Borotva",
+          "fenyerzekeny": "Nem szedek",
+          "borbetegseg": "Nem",
+          "nem": "Férfi",
+          "kivalasztott_kezelesek": [
+            "Női SOFT bérlet — Hónalj + intim",
+            "Férfi COMFORT bérlet — Hát + nyak + váll + mellkas + has",
+            "Hát (300 000 Ft)"
+          ],
+          "szandek": "Időpontot foglalok",
+          "appointment_date": "2026-03-24",
+          "appointment_time": "12:00",
+          "bekuldes_datum": "2026. 02. 28. 22:40:23"
+        }
+      }
+    ]
+  },
+  "versionId": "3c81f8aa-eabd-4bc8-8f8e-33f49bba4e4c",
+  "activeVersionId": null,
+  "versionCounter": 5,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-03-01T18:52:09.179Z",
+      "createdAt": "2026-03-01T18:52:09.179Z",
+      "role": "workflow:owner",
+      "workflowId": "ixGrW28GTnhtDgMofWDl_",
+      "projectId": "XZv9PbY59ZCA0gOc",
+      "project": {
+        "updatedAt": "2025-12-10T13:50:14.258Z",
+        "createdAt": "2025-12-10T13:46:51.918Z",
+        "id": "XZv9PbY59ZCA0gOc",
+        "name": "Adam Duro <adam.duro11@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "19d3396f-0a28-45cb-9fe2-b9a83778f021",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-10T13:46:51.919Z",
+            "createdAt": "2025-12-10T13:46:51.919Z",
+            "userId": "19d3396f-0a28-45cb-9fe2-b9a83778f021",
+            "projectId": "XZv9PbY59ZCA0gOc",
+            "user": {
+              "updatedAt": "2026-03-01T04:52:52.000Z",
+              "createdAt": "2025-12-10T13:46:50.990Z",
+              "id": "19d3396f-0a28-45cb-9fe2-b9a83778f021",
+              "email": "adam.duro11@gmail.com",
+              "firstName": "Adam",
+              "lastName": "Duro",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-10T13:49:19.608Z",
+                "personalization_survey_n8n_version": "1.123.4",
+                "companyIndustryExtended": [
+                  "finance-insurance-industry"
+                ],
+                "companySize": "personalUser",
+                "companyType": "other",
+                "role": "business-owner",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "hxaFTER39YdPkNHB",
+                "userActivatedAt": 1765394830033,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767623403584
+                },
+                "easyAIWorkflowOnboarded": true
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-02-28",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [
+    {
+      "updatedAt": "2026-02-05T13:18:22.872Z",
+      "createdAt": "2026-02-05T13:18:22.872Z",
+      "id": "xsMCw3Ffda60y0OB",
+      "name": "SS"
+    }
+  ],
+  "activeVersion": null
+}

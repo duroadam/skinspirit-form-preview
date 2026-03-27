@@ -1,0 +1,516 @@
+<!--
+  SkinSpirit — Alkalmassági Form
+  Elhelyezés: Elementor Form widget (Pro szükséges a webhook + conditional logichoz)
+
+  FONTOS: Ez a fájl a teljes form logikát tartalmazza, amit Elementor-ba kell illeszteni.
+  Az Elementor Form mezőket manuálisan kell létrehozni az admin felületen,
+  a JS logika és a csúszka pedig Elementor HTML widgetként kerül mellé.
+
+  Struktúra az oldalon:
+  1. [Elementor HTML Widget] — Fitzpatrick csúszka (fitzpatrick-slider.html)
+  2. [Elementor Form Widget] — Form mezők
+  3. [Elementor HTML Widget] — Alkalmassági logika + időpontfoglaló JS (ez a fájl)
+-->
+
+<!-- ===== ALKALMASSÁGI EREDMÉNY PANEL (kezdetben rejtett) ===== -->
+<div id="ss-not-eligible" style="display:none;" class="ss-result-panel ss-result-no">
+  <div class="ss-result-icon">✗</div>
+  <p class="ss-result-title">Sajnos jelenleg nem tudunk kezelést végezni</p>
+  <p class="ss-result-reason" id="ss-reason-text"></p>
+  <p class="ss-result-sub">Ha állapotod megváltozik, örömmel várunk! Kérdések esetén hívj minket.</p>
+  <a href="tel:+36XXXXXXXXX" class="ss-cta-btn">Hívj minket</a>
+</div>
+
+<!-- ===== IDŐPONTFOGLALÓ PANEL (kezdetben rejtett) ===== -->
+<div id="ss-calendar" style="display:none;" class="ss-calendar-wrap">
+  <p class="ss-cal-title">Válassz időpontot</p>
+  <p class="ss-cal-subtitle">Hétfő–Szerda, legkorábban <strong id="ss-min-date-label"></strong></p>
+
+  <div class="ss-cal-grid" id="ss-cal-grid"></div>
+
+  <div id="ss-time-slots" style="display:none;" class="ss-time-wrap">
+    <p class="ss-time-title">Válassz időpontot <span id="ss-selected-date-label"></span></p>
+    <div class="ss-time-grid" id="ss-time-grid"></div>
+  </div>
+
+  <!-- Hidden fields — ezek mennek a webhookba -->
+  <input type="hidden" id="ss-date-field" name="form_fields[appointment_date]" value="" />
+  <input type="hidden" id="ss-time-field" name="form_fields[appointment_time]" value="" />
+</div>
+
+<!-- ===== TELEFONOS KONZULTÁCIÓ PANEL (kezdetben rejtett) ===== -->
+<div id="ss-phone-consult" style="display:none;" class="ss-phone-wrap">
+  <p class="ss-phone-title">Mikor hívhatunk?</p>
+  <p class="ss-phone-sub">Válaszd ki az számodra megfelelő időablakokat</p>
+  <div class="ss-checkbox-group" id="ss-phone-times">
+    <label class="ss-check-label"><input type="checkbox" name="form_fields[hivasi_ido][]" value="Hétköznap délelőtt (9-12)"> Hétköznap délelőtt</label>
+    <label class="ss-check-label"><input type="checkbox" name="form_fields[hivasi_ido][]" value="Hétköznap délután (12-17)"> Hétköznap délután</label>
+    <label class="ss-check-label"><input type="checkbox" name="form_fields[hivasi_ido][]" value="Hétköznap este (17-20)"> Hétköznap este</label>
+    <label class="ss-check-label"><input type="checkbox" name="form_fields[hivasi_ido][]" value="Hétvége"> Hétvége</label>
+  </div>
+</div>
+
+<style>
+/* ===== NEM ALKALMAS PANEL ===== */
+.ss-result-panel {
+  border-radius: 8px;
+  padding: 28px 24px;
+  text-align: center;
+  margin: 20px 0;
+  font-family: 'Oswald', sans-serif;
+}
+
+.ss-result-no {
+  background: #fff5f5;
+  border: 1.5px solid #fca5a5;
+}
+
+.ss-result-icon {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  color: #dc2626;
+}
+
+.ss-result-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #685736;
+  margin: 0 0 8px;
+}
+
+.ss-result-reason {
+  font-size: 0.95rem;
+  color: #575757;
+  margin: 0 0 12px;
+  line-height: 1.55;
+}
+
+.ss-result-sub {
+  font-size: 0.85rem;
+  color: #978A73;
+  margin: 0 0 18px;
+}
+
+.ss-cta-btn {
+  display: inline-block;
+  padding: 13px 40px;
+  background: #627476;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: background 0.2s;
+}
+
+.ss-cta-btn:hover { background: #8B7346; }
+
+/* ===== NAPTÁR ===== */
+.ss-calendar-wrap {
+  margin: 20px 0;
+  font-family: 'Oswald', sans-serif;
+}
+
+.ss-cal-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #685736;
+  margin: 0 0 4px;
+}
+
+.ss-cal-subtitle {
+  font-size: 0.87rem;
+  color: #575757;
+  margin: 0 0 16px;
+}
+
+.ss-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  max-width: 420px;
+}
+
+.ss-cal-header {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #bb9f6d;
+  text-align: center;
+  padding: 4px 0;
+  text-transform: uppercase;
+}
+
+.ss-cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.15s;
+  background: #f7f4ee;
+  color: #685736;
+}
+
+.ss-cal-day:hover:not(.ss-cal-disabled):not(.ss-cal-empty) {
+  background: #bb9f6d;
+  color: #fff;
+}
+
+.ss-cal-day.ss-cal-selected {
+  background: #bb9f6d;
+  color: #fff;
+  border-color: #8B7346;
+}
+
+.ss-cal-day.ss-cal-disabled {
+  background: transparent;
+  color: #EBE6DC;
+  cursor: default;
+}
+
+.ss-cal-day.ss-cal-empty {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+
+.ss-cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.ss-cal-nav-btn {
+  background: #f7f4ee;
+  border: 1px solid #EBE6DC;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #685736;
+  transition: background 0.15s;
+}
+
+.ss-cal-nav-btn:hover { background: #EBE6DC; }
+
+.ss-cal-month-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #685736;
+}
+
+/* ===== IDŐPONTOK ===== */
+.ss-time-wrap {
+  margin-top: 20px;
+}
+
+.ss-time-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #685736;
+  margin: 0 0 10px;
+}
+
+.ss-time-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ss-time-btn {
+  padding: 9px 16px;
+  border-radius: 6px;
+  border: 1.5px solid #EBE6DC;
+  background: #fff;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: #685736;
+  font-family: 'Oswald', sans-serif;
+}
+
+.ss-time-btn:hover { border-color: #bb9f6d; color: #bb9f6d; }
+
+.ss-time-btn.ss-time-selected {
+  background: #bb9f6d;
+  color: #fff;
+  border-color: #8B7346;
+}
+
+/* ===== TELEFONOS KONZULTÁCIÓ ===== */
+.ss-phone-wrap {
+  margin: 20px 0;
+  font-family: 'Oswald', sans-serif;
+}
+
+.ss-phone-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #685736;
+  margin: 0 0 4px;
+}
+
+.ss-phone-sub {
+  font-size: 0.87rem;
+  color: #575757;
+  margin: 0 0 14px;
+}
+
+.ss-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ss-check-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.93rem;
+  color: #575757;
+  cursor: pointer;
+}
+
+.ss-check-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #bb9f6d;
+}
+</style>
+
+<script>
+(function() {
+  // =============================================
+  // KONFIGURÁCIÓ
+  // =============================================
+  var TIME_SLOTS = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'];
+  var ALLOWED_WEEKDAYS = [1, 2, 3]; // Hétfő=1, Kedd=2, Szerda=3
+  var MIN_DAYS_AHEAD = 14;
+  var HU_MONTHS = ['Január','Február','Március','Április','Május','Június',
+                   'Július','Augusztus','Szeptember','Október','November','December'];
+  var HU_DAYS   = ['H','K','Sze','Cs','P','Szo','V'];
+
+  // =============================================
+  // ALKALMASSÁGI ELLENŐRZÉS
+  // Figyeli az Elementor form mezőket és dönt
+  // =============================================
+  var calendarState = { year: null, month: null, selectedDate: null, selectedTime: null };
+
+  function checkEligibility() {
+    // Fényérzékeny gyógyszer mező neve Elementor-ban: form_fields[fenyerzekeny]
+    // Aktív bőrbetegség mező neve: form_fields[borbetegseg]
+    var medField  = document.querySelector('[name="form_fields[fenyerzekeny]"]:checked');
+    var skinField = document.querySelector('[name="form_fields[borbetegseg]"]:checked');
+    var intentField = document.querySelector('[name="form_fields[szandek]"]:checked');
+
+    if (!medField && !skinField) return; // Még nem töltötték ki
+
+    var notEligible = false;
+    var reason = '';
+
+    if (medField && medField.value === 'Igen') {
+      notEligible = true;
+      reason = 'Fényérzékeny gyógyszer szedése esetén sajnos nem végezhetünk lézer kezelést, mivel a gyógyszer növeli a bőr fényérzékenységét és bőrreakció kockázatát. Ha abbahagyod a gyógyszer szedését, örömmel fogadunk!';
+    } else if (skinField && skinField.value === 'Igen') {
+      notEligible = true;
+      reason = 'Aktív bőrbetegség esetén (kivéve szőrtüszőgyulladás) a kezelés nem végezhető, mivel a lézer irritálhatja az érintett bőrfelületet. Gyógyulás után szeretettel várunk!';
+    }
+
+    var notEligiblePanel = document.getElementById('ss-not-eligible');
+    var calendarPanel    = document.getElementById('ss-calendar');
+    var phonePanel       = document.getElementById('ss-phone-consult');
+
+    if (notEligible) {
+      document.getElementById('ss-reason-text').textContent = reason;
+      notEligiblePanel.style.display = 'block';
+      calendarPanel.style.display    = 'none';
+      phonePanel.style.display       = 'none';
+    } else {
+      notEligiblePanel.style.display = 'none';
+      // Szándék alapján: időpontfoglalás vs telefonos konzultáció
+      if (intentField) {
+        if (intentField.value === 'Időpontot foglalok') {
+          calendarPanel.style.display = 'block';
+          phonePanel.style.display    = 'none';
+          if (!calendarState.year) initCalendar();
+        } else {
+          calendarPanel.style.display = 'none';
+          phonePanel.style.display    = 'block';
+        }
+      }
+    }
+  }
+
+  // =============================================
+  // NAPTÁR LOGIKA
+  // =============================================
+  function getMinDate() {
+    var d = new Date();
+    d.setDate(d.getDate() + MIN_DAYS_AHEAD);
+    return d;
+  }
+
+  function isoDate(y, m, d) {
+    return y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+  }
+
+  function initCalendar() {
+    var min = getMinDate();
+    calendarState.year  = min.getFullYear();
+    calendarState.month = min.getMonth();
+
+    var label = document.getElementById('ss-min-date-label');
+    if (label) {
+      label.textContent = min.toLocaleDateString('hu-HU', {year:'numeric', month:'long', day:'numeric'});
+    }
+
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    var grid = document.getElementById('ss-cal-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    var y = calendarState.year;
+    var m = calendarState.month;
+    var min = getMinDate();
+    min.setHours(0,0,0,0);
+
+    // Navigáció
+    var nav = document.createElement('div');
+    nav.style.cssText = 'grid-column:1/-1; display:flex; align-items:center; gap:12px; margin-bottom:8px;';
+
+    var prevBtn = document.createElement('button');
+    prevBtn.textContent = '‹';
+    prevBtn.className = 'ss-cal-nav-btn';
+    prevBtn.onclick = function() {
+      calendarState.month--;
+      if (calendarState.month < 0) { calendarState.month = 11; calendarState.year--; }
+      renderCalendar();
+    };
+
+    var nextBtn = document.createElement('button');
+    nextBtn.textContent = '›';
+    nextBtn.className = 'ss-cal-nav-btn';
+    nextBtn.onclick = function() {
+      calendarState.month++;
+      if (calendarState.month > 11) { calendarState.month = 0; calendarState.year++; }
+      renderCalendar();
+    };
+
+    var monthLabel = document.createElement('span');
+    monthLabel.className = 'ss-cal-month-label';
+    monthLabel.textContent = y + '. ' + HU_MONTHS[m];
+
+    nav.appendChild(prevBtn);
+    nav.appendChild(monthLabel);
+    nav.appendChild(nextBtn);
+    grid.appendChild(nav);
+
+    // Nap fejlécek (H K Sze Cs P Szo V)
+    HU_DAYS.forEach(function(d) {
+      var h = document.createElement('div');
+      h.className = 'ss-cal-header';
+      h.textContent = d;
+      grid.appendChild(h);
+    });
+
+    // Első nap hét napja (H=1 alapú)
+    var firstDay = new Date(y, m, 1).getDay(); // 0=V, 1=H...
+    var offset = (firstDay === 0) ? 6 : firstDay - 1; // Hétfő-alapú eltolás
+
+    for (var i = 0; i < offset; i++) {
+      var empty = document.createElement('div');
+      empty.className = 'ss-cal-day ss-cal-empty';
+      grid.appendChild(empty);
+    }
+
+    var daysInMonth = new Date(y, m + 1, 0).getDate();
+    for (var d = 1; d <= daysInMonth; d++) {
+      var date = new Date(y, m, d);
+      var weekday = date.getDay(); // 0=V, 1=H, 2=K, 3=Sze
+      var isAllowed = ALLOWED_WEEKDAYS.indexOf(weekday) !== -1;
+      var isBeforeMin = date < min;
+      var iso = isoDate(y, m, d);
+
+      var cell = document.createElement('div');
+      cell.textContent = d;
+      cell.className = 'ss-cal-day';
+
+      if (!isAllowed || isBeforeMin) {
+        cell.classList.add('ss-cal-disabled');
+      } else {
+        if (iso === calendarState.selectedDate) cell.classList.add('ss-cal-selected');
+        (function(isoVal, dateObj) {
+          cell.onclick = function() {
+            calendarState.selectedDate = isoVal;
+            document.getElementById('ss-date-field').value = isoVal;
+            document.getElementById('ss-selected-date-label').textContent =
+              '— ' + dateObj.toLocaleDateString('hu-HU', {month:'long', day:'numeric', weekday:'long'});
+            renderCalendar();
+            renderTimeSlots();
+            document.getElementById('ss-time-slots').style.display = 'block';
+          };
+        })(iso, date);
+      }
+
+      grid.appendChild(cell);
+    }
+  }
+
+  function renderTimeSlots() {
+    var grid = document.getElementById('ss-time-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    TIME_SLOTS.forEach(function(t) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = t;
+      btn.className = 'ss-time-btn';
+      if (t === calendarState.selectedTime) btn.classList.add('ss-time-selected');
+      btn.onclick = function() {
+        calendarState.selectedTime = t;
+        document.getElementById('ss-time-field').value = t;
+        renderTimeSlots();
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  // =============================================
+  // ESEMÉNY FIGYELŐK — Elementor form mezőkre
+  // =============================================
+  function attachListeners() {
+    var fields = ['fenyerzekeny', 'borbetegseg', 'szandek'];
+    fields.forEach(function(fieldName) {
+      var selector = '[name="form_fields[' + fieldName + ']"]';
+      document.querySelectorAll(selector).forEach(function(el) {
+        el.addEventListener('change', checkEligibility);
+      });
+    });
+  }
+
+  // DOM ready + kis késés (Elementor form betöltéséhez)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { setTimeout(attachListeners, 500); });
+  } else {
+    setTimeout(attachListeners, 500);
+  }
+
+  // Elementor form AJAX után is újra kötjük (ha szükséges)
+  document.addEventListener('elementor/frontend/init', function() {
+    setTimeout(attachListeners, 800);
+  });
+})();
+</script>

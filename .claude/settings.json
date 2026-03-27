@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:support.google.com)",
+      "Bash(pip install:*)",
+      "Bash(python -c \"import fitz; print\\(''pymupdf:'', fitz.__version__\\)\")",
+      "Bash(python -c \"import docx; print\\(''python-docx ok''\\)\")",
+      "Bash(python -c \":*)",
+      "Bash(ls c:/Users/DuroA1106/CLAUDE/skinspirit/*.pdf)",
+      "Bash(find c:/Users/DuroA1106/CLAUDE/skinspirit -name *.pdf)",
+      "Read(//c/Users/DuroA1106/**)",
+      "WebFetch(domain:pagespeed.web.dev)",
+      "WebFetch(domain:www.googleapis.com)",
+      "Bash(curl -s \"https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=https://skinspirit.hu/&strategy=mobile&category=performance\")",
+      "Bash(python3 -c \":*)",
+      "mcp__claude_ai_n8n__search_workflows",
+      "Bash(curl -s -X POST -H \"X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxOWQzMzk2Zi0wYTI4LTQ1Y2ItOWZlMi1iOWE4Mzc3OGYwMjEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiYjA1NzIyN2EtN2RmZC00NjFlLTk5MjUtNmI3YWJmMjYxZTkxIiwiaWF0IjoxNzcyMzkzODkxfQ.GuhcMa8-GbAORSclswpSK3cQRfNPzVBhrLFlqDEJBXQ\" -H \"Content-Type: application/json\" -d @\"c:/Users/DuroA1106/CLAUDE/skinspirit/n8n-workflows/wf_cf7_webhook_crm.json\" \"https://n8n.srv1190089.hstgr.cloud/api/v1/workflows\")",
+      "Bash(node -e \":*)",
+      "Bash(curl -s -X POST -H \"X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxOWQzMzk2Zi0wYTI4LTQ1Y2ItOWZlMi1iOWE4Mzc3OGYwMjEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiYjA1NzIyN2EtN2RmZC00NjFlLTk5MjUtNmI3YWJmMjYxZTkxIiwiaWF0IjoxNzcyMzkzODkxfQ.GuhcMa8-GbAORSclswpSK3cQRfNPzVBhrLFlqDEJBXQ\" -H \"Content-Type: application/json\" -d @- \"https://n8n.srv1190089.hstgr.cloud/api/v1/workflows\")",
+      "Bash(curl -s -H \"X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxOWQzMzk2Zi0wYTI4LTQ1Y2ItOWZlMi1iOWE4Mzc3OGYwMjEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiYjA1NzIyN2EtN2RmZC00NjFlLTk5MjUtNmI3YWJmMjYxZTkxIiwiaWF0IjoxNzcyMzkzODkxfQ.GuhcMa8-GbAORSclswpSK3cQRfNPzVBhrLFlqDEJBXQ\" \"https://n8n.srv1190089.hstgr.cloud/api/v1/credentials\")",
+      "Bash(node -e \"let d='''''''';process.stdin.on\\(''''data'''',c=>d+=c\\);process.stdin.on\\(''''end'''',\\(\\)=>{const j=JSON.parse\\(d\\);console.log\\(JSON.stringify\\(j,null,2\\).substring\\(0,2000\\)\\);}\\)\")",
+      "Bash(curl -s -H \"X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxOWQzMzk2Zi0wYTI4LTQ1Y2ItOWZlMi1iOWE4Mzc3OGYwMjEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiYjA1NzIyN2EtN2RmZC00NjFlLTk5MjUtNmI3YWJmMjYxZTkxIiwiaWF0IjoxNzcyMzkzODkxfQ.GuhcMa8-GbAORSclswpSK3cQRfNPzVBhrLFlqDEJBXQ\" \"https://n8n.srv1190089.hstgr.cloud/api/v1/workflows?limit=50\")",
+      "Bash(node -e \"let d='''''''';process.stdin.on\\(''''data'''',c=>d+=c\\);process.stdin.on\\(''''end'''',\\(\\)=>{const j=JSON.parse\\(d\\);j.data.forEach\\(w=>console.log\\(w.id,''''|'''',w.name\\)\\);}\\)\")",
+      "Bash(curl -s -H \"X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxOWQzMzk2Zi0wYTI4LTQ1Y2ItOWZlMi1iOWE4Mzc3OGYwMjEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiYjA1NzIyN2EtN2RmZC00NjFlLTk5MjUtNmI3YWJmMjYxZTkxIiwiaWF0IjoxNzcyMzkzODkxfQ.GuhcMa8-GbAORSclswpSK3cQRfNPzVBhrLFlqDEJBXQ\" \"https://n8n.srv1190089.hstgr.cloud/api/v1/workflows/s2cVK9ktycRBH41F\")",
+      "Bash(node -e \"let d='''''''';process.stdin.on\\(''''data'''',c=>d+=c\\);process.stdin.on\\(''''end'''',\\(\\)=>{const j=JSON.parse\\(d\\);j.nodes.forEach\\(n=>{if\\(n.credentials\\)console.log\\(n.name,''''→'''',JSON.stringify\\(n.credentials\\)\\);}\\);}\\);\")",
+      "Bash(node -e \"let d='''''''';process.stdin.on\\(''''data'''',c=>d+=c\\);process.stdin.on\\(''''end'''',\\(\\)=>{const j=JSON.parse\\(d\\);const gs=j.nodes.find\\(n=>n.name===''''Google Sheets — Leads sor''''\\);if\\(gs\\)console.log\\(JSON.stringify\\(gs.parameters.documentId,null,2\\)\\);}\\);\")",
+      "Bash(curl -s -H \"X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxOWQzMzk2Zi0wYTI4LTQ1Y2ItOWZlMi1iOWE4Mzc3OGYwMjEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiYjA1NzIyN2EtN2RmZC00NjFlLTk5MjUtNmI3YWJmMjYxZTkxIiwiaWF0IjoxNzcyMzkzODkxfQ.GuhcMa8-GbAORSclswpSK3cQRfNPzVBhrLFlqDEJBXQ\" \"https://n8n.srv1190089.hstgr.cloud/api/v1/workflows/8k2f8wE_TyLAX__BmMwWc\")",
+      "Bash(node -e \"let d='''''''';process.stdin.on\\(''''data'''',c=>d+=c\\);process.stdin.on\\(''''end'''',\\(\\)=>{const j=JSON.parse\\(d\\);j.nodes.forEach\\(n=>{if\\(n.credentials && JSON.stringify\\(n.credentials\\).includes\\(''''telegram''''\\)\\)console.log\\(n.name,''''→'''',JSON.stringify\\(n.credentials\\)\\);if\\(n.parameters && n.parameters.chatId\\)console.log\\(''''chatId:'''',n.parameters.chatId\\);}\\);}\\);\")",
+      "Bash(curl -s -X PUT -H \"X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxOWQzMzk2Zi0wYTI4LTQ1Y2ItOWZlMi1iOWE4Mzc3OGYwMjEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiYjA1NzIyN2EtN2RmZC00NjFlLTk5MjUtNmI3YWJmMjYxZTkxIiwiaWF0IjoxNzcyMzkzODkxfQ.GuhcMa8-GbAORSclswpSK3cQRfNPzVBhrLFlqDEJBXQ\" -H \"Content-Type: application/json\" -d @- \"https://n8n.srv1190089.hstgr.cloud/api/v1/workflows/9Rgsm7refp86hzbR\")",
+      "Bash(curl -s -H \"X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxOWQzMzk2Zi0wYTI4LTQ1Y2ItOWZlMi1iOWE4Mzc3OGYwMjEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiYjA1NzIyN2EtN2RmZC00NjFlLTk5MjUtNmI3YWJmMjYxZTkxIiwiaWF0IjoxNzcyMzkzODkxfQ.GuhcMa8-GbAORSclswpSK3cQRfNPzVBhrLFlqDEJBXQ\" \"https://n8n.srv1190089.hstgr.cloud/api/v1/workflows/9Rgsm7refp86hzbR\")"
+    ]
+  }
+}

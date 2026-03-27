@@ -1,0 +1,353 @@
+<!--
+  SkinSpirit — Szőrszín Csúszka
+  Elhelyezés: Elementor → Widget → HTML → beillesztés
+  (A Fitzpatrick csúszka után, ugyanazon az oldalon)
+-->
+
+<div class="hair-wrap">
+  <p class="hair-title">Milyen színű a szőrzeted?</p>
+  <p class="hair-subtitle">Húzd a csúszkát a szőrzeted árnyalatának megfelelően</p>
+
+  <div class="hair-slider-row">
+    <div class="hair-gradient"></div>
+    <input
+      type="range"
+      id="hairSlider"
+      min="1"
+      max="6"
+      value="4"
+      step="1"
+      class="hair-range"
+      aria-label="Szőrszín típus"
+    />
+  </div>
+
+  <div class="hair-labels">
+    <span>Fehér</span>
+    <span>Platina</span>
+    <span>Szőke</span>
+    <span>Barna</span>
+    <span>Sötétbarna</span>
+    <span>Fekete</span>
+  </div>
+
+  <div class="hair-result" id="hairResult">
+    <div class="hair-swatch-wrap">
+      <div class="hair-swatch" id="hairSwatch"></div>
+    </div>
+    <div class="hair-text">
+      <p class="hair-type" id="hairType"></p>
+      <p class="hair-desc" id="hairDesc"></p>
+      <div class="hair-eff-bar-wrap">
+        <div class="hair-eff-label">Hatékonyság</div>
+        <div class="hair-eff-track">
+          <div class="hair-eff-fill" id="hairEffFill"></div>
+        </div>
+        <div class="hair-eff-pct" id="hairEffPct"></div>
+      </div>
+      <p class="hair-protocol" id="hairProtocol"></p>
+    </div>
+  </div>
+
+  <!-- Hidden field — webhookba megy -->
+  <input type="hidden" id="hairValue" name="form_fields[hair_color]" value="4" />
+</div>
+
+<style>
+.hair-wrap {
+  font-family: 'Oswald', sans-serif;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.hair-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #685736;
+  margin: 0 0 4px;
+}
+
+.hair-subtitle {
+  font-size: 0.85rem;
+  color: #575757;
+  margin: 0 0 20px;
+}
+
+/* Gradient sáv */
+.hair-slider-row {
+  position: relative;
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.hair-gradient {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(
+    to right,
+    #F0EEEA,
+    #EAE0C8,
+    #C9A96E,
+    #8B5E3C,
+    #3D1F0E,
+    #0F0808
+  );
+  pointer-events: none;
+  z-index: 0;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.hair-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 12px;
+  background: transparent;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+
+.hair-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #bb9f6d;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.hair-range::-webkit-slider-thumb:hover {
+  transform: scale(1.12);
+}
+
+.hair-range::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #bb9f6d;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  cursor: pointer;
+}
+
+/* Labels */
+.hair-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  padding: 0 2px;
+}
+
+.hair-labels span {
+  font-size: 0.68rem;
+  color: #978A73;
+  font-weight: 500;
+  width: calc(100% / 6);
+  text-align: center;
+}
+
+.hair-labels span:first-child { text-align: left; }
+.hair-labels span:last-child  { text-align: right; }
+
+/* Result card */
+.hair-result {
+  margin-top: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: #f7f4ee;
+  border: 1px solid #EBE6DC;
+  border-radius: 8px;
+  padding: 16px 18px;
+  transition: border-color 0.3s;
+}
+
+/* Szőr illusztráció — 3 ívelt vonal */
+.hair-swatch-wrap {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hair-swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: background 0.35s;
+  border: 2px solid rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Szőrszálakat imitáló vonalak a körön belül */
+.hair-swatch::before,
+.hair-swatch::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  width: 2px;
+  height: 200%;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.22);
+  transform-origin: top center;
+}
+
+.hair-swatch::before { transform: translateX(-8px) rotate(-15deg); }
+.hair-swatch::after  { transform: translateX(4px) rotate(10deg); }
+
+.hair-text { flex: 1; }
+
+.hair-type {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #bb9f6d;
+  margin: 0 0 2px;
+  font-weight: 600;
+}
+
+.hair-desc {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #685736;
+  margin: 0 0 8px;
+}
+
+/* Hatékonyság bar */
+.hair-eff-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.hair-eff-label {
+  font-size: 0.73rem;
+  color: #978A73;
+  font-weight: 600;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  width: 72px;
+}
+
+.hair-eff-track {
+  flex: 1;
+  height: 6px;
+  background: #EBE6DC;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.hair-eff-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease, background 0.4s ease;
+}
+
+.hair-eff-pct {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #685736;
+  width: 32px;
+  text-align: right;
+}
+
+.hair-protocol {
+  font-size: 0.88rem;
+  color: #575757;
+  margin: 0;
+  line-height: 1.5;
+}
+</style>
+
+<script>
+(function() {
+  var data = {
+    1: {
+      swatch: '#ECEAE6',
+      type: 'Fehér / Ősz szőrzet',
+      desc: 'Fehér vagy ősz szőr',
+      eff: 5,
+      effColor: '#ef4444',
+      protocol: 'Fehér és ősz szőrzetnél egyéni konzultáció szükséges a megfelelő kezelési protokoll meghatározásához. Foglalj időpontot és szakértőink személyre szabott megoldást kínálnak!'
+    },
+    2: {
+      swatch: '#EEE5C8',
+      type: 'Platinaszőke szőrzet',
+      desc: 'Platina- vagy hamuszőke szőr',
+      eff: 20,
+      effColor: '#f97316',
+      protocol: 'Platinaszőke szőrzetnél egyéni felmérés alapján határozzuk meg a legjobb kezelési tervet. Konzultáció keretében személyre szabott protokollt állítunk össze a számodra.'
+    },
+    3: {
+      swatch: '#C9A96E',
+      type: 'Szőke szőrzet',
+      desc: 'Szőke vagy aranyszőke szőr',
+      eff: 45,
+      effColor: '#eab308',
+      protocol: 'Szőke szőrzetnél személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a várható eredményt és a szükséges kezelések számát.'
+    },
+    4: {
+      swatch: '#8B5E3C',
+      type: 'Barna szőrzet',
+      desc: 'Világos- vagy középbarna szőr',
+      eff: 75,
+      effColor: '#84cc16',
+      protocol: 'Barna szőrzet esetén jó hatékonysággal végezhetjük a lézer szőrtelenítést — megfelelő melanintartalom, szép és tartós eredmény várható.'
+    },
+    5: {
+      swatch: '#3D1F0E',
+      type: 'Sötétbarna szőrzet',
+      desc: 'Sötétbarna szőr',
+      eff: 92,
+      effColor: '#22c55e',
+      protocol: 'Sötétbarna szőrzet — kiváló jelölt vagy lézer szőrtelenítésre! Erős melanintartalom, nagyon hatékony kezelés és tartós eredmény várható.'
+    },
+    6: {
+      swatch: '#100808',
+      type: 'Fekete szőrzet',
+      desc: 'Fekete szőr',
+      eff: 100,
+      effColor: '#16a34a',
+      protocol: 'Fekete szőrzet — a legjobb jelölt lézer szőrtelenítésre! Maximum melanintartalom, legjobb hatékonyság, leglátványosabb és legtartósabb eredmény.'
+    }
+  };
+
+  function update(val) {
+    var d = data[val];
+    document.getElementById('hairSwatch').style.background = d.swatch;
+    document.getElementById('hairType').textContent = d.type;
+    document.getElementById('hairDesc').textContent = d.desc;
+    document.getElementById('hairProtocol').textContent = d.protocol;
+    document.getElementById('hairEffFill').style.width = d.eff + '%';
+    document.getElementById('hairEffFill').style.background = d.effColor;
+    document.getElementById('hairEffPct').textContent = d.eff + '%';
+    document.getElementById('hairValue').value = val;
+
+    // Elementor hidden field szinkronizálás
+    var elField = document.querySelector('[name="form_fields[hair_color]"]');
+    if (elField) elField.value = val;
+  }
+
+  var slider = document.getElementById('hairSlider');
+  slider.addEventListener('input', function() { update(this.value); });
+  update(slider.value);
+})();
+</script>

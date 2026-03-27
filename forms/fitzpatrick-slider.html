@@ -1,0 +1,259 @@
+<!--
+  SkinSpirit — Fitzpatrick Bőrtípus Csúszka
+  Elhelyezés: Elementor → Widget → HTML → beillesztés
+  A hidden input automatikusan feltölti a form mezőt.
+-->
+
+<div class="fitz-wrap">
+  <p class="fitz-title">Milyen a bőrtónusod?</p>
+  <p class="fitz-subtitle">Húzd a csúszkát a bőrszínednek megfelelő értékre</p>
+
+  <div class="fitz-slider-row">
+    <div class="fitz-gradient"></div>
+    <input
+      type="range"
+      id="fitzSlider"
+      min="1"
+      max="6"
+      value="3"
+      step="1"
+      class="fitz-range"
+      aria-label="Fitzpatrick bőrtípus"
+    />
+  </div>
+
+  <div class="fitz-labels">
+    <span>I</span>
+    <span>II</span>
+    <span>III</span>
+    <span>IV</span>
+    <span>V</span>
+    <span>VI</span>
+  </div>
+
+  <div class="fitz-result" id="fitzResult">
+    <div class="fitz-swatch" id="fitzSwatch"></div>
+    <div class="fitz-text">
+      <p class="fitz-type" id="fitzType"></p>
+      <p class="fitz-desc" id="fitzDesc"></p>
+      <p class="fitz-protocol" id="fitzProtocol"></p>
+    </div>
+  </div>
+
+  <!-- Hidden field — ez megy a webhookba -->
+  <input type="hidden" id="fitzValue" name="fitzpatrick_type" value="3" />
+</div>
+
+<style>
+.fitz-wrap {
+  font-family: 'Oswald', sans-serif;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.fitz-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #685736;
+  margin: 0 0 4px;
+}
+
+.fitz-subtitle {
+  font-size: 0.85rem;
+  color: #575757;
+  margin: 0 0 20px;
+}
+
+/* Gradient sáv + range wrapper */
+.fitz-slider-row {
+  position: relative;
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.fitz-gradient {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(
+    to right,
+    #F5D5C0,
+    #E8B89A,
+    #C68C6C,
+    #A0624A,
+    #7B3F28,
+    #4A2315
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.fitz-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 12px;
+  background: transparent;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+
+.fitz-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #bb9f6d;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.fitz-range::-webkit-slider-thumb:hover {
+  transform: scale(1.12);
+}
+
+.fitz-range::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid #bb9f6d;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  cursor: pointer;
+}
+
+/* Labels */
+.fitz-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  padding: 0 2px;
+}
+
+.fitz-labels span {
+  font-size: 0.78rem;
+  color: #978A73;
+  font-weight: 500;
+  width: calc(100% / 6);
+  text-align: center;
+}
+
+.fitz-labels span:first-child { text-align: left; }
+.fitz-labels span:last-child  { text-align: right; }
+
+/* Result card */
+.fitz-result {
+  margin-top: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: #f7f4ee;
+  border: 1px solid #EBE6DC;
+  border-radius: 8px;
+  padding: 16px 18px;
+  transition: border-color 0.3s;
+}
+
+.fitz-swatch {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid rgba(0,0,0,0.08);
+  transition: background 0.35s;
+}
+
+.fitz-text { flex: 1; }
+
+.fitz-type {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #bb9f6d;
+  margin: 0 0 2px;
+  font-weight: 600;
+}
+
+.fitz-desc {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #685736;
+  margin: 0 0 6px;
+}
+
+.fitz-protocol {
+  font-size: 0.88rem;
+  color: #575757;
+  margin: 0;
+  line-height: 1.5;
+}
+</style>
+
+<script>
+(function() {
+  var data = {
+    1: {
+      swatch: '#F9EAE0',
+      type: 'Fitzpatrick I.',
+      desc: 'Nagyon világos bőr, szőke / vörös haj',
+      protocol: 'Világos bőrödre és finom szőrzetedre speciálisan kalibrált, alacsonyabb energiájú protokollt alkalmazunk a legjobb eredmény érdekében.'
+    },
+    2: {
+      swatch: '#F0C8A8',
+      type: 'Fitzpatrick II.',
+      desc: 'Világos bőr, könnyen leég',
+      protocol: 'Világos bőrtónusodhoz finomhangolt kezelési beállítással dolgozunk — biztonságos és hatékony eredménnyel.'
+    },
+    3: {
+      swatch: '#D4956A',
+      type: 'Fitzpatrick III.',
+      desc: 'Közép bőrszín, enyhén barnul',
+      protocol: 'Ideális bőrtípus lézer szőrtelenítéshez — a legjobb eredmények érhetők el a te bőrtónusodra optimalizált beállításokkal.'
+    },
+    4: {
+      swatch: '#A8693E',
+      type: 'Fitzpatrick IV.',
+      desc: 'Olíva/közepes barna bőr',
+      protocol: 'Ideális bőrtípus — gazdag melanintartalmú bőröd kiválóan reagál a lézer kezelésre, professzionális protokollal.'
+    },
+    5: {
+      swatch: '#7B4228',
+      type: 'Fitzpatrick V.',
+      desc: 'Sötétbarna bőr',
+      protocol: 'Sötétebb bőrtónusodhoz egyedi energiabeállítással dolgozunk — a biztonság és a hatékonyság egyaránt garantált.'
+    },
+    6: {
+      swatch: '#3E1F0F',
+      type: 'Fitzpatrick VI.',
+      desc: 'Nagyon sötét / mélybarna bőr',
+      protocol: 'Mélybarna bőrödre specializált, alacsony frekvenciájú protokollt alkalmazunk, ami maximális biztonságot és látható eredményt nyújt.'
+    }
+  };
+
+  function update(val) {
+    var d = data[val];
+    document.getElementById('fitzSwatch').style.background = d.swatch;
+    document.getElementById('fitzType').textContent = d.type;
+    document.getElementById('fitzDesc').textContent = d.desc;
+    document.getElementById('fitzProtocol').textContent = d.protocol;
+    document.getElementById('fitzValue').value = val;
+    // Elementor hidden field szinkronizálás (ha Elementor Form hidden fieldbe kötöd)
+    var elField = document.querySelector('[name="form_fields[fitzpatrick_type]"]');
+    if (elField) elField.value = val;
+  }
+
+  var slider = document.getElementById('fitzSlider');
+  slider.addEventListener('input', function() { update(this.value); });
+  update(slider.value); // Kezdőérték beállítása
+})();
+</script>
