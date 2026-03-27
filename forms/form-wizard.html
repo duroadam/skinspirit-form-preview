@@ -1253,10 +1253,7 @@
           </div>
         </div>
 
-        <!-- STOP message for white/grey hair -->
-        <div class="ss-stop-msg" id="ss-stop-msg" style="display:none;">
-          <p>Fehér vagy ősz szőrzetnél sajnos nem hatékony a lézer, mert nincs benne elég melanin.</p>
-        </div>
+        <!-- STOP handled by compat box + hair proto text -->
       </div>
 
     </div>
@@ -1797,20 +1794,15 @@ function ssUpdateHairResult(d) {
 // ── HAIR ROUTE UPDATE ──
 function ssUpdateHairRoute() {
   var val = ssWizard.selHair;
-  var stopMsg = document.getElementById('ss-stop-msg');
 
   if (val === 1) {
     ssWizard.hairRoute = 'stop';
-    if (stopMsg) stopMsg.style.display = 'block';
   } else if (val === 2 || val === 3) {
     ssWizard.hairRoute = 'consult';
-    if (stopMsg) stopMsg.style.display = 'none';
   } else if (val >= 4 && val <= 6) {
     ssWizard.hairRoute = 'full';
-    if (stopMsg) stopMsg.style.display = 'none';
   } else {
     ssWizard.hairRoute = null;
-    if (stopMsg) stopMsg.style.display = 'none';
   }
 }
 
