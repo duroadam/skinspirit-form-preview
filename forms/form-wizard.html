@@ -2306,6 +2306,64 @@ function ssInitSubmit() {
   ssInitApptToggle();
   ssInitSubmit();
 })();
+
+// ══════════════════════════════════════════════════════════════════
+// MODAL OVERLAY SYSTEM
+// ══════════════════════════════════════════════════════════════════
+(function ssModalInit() {
+  var backdrop  = document.getElementById('ss-modal-backdrop');
+  var closeBtn  = document.getElementById('ss-modal-inner') &&
+                  document.querySelector('.ss-modal-close');
+  var formRoot  = document.getElementById('ss-form-root');
+
+  if (!backdrop || !formRoot) return;
+
+  function openModal() {
+    backdrop.appendChild(formRoot);
+    backdrop.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    backdrop.style.display = 'none';
+    document.body.style.overflow = '';
+    document.body.insertBefore(formRoot, backdrop);
+  }
+
+  // Close button
+  var closeBtnEl = document.querySelector('.ss-modal-close');
+  if (closeBtnEl) {
+    // Remove the existing inline handler and replace with JS
+    closeBtnEl.removeAttribute('onclick');
+    closeBtnEl.addEventListener('click', closeModal);
+  }
+
+  // Backdrop click (only if the click target IS the backdrop, not the form)
+  backdrop.addEventListener('click', function(e) {
+    if (e.target === backdrop) closeModal();
+  });
+
+  // ESC key — only close if modal is open
+  document.addEventListener('keydown', function(e) {
+    if ((e.key === 'Escape' || e.key === 'Esc') &&
+        backdrop.style.display === 'flex') {
+      closeModal();
+    }
+  });
+
+  // Document-level delegation: data-ss-form="open" triggers openModal
+  document.addEventListener('click', function(e) {
+    var target = e.target;
+    while (target && target !== document) {
+      if (target.getAttribute && target.getAttribute('data-ss-form') === 'open') {
+        e.preventDefault();
+        openModal();
+        return;
+      }
+      target = target.parentNode;
+    }
+  });
+})();
 </script>
 
 </body>
