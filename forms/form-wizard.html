@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkinSpirit — Konzultációs kérdőív</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Playfair+Display:wght@500;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ── BASE RESET ── */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    #ss-form-root {
+      font-family: 'Oswald', sans-serif;
+      background: #EBE6DC;
+      color: #685736;
+      padding: 32px 20px 80px;
+      min-height: 100vh;
+    }
+
+    #ss-form-root * { box-sizing: border-box; }
+
+    .ss-page-wrap {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* ── HEADER ── */
+    .ss-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .ss-logo {
+      height: 48px;
+      width: auto;
+      display: block;
+      margin: 0 auto 16px;
+    }
+
+    .ss-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin: 0 0 6px;
+      color: #685736;
+      line-height: 1.25;
+    }
+
+    .ss-subtitle {
+      font-size: .88rem;
+      color: #978A73;
+      margin: 0;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .ss-progress {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .ss-progress-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid #EBE6DC;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .72rem;
+      font-weight: 600;
+      color: #978A73;
+      flex-shrink: 0;
+      z-index: 1;
+      transition: all .3s ease;
+      position: relative;
+    }
+
+    .ss-progress-dot.active {
+      border-color: #bb9f6d;
+      background: #bb9f6d;
+      color: #fff;
+      box-shadow: 0 0 0 3px rgba(187,159,109,.2);
+    }
+
+    .ss-progress-dot.completed {
+      border-color: #627476;
+      background: #627476;
+      color: #fff;
+    }
+
+    .ss-progress-line {
+      flex: 1;
+      height: 3px;
+      background: #EBE6DC;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ss-progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: #627476;
+      width: 0%;
+      transition: width .4s ease;
+      border-radius: 3px;
+    }
+
+    .ss-progress-label {
+      text-align: center;
+      font-size: .75rem;
+      color: #978A73;
+      margin-bottom: 24px;
+      font-weight: 500;
+      letter-spacing: .04em;
+    }
+
+    /* ── STEP CONTAINERS ── */
+    .ss-step {
+      display: none;
+    }
+
+    .ss-step.active {
+      display: block;
+      animation: ssSlideIn .3s ease;
+    }
+
+    .ss-step.slide-out {
+      display: block;
+      animation: ssSlideOut .25s ease forwards;
+    }
+
+    /* ── CARD ── */
+    .ss-card {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 14px;
+      border: 1px solid #EBE6DC;
+    }
+
+    .ss-card-label {
+      font-size: .67rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: #978A73;
+      margin: 0 0 16px;
+    }
+
+    .ss-divider {
+      border: none;
+      border-top: 1px solid #EBE6DC;
+      margin: 22px 0;
+    }
+
+    .ss-section-title {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #685736;
+      margin: 0 0 3px;
+    }
+
+    .ss-section-sub {
+      font-size: .82rem;
+      color: #978A73;
+      margin: 0 0 14px;
+    }
+
+    /* ── FORM FIELDS ── */
+    .ss-field-group {
+      margin-bottom: 18px;
+    }
+
+    .ss-field-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .ss-field-label {
+      display: block;
+      font-size: .87rem;
+      font-weight: 400;
+      color: #685736;
+      margin-bottom: 7px;
+    }
+
+    .ss-field-label small {
+      font-weight: 400;
+      color: #978A73;
+    }
+
+    .ss-field-input {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1.5px solid #EBE6DC;
+      border-radius: 6px;
+      font-size: .92rem;
+      color: #685736;
+      outline: none;
+      transition: border-color .15s;
+      font-family: 'Oswald', sans-serif;
+      background: #fff;
+    }
+
+    .ss-field-input:focus {
+      border-color: #bb9f6d;
+    }
+
+    .ss-name-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* ── RADIO PILLS ── */
+    .ss-radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .ss-radio-pill {
+      display: none;
+    }
+
+    .ss-radio-pill + label {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 15px;
+      border: 1.5px solid #EBE6DC;
+      border-radius: 20px;
+      font-size: .87rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: #685736;
+      transition: all .15s;
+      user-select: none;
+    }
+
+    .ss-radio-pill:checked + label {
+      background: #627476;
+      color: #fff;
+      border-color: #627476;
+    }
+
+    .ss-radio-pill + label:hover {
+      border-color: #bb9f6d;
+    }
+
+    /* ── TONE TILES (Fitzpatrick + Hair) ── */
+    .ss-tone-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .ss-tone-radio {
+      display: none;
+    }
+
+    .ss-tone-tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 10px 4px;
+      border: 2px solid #EBE6DC;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      background: #f7f4ee;
+      transition: all .15s;
+      user-select: none;
+    }
+
+    .ss-tone-tile:hover {
+      border-color: #bb9f6d;
+      background: #fff;
+      transform: translateY(-1px);
+    }
+
+    .ss-tone-radio:checked + .ss-tone-tile {
+      border-color: #bb9f6d;
+      background: #fff;
+      box-shadow: 0 0 0 1px #8B7346;
+      transform: scale(1.02) translateY(-2px);
+    }
+
+    .ss-tone-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid rgba(0,0,0,.07);
+      flex-shrink: 0;
+    }
+
+    .ss-tone-main {
+      font-size: .73rem;
+      font-weight: 500;
+      color: #685736;
+      line-height: 1.2;
+    }
+
+    /* ── TONE RESULT CARD ── */
+    .ss-tone-result {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: #f7f4ee;
+      border: 1px solid #EBE6DC;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 0;
+      animation: ssFadeIn .2s ease;
+    }
+
+    .ss-res-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid rgba(0,0,0,.07);
+    }
+
+    .ss-hair-swatch {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ss-hair-swatch-inner {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid rgba(0,0,0,.07);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ss-hair-swatch-inner::before,
+    .ss-hair-swatch-inner::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: -4px;
+      width: 2px;
+      height: 200%;
+      border-radius: 2px;
+      background: rgba(255,255,255,.22);
+      transform-origin: top center;
+    }
+
+    .ss-hair-swatch-inner::before { transform: translateX(-8px) rotate(-15deg); }
+    .ss-hair-swatch-inner::after  { transform: translateX(4px) rotate(10deg); }
+
+    .ss-res-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ss-res-type {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #bb9f6d;
+      margin: 0 0 2px;
+      font-weight: 500;
+    }
+
+    .ss-res-desc {
+      font-size: .93rem;
+      font-weight: 500;
+      color: #685736;
+      margin: 0 0 6px;
+    }
+
+    .ss-res-proto {
+      font-size: .85rem;
+      color: #575757;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* ── COMPATIBILITY BOX ── */
+    .ss-compat-placeholder {
+      margin-top: 18px;
+      padding: 14px 16px;
+      background: #f7f4ee;
+      border-radius: 8px;
+      font-size: .84rem;
+      color: #978A73;
+      text-align: center;
+    }
+
+    .ss-compat-box {
+      margin-top: 18px;
+      padding: 14px 18px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      border: 1.5px solid;
+      transition: all .3s;
+    }
+
+    .ss-compat-box.ok      { background: #f0fdf4; border-color: #86efac; }
+    .ss-compat-box.consult { background: #fffbeb; border-color: #fcd34d; }
+    .ss-compat-box.special { background: #fff7ed; border-color: #fdba74; }
+    .ss-compat-box.notok   { background: #fff5f5; border-color: #fca5a5; }
+
+    .ss-compat-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .ss-compat-box.ok      .ss-compat-icon { background: #dcfce7; }
+    .ss-compat-box.consult .ss-compat-icon { background: #fef9c3; }
+    .ss-compat-box.special .ss-compat-icon { background: #ffedd5; }
+    .ss-compat-box.notok   .ss-compat-icon { background: #fee2e2; }
+
+    .ss-compat-body { flex: 1; }
+
+    .ss-compat-status {
+      font-size: .9rem;
+      font-weight: 500;
+      color: #685736;
+      margin: 0 0 2px;
+    }
+
+    .ss-compat-detail {
+      font-size: .82rem;
+      color: #575757;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .ss-compat-link {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: .82rem;
+      color: #627476;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* ── SESSION TOGGLE ── */
+    .ss-session-toggle-wrap {
+      margin-bottom: 18px;
+    }
+
+    .ss-session-toggle {
+      display: inline-flex;
+      background: #EBE6DC;
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .ss-sess-btn {
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      padding: 7px 18px;
+      font-size: .87rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #978A73;
+      transition: all .15s;
+      font-family: 'Oswald', sans-serif;
+    }
+
+    .ss-sess-btn.active {
+      background: #627476;
+      color: #fff;
+    }
+
+    /* ── PACKAGE CARDS ── */
+    .ss-treat-group-label {
+      font-size: .7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #978A73;
+      margin: 16px 0 10px;
+    }
+
+    .ss-treat-group-label:first-child { margin-top: 0; }
+
+    .ss-pkg-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+    }
+
+    .ss-pkg-check {
+      display: none;
+    }
+
+    .ss-pkg-check + .ss-pkg-lbl {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      border: 2px solid #EBE6DC;
+      border-radius: 8px;
+      padding: 13px 11px;
+      cursor: pointer;
+      transition: all .15s;
+      background: #f7f4ee;
+      user-select: none;
+      position: relative;
+    }
+
+    .ss-pkg-check:checked + .ss-pkg-lbl {
+      border-color: #bb9f6d;
+      background: #fff;
+      box-shadow: 0 0 0 1px #8B7346;
+    }
+
+    .ss-pkg-lbl:hover {
+      border-color: #bb9f6d;
+      background: #fff;
+    }
+
+    .ss-pkg-checkmark {
+      position: absolute;
+      top: 9px;
+      right: 9px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      border: 1.5px solid #EBE6DC;
+      transition: all .15s;
+    }
+
+    .ss-pkg-check:checked + .ss-pkg-lbl .ss-pkg-checkmark {
+      background: #bb9f6d;
+      border-color: #8B7346;
+    }
+
+    .ss-pkg-check:checked + .ss-pkg-lbl .ss-pkg-checkmark::after {
+      content: '✓';
+      color: #fff;
+      font-size: .6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+
+    .ss-pkg-tier {
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: #fff;
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 7px;
+      align-self: flex-start;
+    }
+
+    .ss-pkg-tier.soft    { background: #978A73; }
+    .ss-pkg-tier.comfort { background: #627476; }
+    .ss-pkg-tier.premium { background: #685736; }
+
+    .ss-pkg-name {
+      font-size: .84rem;
+      font-weight: 500;
+      color: #685736;
+      margin-bottom: 7px;
+    }
+
+    .ss-pkg-areas {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 9px;
+      flex: 1;
+    }
+
+    .ss-pkg-areas li {
+      font-size: .76rem;
+      color: #575757;
+      padding: 1px 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .ss-pkg-areas li::before {
+      content: '—';
+      color: #EBE6DC;
+      font-size: .65rem;
+    }
+
+    .ss-pkg-price {
+      font-size: .82rem;
+      font-weight: 700;
+      color: #685736;
+      margin-top: auto;
+    }
+
+    .ss-pkg-price .ss-old-price {
+      text-decoration: line-through;
+      color: #978A73;
+      font-weight: 400;
+      margin-right: 4px;
+    }
+
+    .ss-pkg-per {
+      font-size: .7rem;
+      color: #978A73;
+      font-weight: 400;
+    }
+
+    /* ── INDIVIDUAL TREATMENT PILLS ── */
+    .ss-single-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 7px;
+    }
+
+    .ss-single-check {
+      display: none;
+    }
+
+    .ss-single-check + .ss-single-lbl {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 11px 8px;
+      border: 1.5px solid #EBE6DC;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all .15s;
+      background: #f7f4ee;
+      user-select: none;
+      min-height: 58px;
+    }
+
+    .ss-single-check:checked + .ss-single-lbl {
+      background: #bb9f6d;
+      border-color: #8B7346;
+      color: #fff;
+    }
+
+    .ss-single-lbl:hover {
+      border-color: #bb9f6d;
+      background: #fff;
+    }
+
+    .ss-single-check:checked + .ss-single-lbl .ss-single-price {
+      color: rgba(255,255,255,.75);
+    }
+
+    .ss-single-name {
+      font-size: .87rem;
+      font-weight: 400;
+    }
+
+    .ss-single-price {
+      font-size: .72rem;
+      color: #978A73;
+      margin-top: 2px;
+      transition: color .15s;
+    }
+
+    /* ── CALENDAR ── */
+    .ss-cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      max-width: 390px;
+    }
+
+    .ss-cal-hdr {
+      font-size: .67rem;
+      font-weight: 700;
+      color: #bb9f6d;
+      text-align: center;
+      padding: 3px 0;
+      text-transform: uppercase;
+    }
+
+    .ss-cal-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      font-size: .84rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: all .15s;
+      background: #f7f4ee;
+      color: #685736;
+    }
+
+    .ss-cal-day:hover:not(.ss-disabled):not(.ss-empty) {
+      background: #bb9f6d;
+      color: #fff;
+    }
+
+    .ss-cal-day.ss-selected {
+      background: #fff;
+      color: #685736;
+      border-color: #bb9f6d;
+      box-shadow: 0 0 0 1px #bb9f6d;
+    }
+
+    .ss-cal-day.ss-disabled {
+      background: transparent;
+      color: #EBE6DC;
+      cursor: default;
+    }
+
+    .ss-cal-day.ss-empty {
+      background: transparent;
+      cursor: default;
+    }
+
+    .ss-cal-nav-btn {
+      background: #f7f4ee;
+      border: 1px solid #EBE6DC;
+      border-radius: 6px;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-size: .9rem;
+      color: #685736;
+      transition: background .15s;
+      font-family: 'Oswald', sans-serif;
+    }
+
+    .ss-cal-nav-btn:hover { background: #EBE6DC; }
+
+    .ss-month-label {
+      font-size: .9rem;
+      font-weight: 600;
+      color: #685736;
+    }
+
+    .ss-time-wrap { margin-top: 16px; }
+
+    .ss-time-title {
+      font-size: .9rem;
+      font-weight: 600;
+      margin: 0 0 9px;
+      color: #685736;
+    }
+
+    .ss-time-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .ss-time-btn {
+      padding: 8px 13px;
+      border-radius: 6px;
+      border: 1.5px solid #EBE6DC;
+      background: #fff;
+      font-size: .85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      color: #685736;
+      font-family: 'Oswald', sans-serif;
+    }
+
+    .ss-time-btn:hover { border-color: #bb9f6d; color: #bb9f6d; }
+
+    .ss-time-btn.ss-time-sel {
+      background: #fff;
+      color: #685736;
+      border-color: #bb9f6d;
+      box-shadow: 0 0 0 1px #bb9f6d;
+    }
+
+    /* ── AVAILABILITY SLOTS ── */
+    .ss-slot-check {
+      display: none;
+    }
+
+    .ss-slot-check + label {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 14px;
+      border: 1.5px solid #EBE6DC;
+      border-radius: 20px;
+      font-size: .85rem;
+      cursor: pointer;
+      color: #685736;
+      transition: all .15s;
+      user-select: none;
+    }
+
+    .ss-slot-check:checked + label {
+      background: #627476;
+      color: #fff;
+      border-color: #627476;
+    }
+
+    /* ── SUMMARY CARD ── */
+    .ss-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ss-summary-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #EBE6DC;
+    }
+
+    .ss-summary-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .ss-summary-label {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #978A73;
+      width: 120px;
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+
+    .ss-summary-value {
+      font-size: .9rem;
+      font-weight: 500;
+      color: #685736;
+      flex: 1;
+    }
+
+    .ss-summary-edit {
+      font-size: .75rem;
+      color: #627476;
+      cursor: pointer;
+      text-decoration: underline;
+      white-space: nowrap;
+    }
+
+    /* ── NOT ELIGIBLE BOX ── */
+    .ss-not-eligible {
+      border-radius: 8px;
+      padding: 22px 20px;
+      text-align: center;
+      background: #fff5f5;
+      border: 1.5px solid #fca5a5;
+    }
+
+    .ss-not-icon {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: #dc2626;
+    }
+
+    .ss-not-title {
+      font-size: 1rem;
+      font-weight: 500;
+      margin: 0 0 7px;
+      color: #685736;
+    }
+
+    .ss-not-reason {
+      font-size: .88rem;
+      color: #575757;
+      margin: 0 0 10px;
+      line-height: 1.55;
+    }
+
+    .ss-not-sub {
+      font-size: .81rem;
+      color: #978A73;
+      margin: 0 0 14px;
+    }
+
+    .ss-cta-btn {
+      display: inline-block;
+      padding: 10px 30px;
+      background: #627476;
+      color: #fff;
+      border-radius: 6px;
+      font-size: .85rem;
+      font-weight: 600;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    /* ── NAVIGATION ── */
+    .ss-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .ss-nav-back {
+      padding: 11px 24px;
+      background: transparent;
+      color: #685736;
+      border: 1.5px solid #EBE6DC;
+      border-radius: 6px;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Oswald', sans-serif;
+      transition: all .15s;
+    }
+
+    .ss-nav-back:hover {
+      border-color: #8B7346;
+      color: #8B7346;
+    }
+
+    .ss-nav-next {
+      flex: 1;
+      padding: 13px 24px;
+      background: #627476;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Oswald', sans-serif;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      transition: background .15s;
+    }
+
+    .ss-nav-next:hover:not(:disabled) {
+      background: #8B7346;
+    }
+
+    .ss-nav-next:disabled {
+      background: #c7bfb2;
+      cursor: not-allowed;
+      opacity: .7;
+    }
+
+    /* ── SUBMIT BUTTON ── */
+    .ss-submit-btn {
+      width: 100%;
+      padding: 13px 40px;
+      background: #627476;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: .97rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      transition: background .15s;
+      font-family: 'Oswald', sans-serif;
+    }
+
+    .ss-submit-btn:hover { background: #8B7346; }
+
+    .ss-submit-error {
+      margin-top: 10px;
+      font-size: .83rem;
+      color: #dc2626;
+      text-align: center;
+    }
+
+    /* ── MODAL ── */
+    .ss-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .ss-modal-backdrop.visible {
+      display: flex;
+    }
+
+    .ss-modal-inner {
+      background: #EBE6DC;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      padding: 32px 20px 40px;
+      animation: ssSlideUp .3s ease;
+    }
+
+    .ss-modal-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: #fff;
+      border: 1px solid #EBE6DC;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      color: #685736;
+      transition: all .15s;
+    }
+
+    .ss-modal-close:hover {
+      background: #EBE6DC;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes ssFadeIn {
+      from { opacity: 0; transform: translateY(-3px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes ssSlideIn {
+      from { opacity: 0; transform: translateX(24px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes ssSlideOut {
+      from { opacity: 1; transform: translateX(0); }
+      to   { opacity: 0; transform: translateX(-24px); }
+    }
+
+    @keyframes ssSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 460px) {
+      .ss-tone-grid { grid-template-columns: repeat(3, 1fr); }
+      .ss-pkg-grid  { grid-template-columns: 1fr; }
+      .ss-name-row  { grid-template-columns: 1fr; }
+
+      .ss-modal-inner {
+        padding: 24px 16px 32px;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════
+     SS FORM ROOT — all wizard content lives here
+════════════════════════════════════════════════ -->
+<div id="ss-form-root">
+<div class="ss-page-wrap">
+
+  <!-- HEADER -->
+  <div class="ss-header">
+    <img src="ss%20logo.png" alt="SkinSpirit" class="ss-logo" />
+    <h1 class="ss-title">Ismerd meg a számodra ideális kezelést</h1>
+    <p class="ss-subtitle">2 perc, és kiderül melyik megoldás illik hozzád</p>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="ss-progress" id="ss-progress-bar">
+    <div class="ss-progress-dot active" data-dot="0">1</div>
+    <div class="ss-progress-line"><div class="ss-progress-fill" id="ss-fill-0"></div></div>
+    <div class="ss-progress-dot" data-dot="1">2</div>
+    <div class="ss-progress-line"><div class="ss-progress-fill" id="ss-fill-1"></div></div>
+    <div class="ss-progress-dot" data-dot="2">3</div>
+    <div class="ss-progress-line"><div class="ss-progress-fill" id="ss-fill-2"></div></div>
+    <div class="ss-progress-dot" data-dot="3">4</div>
+    <div class="ss-progress-line"><div class="ss-progress-fill" id="ss-fill-3"></div></div>
+    <div class="ss-progress-dot" data-dot="4">5</div>
+  </div>
+  <div class="ss-progress-label" id="ss-progress-label">1 / 5 — Bőrtípus & szőrszín</div>
+
+  <!-- FORM -->
+  <form id="ss-wizard-form" autocomplete="on" onsubmit="return false;">
+
+    <!-- ── STEP 0: Fitzpatrick + Hair + Compatibility ── -->
+    <div class="ss-step active" data-step="0" id="step-0">
+
+      <div class="ss-card">
+        <p class="ss-card-label">Bőrtípus &amp; szőrszín</p>
+
+        <!-- FITZPATRICK -->
+        <p class="ss-section-title">Milyen a bőrtónusod?</p>
+        <p class="ss-section-sub">Válaszd ki a bőrszínedhez és napozási szokásodhoz legközelebb álló típust</p>
+        <div class="ss-tone-grid" id="ss-fitz-grid"></div>
+        <div id="ss-fitz-result" style="display:none;" class="ss-tone-result">
+          <div class="ss-res-circle" id="ss-fitz-swatch"></div>
+          <div class="ss-res-text">
+            <p class="ss-res-type" id="ss-fitz-type"></p>
+            <p class="ss-res-desc" id="ss-fitz-desc"></p>
+            <p class="ss-res-proto" id="ss-fitz-proto"></p>
+          </div>
+        </div>
+
+        <hr class="ss-divider" />
+
+        <!-- HAIR -->
+        <p class="ss-section-title">Milyen színű a szőrzeted?</p>
+        <p class="ss-section-sub">A természetes, nem festett szőrzeted árnyalatát válaszd ki</p>
+        <div class="ss-tone-grid" id="ss-hair-grid"></div>
+        <div id="ss-hair-result" style="display:none;" class="ss-tone-result">
+          <div class="ss-hair-swatch">
+            <div class="ss-hair-swatch-inner" id="ss-hair-swatch"></div>
+          </div>
+          <div class="ss-res-text">
+            <p class="ss-res-type" id="ss-hair-type"></p>
+            <p class="ss-res-desc" id="ss-hair-desc"></p>
+            <p class="ss-res-proto" id="ss-hair-proto"></p>
+          </div>
+        </div>
+
+        <!-- COMPATIBILITY -->
+        <div class="ss-compat-placeholder" id="ss-compat-ph">Válaszd ki a bőr- és szőrszínt a kompatibilitás megtekintéséhez</div>
+        <div class="ss-compat-box" id="ss-compat-box" style="display:none;">
+          <div class="ss-compat-icon" id="ss-compat-icon"></div>
+          <div class="ss-compat-body">
+            <p class="ss-compat-status" id="ss-compat-status"></p>
+            <p class="ss-compat-detail" id="ss-compat-detail"></p>
+            <a class="ss-compat-link" id="ss-compat-link" style="display:none;" onclick="ssWizard.goToStep(3)">Nézd meg az árainkat →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- NAV -->
+      <div class="ss-nav">
+        <button type="button" class="ss-nav-back" id="ss-btn-back" style="display:none;" onclick="ssWizard.prevStep()">← Vissza</button>
+        <button type="button" class="ss-nav-next" id="ss-btn-next" disabled onclick="ssWizard.nextStep()">Következő →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 1: (placeholder) ── -->
+    <div class="ss-step" data-step="1" id="step-1">
+      <!-- Content will be added in later task -->
+    </div>
+
+    <!-- ── STEP 2: (placeholder) ── -->
+    <div class="ss-step" data-step="2" id="step-2">
+      <!-- Content will be added in later task -->
+    </div>
+
+    <!-- ── STEP 3: (placeholder) ── -->
+    <div class="ss-step" data-step="3" id="step-3">
+      <!-- Content will be added in later task -->
+    </div>
+
+    <!-- ── STEP 4: (placeholder) ── -->
+    <div class="ss-step" data-step="4" id="step-4">
+      <!-- Content will be added in later task -->
+    </div>
+
+  </form>
+
+</div><!-- /ss-page-wrap -->
+</div><!-- /ss-form-root -->
+
+<!-- MODAL BACKDROP -->
+<div class="ss-modal-backdrop" id="ss-modal-backdrop">
+  <div class="ss-modal-inner" id="ss-modal-inner">
+    <button type="button" class="ss-modal-close" onclick="document.getElementById('ss-modal-backdrop').classList.remove('visible')">✕</button>
+    <!-- Modal content injected by JS -->
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     WIZARD JS
+════════════════════════════════════════════════ -->
+<script>
+// ── PRICE FORMATTER ──
+function ssFmt(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0'); }
+
+// ══════════════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════════════
+
+// FITZPATRICK DATA
+var SS_FITZ = [
+  { val:1, swatch:'#F9EAE0', main:'Mindig leég',       sub:'Sosem barnul',          type:'Fitzpatrick I.',   desc:'Nagyon világos, szőke vagy vörös haj',  proto:'Világos bőrödre speciálisan kalibrált, alacsonyabb energiájú protokollt alkalmazunk — biztonságos és hatékony kezelés.' },
+  { val:2, swatch:'#F0C8A8', main:'Általában leég',    sub:'Néha barnul',            type:'Fitzpatrick II.',  desc:'Világos bőr, barnás vagy szőke haj',    proto:'Világos bőrtónusodhoz finomhangolt beállításokkal dolgozunk — a legjobb eredményt megbízható protokollal érjük el.' },
+  { val:3, swatch:'#D4956A', main:'Néha leég',         sub:'Fokozatosan barnul',     type:'Fitzpatrick III.', desc:'Közép bőrszín, barna haj',              proto:'Ideális bőrtípus lézer szőrtelenítéshez — optimalizált protokollal kiváló eredmény érhető el.' },
+  { val:4, swatch:'#A8693E', main:'Ritkán leég',       sub:'Könnyen megbarnul',      type:'Fitzpatrick IV.',  desc:'Olíva vagy közepes barna bőr',          proto:'Gazdag melanintartalmú bőröd kiválóan reagál a lézer kezelésre — professzionális protokollal hosszú tartós eredmény.' },
+  { val:5, swatch:'#7B4228', main:'Szinte sosem ég le',sub:'Mindig megbarnul',       type:'Fitzpatrick V.',   desc:'Sötétbarna bőr',                        proto:'Sötétebb bőrtónusodhoz egyedi energiabeállítással dolgozunk — a biztonság és a hatékonyság egyaránt garantált.' },
+  { val:6, swatch:'#3E1F0F', main:'Sosem ég le',       sub:'Mélybarna vagy fekete bőr', type:'Fitzpatrick VI.', desc:'Nagyon sötét, mélybarna bőr',        proto:'Mélybarna bőrödre specializált protokollt alkalmazunk — maximális biztonság és látható, tartós eredmény.' },
+];
+
+// HAIR DATA
+var SS_HAIR = [
+  { val:1, swatch:'#ECEAE6', main:'Fehér / Ősz',  sub:'Fehér vagy ősz szőrzet',      type:'Fehér / Ősz szőrzet',  desc:'Fehér vagy ősz szőr',               proto:'Sajnos fehér és ősz szőrzet esetén a lézer szőrtelenítés nem elvégezhető — nincs elegendő melanintartalom a szőrzetben.' },
+  { val:2, swatch:'#C9A96E', main:'Szőke',        sub:'Szőke vagy aranyszőke',        type:'Szőke szőrzet',        desc:'Szőke vagy aranyszőke szőr',        proto:'Szőke szőrzetnél személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a várható eredményt.' },
+  { val:3, swatch:'#B5564D', main:'Vörös',        sub:'Vörös vagy rézvörös',          type:'Vörös szőrzet',        desc:'Vörös vagy rézvörös szőr',          proto:'Vörös szőrzetnél személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a várható eredményt.' },
+  { val:4, swatch:'#8B5E3C', main:'Barna',        sub:'Gesztenye vagy barna',         type:'Barna szőrzet',        desc:'Gesztenye vagy középbarna szőr',    proto:'Barna szőrzet esetén jó hatékonysággal végezhetjük a lézer szőrtelenítést — megfelelő melanintartalom, szép és tartós eredmény.' },
+  { val:5, swatch:'#3D1F0E', main:'Sötétbarna',   sub:'Mélybarna szőrzet',            type:'Sötétbarna szőrzet',   desc:'Mélybarna szőr',                    proto:'Sötétbarna szőrzet — kiváló jelölt vagy lézer szőrtelenítésre! Erős melanintartalom, nagyon hatékony kezelés és tartós eredmény.' },
+  { val:6, swatch:'#100808', main:'Fekete',       sub:'Fekete szőrzet',               type:'Fekete szőrzet',       desc:'Fekete szőr',                       proto:'Fekete szőrzet — a legjobb jelölt lézer szőrtelenítésre! Maximum melanintartalom, legjobb hatékonyság, leglátványosabb eredmény.' },
+];
+
+// COMPATIBILITY MATRIX [hair-1][fitz-1]
+var SS_COMPAT_MATRIX = [
+  ['X','X','X','X','X','X'],        // hair 1 — Fehér/Ősz
+  ['X','X','X','X','X','X'],        // hair 2 — Szőke (nem kezelhető)
+  ['C','C','C','S','S','S'],        // hair 3 — Vörös (konzultáció / speciális)
+  ['OK','OK','OK','OK','OK','OK'],  // hair 4 — Barna
+  ['OK','OK','OK','OK','OK','OK'],  // hair 5 — Sötétbarna
+  ['OK','OK','OK','OK','OK','OK'],  // hair 6 — Fekete
+];
+
+var SS_COMPAT_TEXT = {
+  OK_gen:  'Ideális kombináció — a kezelés elvégezhető, szép és tartós eredmény várható.',
+  OK_dark: 'Kezelés elvégezhető. Sötétebb bőrtípushoz egyedi energiabeállítással dolgozunk.',
+  C_3:     'Vörös szőrzetnél a hatékonyság egyéni felmérést igényel — konzultáción pontosítjuk a lehetőségeket.',
+  C_4f6:   'Barna szőr + mélybarna bőr kombinációhoz speciális beállítás szükséges — egyéni konzultáció ajánlott.',
+  S:       'Szőke szőrzet + sötétebb bőrtónus esetén speciális protokoll szükséges — egyéni felmérés alapján dolgozunk.',
+};
+
+// ══════════════════════════════════════════════════════════════════
+// WIZARD STATE
+// ══════════════════════════════════════════════════════════════════
+var ssWizard = {
+  currentStep: 0,
+  totalSteps: 5,
+  stepNames: [
+    'Bőrtípus & szőrszín',
+    'Személyes adatok',
+    'Néhány kérdés',
+    'Kezelés',
+    'Összefoglalás',
+  ],
+  selFitz: null,
+  selHair: null,
+  compatCode: null,
+  isEligible: true,
+
+  goToStep: function(step) {
+    var current = document.querySelector('.ss-step[data-step="' + this.currentStep + '"]');
+    var target  = document.querySelector('.ss-step[data-step="' + step + '"]');
+    if (!target) return;
+
+    // animate out
+    current.classList.add('slide-out');
+    var self = this;
+    setTimeout(function() {
+      current.classList.remove('active', 'slide-out');
+      self.currentStep = step;
+      target.classList.add('active');
+      self.updateProgress();
+      self.updateNav();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 240);
+  },
+
+  nextStep: function() {
+    if (this.currentStep < this.totalSteps - 1 && this.canProceed()) {
+      this.goToStep(this.currentStep + 1);
+    }
+  },
+
+  prevStep: function() {
+    if (this.currentStep > 0) {
+      this.goToStep(this.currentStep - 1);
+    }
+  },
+
+  updateProgress: function() {
+    var step = this.currentStep;
+    var dots = document.querySelectorAll('.ss-progress-dot');
+    var fills = document.querySelectorAll('.ss-progress-fill');
+
+    dots.forEach(function(dot, i) {
+      dot.classList.remove('active', 'completed');
+      if (i < step)      dot.classList.add('completed');
+      else if (i === step) dot.classList.add('active');
+    });
+
+    fills.forEach(function(fill, i) {
+      fill.style.width = (i < step) ? '100%' : '0%';
+    });
+
+    var label = document.getElementById('ss-progress-label');
+    if (label) {
+      label.textContent = (step + 1) + ' / ' + ssWizard.totalSteps + ' — ' + ssWizard.stepNames[step];
+    }
+  },
+
+  updateNav: function() {
+    var back = document.getElementById('ss-btn-back');
+    var next = document.getElementById('ss-btn-next');
+    var step = this.currentStep;
+
+    if (back) back.style.display = (step === 0) ? 'none' : 'inline-block';
+
+    if (next) {
+      if (step === this.totalSteps - 1) {
+        next.style.display = 'none';
+      } else {
+        next.style.display = '';
+        next.disabled = !this.canProceed();
+      }
+    }
+  },
+
+  canProceed: function() {
+    switch (this.currentStep) {
+      case 0: return (this.selFitz !== null && this.selHair !== null);
+      case 1: return ssWizardStep1Valid ? ssWizardStep1Valid() : true;
+      case 2: return ssWizardStep2Valid ? ssWizardStep2Valid() : true;
+      case 3: return ssWizardStep3Valid ? ssWizardStep3Valid() : true;
+      default: return true;
+    }
+  },
+
+  refreshNextButton: function() {
+    this.updateNav();
+  },
+};
+
+// Placeholder validation functions for future steps
+function ssWizardStep1Valid() { return true; }
+function ssWizardStep2Valid() { return true; }
+function ssWizardStep3Valid() { return true; }
+
+// ══════════════════════════════════════════════════════════════════
+// RENDER FUNCTIONS
+// ══════════════════════════════════════════════════════════════════
+
+function ssRenderFitzTiles() {
+  var grid = document.getElementById('ss-fitz-grid');
+  if (!grid) return;
+  SS_FITZ.forEach(function(d) {
+    var r = document.createElement('input');
+    r.type = 'radio';
+    r.className = 'ss-tone-radio';
+    r.id = 'ss-fitz' + d.val;
+    r.name = 'form_fields[fitzpatrick_type]';
+    r.value = d.val;
+
+    var l = document.createElement('label');
+    l.htmlFor = 'ss-fitz' + d.val;
+    l.className = 'ss-tone-tile';
+    l.innerHTML = '<div class="ss-tone-circle" style="background:' + d.swatch + '"></div>'
+                + '<span class="ss-tone-main">' + d.main + '</span>';
+
+    r.addEventListener('change', function() {
+      ssWizard.selFitz = d.val;
+      ssUpdateFitzResult(d);
+      ssUpdateCompat();
+      ssWizard.refreshNextButton();
+    });
+
+    grid.appendChild(r);
+    grid.appendChild(l);
+  });
+}
+
+function ssUpdateFitzResult(d) {
+  var swatch = document.getElementById('ss-fitz-swatch');
+  var type   = document.getElementById('ss-fitz-type');
+  var desc   = document.getElementById('ss-fitz-desc');
+  var proto  = document.getElementById('ss-fitz-proto');
+  var result = document.getElementById('ss-fitz-result');
+
+  if (swatch) swatch.style.background = d.swatch;
+  if (type)   type.textContent = d.type;
+  if (desc)   desc.textContent = d.desc;
+  if (proto)  proto.textContent = d.proto;
+  if (result) result.style.display = 'flex';
+}
+
+function ssRenderHairTiles() {
+  var grid = document.getElementById('ss-hair-grid');
+  if (!grid) return;
+  SS_HAIR.forEach(function(d) {
+    var r = document.createElement('input');
+    r.type = 'radio';
+    r.className = 'ss-tone-radio';
+    r.id = 'ss-hair' + d.val;
+    r.name = 'form_fields[hair_color]';
+    r.value = d.val;
+
+    var l = document.createElement('label');
+    l.htmlFor = 'ss-hair' + d.val;
+    l.className = 'ss-tone-tile';
+    l.innerHTML = '<div class="ss-tone-circle" style="background:' + d.swatch + '"></div>'
+                + '<span class="ss-tone-main">' + d.main + '</span>';
+
+    r.addEventListener('change', function() {
+      ssWizard.selHair = d.val;
+      ssUpdateHairResult(d);
+      ssUpdateCompat();
+      ssWizard.refreshNextButton();
+    });
+
+    grid.appendChild(r);
+    grid.appendChild(l);
+  });
+}
+
+function ssUpdateHairResult(d) {
+  var swatch = document.getElementById('ss-hair-swatch');
+  var type   = document.getElementById('ss-hair-type');
+  var desc   = document.getElementById('ss-hair-desc');
+  var proto  = document.getElementById('ss-hair-proto');
+  var result = document.getElementById('ss-hair-result');
+
+  if (swatch) swatch.style.background = d.swatch;
+  if (type)   type.textContent = d.type;
+  if (desc)   desc.textContent = d.desc;
+  if (proto)  proto.textContent = d.proto;
+  if (result) result.style.display = 'flex';
+}
+
+// ── COMPATIBILITY UPDATE ──
+function ssUpdateCompat() {
+  var ph  = document.getElementById('ss-compat-ph');
+  var box = document.getElementById('ss-compat-box');
+  var link = document.getElementById('ss-compat-link');
+
+  if (!ssWizard.selFitz || !ssWizard.selHair) {
+    if (ph)  ph.style.display = 'block';
+    if (box) box.style.display = 'none';
+    ssWizard.compatCode = null;
+    return;
+  }
+
+  if (ph)  ph.style.display = 'none';
+  if (box) box.style.display = 'flex';
+  if (link) link.style.display = 'none';
+
+  var code = SS_COMPAT_MATRIX[ssWizard.selHair - 1][ssWizard.selFitz - 1];
+  ssWizard.compatCode = code;
+
+  var icon   = document.getElementById('ss-compat-icon');
+  var status = document.getElementById('ss-compat-status');
+  var detail = document.getElementById('ss-compat-detail');
+
+  box.classList.remove('ok', 'consult', 'special', 'notok');
+
+  if (code === 'OK') {
+    box.classList.add('ok');
+    if (icon)   icon.textContent = '✓';
+    if (status) status.textContent = 'Alkalmas kombináció';
+    var isDeepDark = (ssWizard.selHair >= 5 && ssWizard.selFitz >= 5);
+    if (detail) detail.textContent = isDeepDark ? SS_COMPAT_TEXT.OK_dark : SS_COMPAT_TEXT.OK_gen;
+    ssWizard.isEligible = true;
+
+  } else if (code === 'X') {
+    box.classList.add('notok');
+    if (icon)   icon.textContent = '✗';
+    if (status) status.textContent = 'Nem alkalmas';
+    if (detail) detail.textContent = 'Sajnos fehér/ősz vagy szőke szőrzet esetén a lézer szőrtelenítés nem elvégezhető.';
+    ssWizard.isEligible = false;
+    if (link) link.style.display = 'inline-block';
+
+  } else if (code === 'C') {
+    box.classList.add('consult');
+    if (icon)   icon.textContent = '~';
+    if (status) status.textContent = 'Egyéni konzultáció ajánlott';
+    if (detail) detail.textContent = (ssWizard.selHair === 3) ? SS_COMPAT_TEXT.C_3 : SS_COMPAT_TEXT.C_4f6;
+    ssWizard.isEligible = true;
+
+  } else { // S
+    box.classList.add('special');
+    if (icon)   icon.textContent = '!';
+    if (status) status.textContent = 'Speciális protokoll szükséges';
+    if (detail) detail.textContent = SS_COMPAT_TEXT.S;
+    ssWizard.isEligible = true;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════
+(function ssInit() {
+  ssRenderFitzTiles();
+  ssRenderHairTiles();
+  ssWizard.updateProgress();
+  ssWizard.updateNav();
+
+  var backBtn = document.getElementById('ss-btn-back');
+  var nextBtn = document.getElementById('ss-btn-next');
+
+  // Nav buttons wired via onclick attributes on the elements,
+  // but also wire here as a fallback
+  if (backBtn && !backBtn.getAttribute('data-wired')) {
+    backBtn.addEventListener('click', function() { ssWizard.prevStep(); });
+    backBtn.setAttribute('data-wired', '1');
+  }
+  if (nextBtn && !nextBtn.getAttribute('data-wired')) {
+    nextBtn.addEventListener('click', function() { ssWizard.nextStep(); });
+    nextBtn.setAttribute('data-wired', '1');
+  }
+})();
+</script>
+
+</body>
+</html>
