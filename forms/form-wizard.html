@@ -90,12 +90,20 @@
       border-color: #627476;
       background: #627476;
       color: #fff;
+      cursor: pointer;
+    }
+
+    .ss-progress-dot.ss-skipped {
+      border-color: #EBE6DC;
+      background: #EBE6DC;
+      color: #978A73;
+      opacity: .5;
     }
 
     .ss-progress-line {
       flex: 1;
       height: 3px;
-      background: #EBE6DC;
+      background: #f7f4ee;
       position: relative;
       overflow: hidden;
     }
@@ -109,6 +117,10 @@
       width: 0%;
       transition: width .4s ease;
       border-radius: 3px;
+    }
+
+    .ss-progress-fill.ss-fill-active {
+      background: #bb9f6d;
     }
 
     .ss-progress-label {
@@ -459,6 +471,36 @@
       text-decoration: underline;
     }
 
+    /* ── STOP MESSAGE ── */
+    .ss-stop-msg {
+      margin-top: 18px;
+      padding: 18px 20px;
+      background: #fff5f5;
+      border: 1.5px solid #fca5a5;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .ss-stop-msg p {
+      font-size: .88rem;
+      color: #575757;
+      margin: 0 0 12px;
+      line-height: 1.5;
+    }
+
+    .ss-stop-msg .ss-cta-btn {
+      display: inline-block;
+      padding: 10px 30px;
+      background: #627476;
+      color: #fff;
+      border-radius: 6px;
+      font-size: .85rem;
+      font-weight: 600;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
     /* ── SESSION TOGGLE ── */
     .ss-session-toggle-wrap {
       margin-bottom: 18px;
@@ -554,7 +596,7 @@
     }
 
     .ss-pkg-check:checked + .ss-pkg-lbl .ss-pkg-checkmark::after {
-      content: '✓';
+      content: '\2713';
       color: #fff;
       font-size: .6rem;
       display: flex;
@@ -604,7 +646,7 @@
     }
 
     .ss-pkg-areas li::before {
-      content: '—';
+      content: '\2014';
       color: #EBE6DC;
       font-size: .65rem;
     }
@@ -1160,7 +1202,7 @@
     <div class="ss-progress-line"><div class="ss-progress-fill" id="ss-fill-3"></div></div>
     <div class="ss-progress-dot" data-dot="4">5</div>
   </div>
-  <div class="ss-progress-label" id="ss-progress-label">1 / 5 — Bőrtípus & szőrszín</div>
+  <div class="ss-progress-label" id="ss-progress-label">1 / 5 — Bőrtípus</div>
 
   <!-- FORM -->
   <form id="ss-wizard-form" autocomplete="on" onsubmit="return false;">
@@ -1208,40 +1250,20 @@
           <div class="ss-compat-body">
             <p class="ss-compat-status" id="ss-compat-status"></p>
             <p class="ss-compat-detail" id="ss-compat-detail"></p>
-            <a class="ss-compat-link" id="ss-compat-link" style="display:none;" onclick="ssWizard.goToStep(3)">Nézd meg az árainkat →</a>
           </div>
+        </div>
+
+        <!-- STOP message for white/grey hair -->
+        <div class="ss-stop-msg" id="ss-stop-msg" style="display:none;">
+          <p>Sajnos fehér és ősz szőrzet esetén a lézer szőrtelenítés nem elvégezhető, mivel nincs elegendő melanintartalom a szőrzetben.</p>
+          <a class="ss-cta-btn" href="tel:+36301234567">Hívj minket</a>
         </div>
       </div>
 
     </div>
 
-    <!-- ── STEP 1: Personal Details ── -->
+    <!-- ── STEP 1: Eligibility Questions (was step 2) ── -->
     <div class="ss-step" data-step="1" id="step-1">
-      <div class="ss-card">
-        <p class="ss-card-label">Személyes adatok</p>
-        <div class="ss-name-row">
-          <div class="ss-field-group">
-            <label class="ss-field-label" for="ss-lastname">Vezetéknév *</label>
-            <input type="text" id="ss-lastname" class="ss-field-input" placeholder="Kovács" autocomplete="family-name" />
-          </div>
-          <div class="ss-field-group">
-            <label class="ss-field-label" for="ss-firstname">Keresztnév *</label>
-            <input type="text" id="ss-firstname" class="ss-field-input" placeholder="Anna" autocomplete="given-name" />
-          </div>
-        </div>
-        <div class="ss-field-group">
-          <label class="ss-field-label" for="ss-email">Email cím *</label>
-          <input type="email" id="ss-email" class="ss-field-input" placeholder="kovacs.anna@email.hu" autocomplete="email" />
-        </div>
-        <div class="ss-field-group">
-          <label class="ss-field-label" for="ss-phone">Telefonszám *</label>
-          <input type="tel" id="ss-phone" class="ss-field-input" placeholder="+36 30 123 4567" autocomplete="tel" />
-        </div>
-      </div>
-    </div>
-
-    <!-- ── STEP 2: Eligibility Questions ── -->
-    <div class="ss-step" data-step="2" id="step-2">
       <div class="ss-card">
         <p class="ss-card-label">Néhány kérdés</p>
         <div class="ss-field-group">
@@ -1272,8 +1294,8 @@
       </div>
     </div>
 
-    <!-- ── STEP 3: Treatment Picker ── -->
-    <div class="ss-step" data-step="3" id="step-3">
+    <!-- ── STEP 2: Treatment Picker (was step 3) ── -->
+    <div class="ss-step" data-step="2" id="step-2">
       <div class="ss-card">
         <p class="ss-card-label">Kezelés</p>
         <div class="ss-field-group">
@@ -1300,42 +1322,88 @@
       </div>
     </div>
 
-    <!-- ── STEP 4: Appointment, Summary, Submit ── -->
-    <div class="ss-step" data-step="4" id="step-4">
+    <!-- ── STEP 3: Appointment / Consultation ── -->
+    <div class="ss-step" data-step="3" id="step-3">
 
-      <!-- Card 1: Appointment Preference -->
-      <div class="ss-card">
-        <p class="ss-card-label">Időpont-preferencia</p>
-        <p class="ss-section-sub">Visszaigazolást küldünk telefonon vagy emailben</p>
+      <!-- Full route: Calendar/Slot appointment picker -->
+      <div id="ss-appt-full">
+        <div class="ss-card">
+          <p class="ss-card-label">Időpont-preferencia</p>
+          <p class="ss-section-sub">Visszaigazolást küldünk telefonon vagy emailben</p>
 
-        <div style="margin-bottom:14px;">
-          <div class="ss-session-toggle">
-            <button type="button" class="ss-sess-btn ss-active" id="ss-appt-cal">Válassz konkrét napot</button>
-            <button type="button" class="ss-sess-btn" id="ss-appt-slot">Jelöld mikor érsz rá</button>
+          <div style="margin-bottom:14px;">
+            <div class="ss-session-toggle">
+              <button type="button" class="ss-sess-btn ss-active" id="ss-appt-cal">Válassz konkrét napot</button>
+              <button type="button" class="ss-sess-btn" id="ss-appt-slot">Jelöld mikor érsz rá</button>
+            </div>
+          </div>
+
+          <!-- Calendar mode -->
+          <div id="ss-calendar-mode">
+            <p class="ss-section-title">Preferált időpont</p>
+            <p class="ss-section-sub">Válassz egy preferált napot</p>
+            <div class="ss-cal-grid" id="ss-cal-grid"></div>
+            <div id="ss-time-slots" style="display:none;">
+              <p class="ss-section-title" style="margin-top:16px;">Szabad időpontok <span id="ss-sel-date"></span></p>
+              <div class="ss-time-grid" id="ss-time-grid"></div>
+            </div>
+          </div>
+
+          <!-- Slot mode -->
+          <div id="ss-slot-mode" style="display:none;">
+            <p class="ss-section-title">Mikor tudsz jönni?</p>
+            <p class="ss-section-sub">Több is választható</p>
+            <div class="ss-slot-grid">
+              <input type="checkbox" class="ss-slot-check" id="ss-sl-hde"  name="ss_idosav[]" value="Hétköznap délelőtt (9-12)" /><label for="ss-sl-hde">Hétköznap délelőtt (9-12)</label>
+              <input type="checkbox" class="ss-slot-check" id="ss-sl-hdu"  name="ss_idosav[]" value="Hétköznap délután (12-17)" /><label for="ss-sl-hdu">Hétköznap délután (12-17)</label>
+              <input type="checkbox" class="ss-slot-check" id="ss-sl-hes"  name="ss_idosav[]" value="Hétköznap este (17-20)" /><label for="ss-sl-hes">Hétköznap este (17-20)</label>
+              <input type="checkbox" class="ss-slot-check" id="ss-sl-hev"  name="ss_idosav[]" value="Hétvége" /><label for="ss-sl-hev">Hétvége</label>
+            </div>
           </div>
         </div>
+      </div>
 
-        <!-- Calendar mode -->
-        <div id="ss-calendar-mode">
-          <p class="ss-section-title">Preferált időpont</p>
-          <p class="ss-section-sub">Hétfő és Szerda, legkorábban <strong id="ss-min-date"></strong></p>
-          <div class="ss-cal-grid" id="ss-cal-grid"></div>
-          <div id="ss-time-slots" style="display:none;">
-            <p class="ss-section-title" style="margin-top:16px;">Szabad időpontok <span id="ss-sel-date"></span></p>
-            <div class="ss-time-grid" id="ss-time-grid"></div>
-          </div>
-        </div>
-
-        <!-- Slot mode -->
-        <div id="ss-slot-mode" style="display:none;">
-          <p class="ss-section-title">Mikor tudsz jönni?</p>
+      <!-- Consult route: Phone consultation -->
+      <div id="ss-appt-consult" style="display:none;">
+        <div class="ss-card">
+          <p class="ss-card-label">Telefonos konzultáció</p>
+          <p class="ss-section-sub">Személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a lehetőségeket.</p>
+          <p class="ss-section-title">Mikor hívhatunk?</p>
           <p class="ss-section-sub">Több is választható</p>
           <div class="ss-slot-grid">
-            <input type="checkbox" class="ss-slot-check" id="ss-sl-hd"   name="ss_idosav[]" value="Hétfő délelőtt (9-12)" /><label for="ss-sl-hd">Hétfő délelőtt</label>
-            <input type="checkbox" class="ss-slot-check" id="ss-sl-hdu"  name="ss_idosav[]" value="Hétfő délután (13-17)" /><label for="ss-sl-hdu">Hétfő délután</label>
-            <input type="checkbox" class="ss-slot-check" id="ss-sl-szd"  name="ss_idosav[]" value="Szerda délelőtt (9-12)" /><label for="ss-sl-szd">Szerda délelőtt</label>
-            <input type="checkbox" class="ss-slot-check" id="ss-sl-szdu" name="ss_idosav[]" value="Szerda délután (13-17)" /><label for="ss-sl-szdu">Szerda délután</label>
+            <input type="checkbox" class="ss-slot-check" id="ss-cl-hde"  name="ss_konzult_ido[]" value="Hétköznap délelőtt (9-12)" /><label for="ss-cl-hde">Hétköznap délelőtt (9-12)</label>
+            <input type="checkbox" class="ss-slot-check" id="ss-cl-hdu"  name="ss_konzult_ido[]" value="Hétköznap délután (12-17)" /><label for="ss-cl-hdu">Hétköznap délután (12-17)</label>
+            <input type="checkbox" class="ss-slot-check" id="ss-cl-hes"  name="ss_konzult_ido[]" value="Hétköznap este (17-20)" /><label for="ss-cl-hes">Hétköznap este (17-20)</label>
+            <input type="checkbox" class="ss-slot-check" id="ss-cl-hev"  name="ss_konzult_ido[]" value="Hétvége" /><label for="ss-cl-hev">Hétvége</label>
           </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── STEP 4: Personal Details + Summary + Submit ── -->
+    <div class="ss-step" data-step="4" id="step-4">
+
+      <!-- Card 1: Personal Details -->
+      <div class="ss-card">
+        <p class="ss-card-label">Személyes adatok</p>
+        <div class="ss-name-row">
+          <div class="ss-field-group">
+            <label class="ss-field-label" for="ss-lastname">Vezetéknév *</label>
+            <input type="text" id="ss-lastname" class="ss-field-input" placeholder="Kovács" autocomplete="family-name" />
+          </div>
+          <div class="ss-field-group">
+            <label class="ss-field-label" for="ss-firstname">Keresztnév *</label>
+            <input type="text" id="ss-firstname" class="ss-field-input" placeholder="Anna" autocomplete="given-name" />
+          </div>
+        </div>
+        <div class="ss-field-group">
+          <label class="ss-field-label" for="ss-email">Email cím *</label>
+          <input type="email" id="ss-email" class="ss-field-input" placeholder="kovacs.anna@email.hu" autocomplete="email" />
+        </div>
+        <div class="ss-field-group">
+          <label class="ss-field-label" for="ss-phone">Telefonszám *</label>
+          <input type="tel" id="ss-phone" class="ss-field-input" placeholder="+36 30 123 4567" autocomplete="tel" />
         </div>
       </div>
 
@@ -1347,7 +1415,7 @@
 
       <!-- Card 3: Submit -->
       <div class="ss-card">
-        <button type="button" class="ss-submit-btn" id="ss-submit-btn">Küldés →</button>
+        <button type="button" class="ss-submit-btn" id="ss-submit-btn">Konzultációt kérek &rarr;</button>
         <p class="ss-submit-error" id="ss-submit-error"></p>
       </div>
 
@@ -1357,8 +1425,8 @@
 
   <!-- GLOBAL NAV — lives outside all step containers -->
   <div class="ss-nav">
-    <button type="button" class="ss-nav-back" id="ss-btn-back" style="display:none;" onclick="ssWizard.prevStep()">← Vissza</button>
-    <button type="button" class="ss-nav-next" id="ss-btn-next" disabled onclick="ssWizard.nextStep()">Következő →</button>
+    <button type="button" class="ss-nav-back" id="ss-btn-back" style="display:none;" onclick="ssWizard.prevStep()">&#8592; Vissza</button>
+    <button type="button" class="ss-nav-next" id="ss-btn-next" disabled onclick="ssWizard.nextStep()">Következő &rarr;</button>
   </div>
 
 </div><!-- /ss-page-wrap -->
@@ -1367,7 +1435,7 @@
 <!-- MODAL BACKDROP -->
 <div class="ss-modal-backdrop" id="ss-modal-backdrop">
   <div class="ss-modal-inner" id="ss-modal-inner">
-    <button type="button" class="ss-modal-close" onclick="document.getElementById('ss-modal-backdrop').classList.remove('ss-modal-open')">✕</button>
+    <button type="button" class="ss-modal-close" onclick="document.getElementById('ss-modal-backdrop').classList.remove('ss-modal-open')">&#10005;</button>
     <!-- Modal content injected by JS -->
   </div>
 </div>
@@ -1468,16 +1536,25 @@ var ssWizard = {
   currentStep: 0,
   totalSteps: 5,
   stepNames: [
-    'Bőrtípus & szőrszín',
-    'Személyes adatok',
-    'Néhány kérdés',
+    'Bőrtípus',
+    'Kérdések',
     'Kezelés',
-    'Összefoglalás',
+    'Időpont',
+    'Adatok',
   ],
   selFitz: null,
   selHair: null,
   compatCode: null,
   isEligible: true,
+  hairRoute: null, // 'stop', 'consult', or 'full'
+
+  // Returns the list of visible step indices based on current route
+  getVisibleSteps: function() {
+    if (this.hairRoute === 'consult') {
+      return [0, 1, 3, 4]; // skip step 2 (treatment picker)
+    }
+    return [0, 1, 2, 3, 4];
+  },
 
   goToStep: function(step) {
     var current = document.querySelector('.ss-step[data-step="' + this.currentStep + '"]');
@@ -1499,13 +1576,23 @@ var ssWizard = {
 
   nextStep: function() {
     if (this.currentStep < this.totalSteps - 1 && this.canProceed()) {
-      this.goToStep(this.currentStep + 1);
+      var next = this.currentStep + 1;
+      // If consult route, skip step 2 (treatment picker)
+      if (this.hairRoute === 'consult' && next === 2) {
+        next = 3;
+      }
+      this.goToStep(next);
     }
   },
 
   prevStep: function() {
     if (this.currentStep > 0) {
-      this.goToStep(this.currentStep - 1);
+      var prev = this.currentStep - 1;
+      // If consult route, skip step 2 (treatment picker)
+      if (this.hairRoute === 'consult' && prev === 2) {
+        prev = 1;
+      }
+      this.goToStep(prev);
     }
   },
 
@@ -1513,12 +1600,30 @@ var ssWizard = {
     var step = this.currentStep;
     var dots = document.querySelectorAll('.ss-progress-dot');
     var fills = document.querySelectorAll('.ss-progress-fill');
+    var visibleSteps = this.getVisibleSteps();
+    var self = this;
 
     dots.forEach(function(dot, i) {
-      dot.classList.remove('ss-active', 'ss-completed');
-      if (i < step) {
+      dot.classList.remove('ss-active', 'ss-completed', 'ss-skipped');
+      // Remove old click handlers
+      dot.onclick = null;
+      dot.style.cursor = '';
+
+      var isSkipped = (self.hairRoute === 'consult' && i === 2);
+
+      if (isSkipped) {
+        dot.classList.add('ss-skipped');
+        dot.innerHTML = String(i + 1);
+      } else if (i < step) {
         dot.classList.add('ss-completed');
-        dot.innerHTML = '✓';
+        dot.innerHTML = '\u2713';
+        // Make completed dots clickable (but respect routing)
+        if (visibleSteps.indexOf(i) !== -1) {
+          dot.style.cursor = 'pointer';
+          (function(idx) {
+            dot.onclick = function() { self.goToStep(idx); };
+          })(i);
+        }
       } else if (i === step) {
         dot.classList.add('ss-active');
         dot.innerHTML = String(i + 1);
@@ -1528,12 +1633,21 @@ var ssWizard = {
     });
 
     fills.forEach(function(fill, i) {
-      fill.style.width = (i < step) ? '100%' : '0%';
+      fill.classList.remove('ss-fill-active');
+      if (i < step) {
+        fill.style.width = '100%';
+        // The line leading to the current step gets gold
+        if (i === step - 1) {
+          fill.classList.add('ss-fill-active');
+        }
+      } else {
+        fill.style.width = '0%';
+      }
     });
 
     var label = document.getElementById('ss-progress-label');
     if (label) {
-      label.textContent = (step + 1) + ' / ' + ssWizard.totalSteps + ' — ' + ssWizard.stepNames[step];
+      label.textContent = (step + 1) + ' / ' + ssWizard.totalSteps + ' \u2014 ' + ssWizard.stepNames[step];
     }
   },
 
@@ -1556,10 +1670,12 @@ var ssWizard = {
 
   canProceed: function() {
     switch (this.currentStep) {
-      case 0: return (this.selFitz !== null && this.selHair !== null);
+      case 0:
+        // Must have both selections AND route must not be 'stop'
+        return (this.selFitz !== null && this.selHair !== null && this.hairRoute !== 'stop');
       case 1: return ssWizardStep1Valid ? ssWizardStep1Valid() : true;
       case 2: return ssWizardStep2Valid ? ssWizardStep2Valid() : true;
-      case 3: return ssWizardStep3Valid ? ssWizardStep3Valid() : true;
+      case 3: return true; // Appointment/consult step — no mandatory fields
       default: return true;
     }
   },
@@ -1570,27 +1686,15 @@ var ssWizard = {
 };
 
 // Validation functions for wizard steps
+// Step 1: Eligibility questions (was step 2)
 function ssWizardStep1Valid() {
-  var lastname  = document.getElementById('ss-lastname');
-  var firstname = document.getElementById('ss-firstname');
-  var email     = document.getElementById('ss-email');
-  var phone     = document.getElementById('ss-phone');
-  if (!lastname || !firstname || !email || !phone) return false;
-  return (
-    lastname.value.trim() !== '' &&
-    firstname.value.trim() !== '' &&
-    email.value.trim() !== '' &&
-    email.value.indexOf('@') !== -1 &&
-    phone.value.trim() !== ''
-  );
-}
-function ssWizardStep2Valid() {
   var q1 = document.querySelector('[name="ss_szortelenites"]:checked');
   var q2 = document.querySelector('[name="ss_fenyerzekeny"]:checked');
   var q3 = document.querySelector('[name="ss_borbetegseg"]:checked');
   return q1 && q2 && q3;
 }
-function ssWizardStep3Valid() {
+// Step 2: Treatment picker (was step 3)
+function ssWizardStep2Valid() {
   var gender = document.querySelector('[name="ss_nem"]:checked');
   if (!gender) return false;
   var checked = document.querySelectorAll('[name="ss_kezelesek[]"]:checked');
@@ -1665,6 +1769,7 @@ function ssRenderHairTiles() {
       ssWizard.selHair = d.val;
       ssUpdateHairResult(d);
       ssUpdateCompat();
+      ssUpdateHairRoute();
       ssWizard.refreshNextButton();
     });
 
@@ -1685,6 +1790,43 @@ function ssUpdateHairResult(d) {
   if (desc)   desc.textContent = d.desc;
   if (proto)  proto.textContent = d.proto;
   if (result) result.style.display = 'flex';
+}
+
+// ── HAIR ROUTE UPDATE ──
+function ssUpdateHairRoute() {
+  var val = ssWizard.selHair;
+  var stopMsg = document.getElementById('ss-stop-msg');
+
+  if (val === 1) {
+    ssWizard.hairRoute = 'stop';
+    if (stopMsg) stopMsg.style.display = 'block';
+  } else if (val === 2 || val === 3) {
+    ssWizard.hairRoute = 'consult';
+    if (stopMsg) stopMsg.style.display = 'none';
+  } else if (val >= 4 && val <= 6) {
+    ssWizard.hairRoute = 'full';
+    if (stopMsg) stopMsg.style.display = 'none';
+  } else {
+    ssWizard.hairRoute = null;
+    if (stopMsg) stopMsg.style.display = 'none';
+  }
+
+  // Update step 3 visibility based on route
+  ssUpdateStep3Mode();
+}
+
+// ── Update Step 3 to show correct mode ──
+function ssUpdateStep3Mode() {
+  var fullEl = document.getElementById('ss-appt-full');
+  var consultEl = document.getElementById('ss-appt-consult');
+
+  if (ssWizard.hairRoute === 'consult') {
+    if (fullEl) fullEl.style.display = 'none';
+    if (consultEl) consultEl.style.display = '';
+  } else {
+    if (fullEl) fullEl.style.display = '';
+    if (consultEl) consultEl.style.display = 'none';
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1739,7 +1881,7 @@ function ssRenderTreatments(data, containerId) {
     }
 
     var areas = d.areas.map(function(a) { return '<li>' + a + '</li>'; }).join('');
-    var checkVal = d.name + ' — ' + sessLabel + ' (' + ssFmt(basePrice) + ' Ft)';
+    var checkVal = d.name + ' \u2014 ' + sessLabel + ' (' + ssFmt(basePrice) + ' Ft)';
 
     var wrap = document.createElement('div');
     wrap.innerHTML = '<input type="checkbox" class="ss-pkg-check" id="pkg-' + d.id + '-' + sess + '" name="ss_kezelesek[]" value="' + checkVal + '" data-id="' + d.id + '" />'
@@ -1773,7 +1915,7 @@ function ssRenderTreatments(data, containerId) {
     var basePrice = sess === 1 ? d.p1 : d.p6;
     var salePrice = ssGetSalePrice(d, sess);
     var sessLabel = sess === 1 ? '1 alkalom' : '6 alkalom';
-    var checkVal = d.name + ' — ' + sessLabel + ' (' + ssFmt(basePrice) + ' Ft)';
+    var checkVal = d.name + ' \u2014 ' + sessLabel + ' (' + ssFmt(basePrice) + ' Ft)';
 
     var priceDisplay;
     if (salePrice) {
@@ -1813,8 +1955,8 @@ function ssApplySession(sess) {
   if (gender) {
     var treatNo    = document.getElementById('ss-treat-no');
     var treatFerfi = document.getElementById('ss-treat-ferfi');
-    if (treatNo)    treatNo.classList.toggle('ss-visible',    gender.value === 'Nő');
-    if (treatFerfi) treatFerfi.classList.toggle('ss-visible', gender.value === 'Férfi');
+    if (treatNo)    treatNo.classList.toggle('ss-visible',    gender.value === 'N\u0151');
+    if (treatFerfi) treatFerfi.classList.toggle('ss-visible', gender.value === 'F\u00e9rfi');
   }
 }
 
@@ -1853,8 +1995,8 @@ function ssFetchPrices() {
       if (gender) {
         var treatNo    = document.getElementById('ss-treat-no');
         var treatFerfi = document.getElementById('ss-treat-ferfi');
-        if (treatNo)    treatNo.classList.toggle('ss-visible',    gender.value === 'Nő');
-        if (treatFerfi) treatFerfi.classList.toggle('ss-visible', gender.value === 'Férfi');
+        if (treatNo)    treatNo.classList.toggle('ss-visible',    gender.value === 'N\u0151');
+        if (treatFerfi) treatFerfi.classList.toggle('ss-visible', gender.value === 'F\u00e9rfi');
       }
     })
     .catch(function() {
@@ -1866,7 +2008,6 @@ function ssFetchPrices() {
 function ssUpdateCompat() {
   var ph  = document.getElementById('ss-compat-ph');
   var box = document.getElementById('ss-compat-box');
-  var link = document.getElementById('ss-compat-link');
 
   if (!ssWizard.selFitz || !ssWizard.selHair) {
     if (ph)  ph.style.display = 'block';
@@ -1877,7 +2018,6 @@ function ssUpdateCompat() {
 
   if (ph)  ph.style.display = 'none';
   if (box) box.style.display = 'flex';
-  if (link) link.style.display = 'none';
 
   var code = SS_COMPAT_MATRIX[ssWizard.selHair - 1][ssWizard.selFitz - 1];
   ssWizard.compatCode = code;
@@ -1890,19 +2030,29 @@ function ssUpdateCompat() {
 
   if (code === 'OK') {
     box.classList.add('ok');
-    if (icon)   icon.textContent = '✓';
+    if (icon)   icon.textContent = '\u2713';
     if (status) status.textContent = 'Alkalmas kombináció';
     var isDeepDark = (ssWizard.selHair >= 5 && ssWizard.selFitz >= 5);
     if (detail) detail.textContent = isDeepDark ? SS_COMPAT_TEXT.OK_dark : SS_COMPAT_TEXT.OK_gen;
     ssWizard.isEligible = true;
 
   } else if (code === 'X') {
-    box.classList.add('notok');
-    if (icon)   icon.textContent = '✗';
-    if (status) status.textContent = 'Nem alkalmas';
-    if (detail) detail.textContent = 'Sajnos fehér/ősz vagy szőke szőrzet esetén a lézer szőrtelenítés nem elvégezhető.';
-    ssWizard.isEligible = false;
-    if (link) link.style.display = 'inline-block';
+    // Differentiate between white/grey (stop) and blonde (consult)
+    if (ssWizard.selHair === 1) {
+      // White/grey — STOP
+      box.classList.add('notok');
+      if (icon)   icon.textContent = '\u2717';
+      if (status) status.textContent = 'Nem alkalmas';
+      if (detail) detail.textContent = 'Sajnos fehér és ősz szőrzet esetén a lézer szőrtelenítés nem elvégezhető.';
+      ssWizard.isEligible = false;
+    } else {
+      // Blonde (val=2) — consult route
+      box.classList.add('consult');
+      if (icon)   icon.textContent = '~';
+      if (status) status.textContent = 'Egyéni konzultáció ajánlott';
+      if (detail) detail.textContent = 'Szőke szőrzetnél személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a lehetőségeket.';
+      ssWizard.isEligible = true;
+    }
 
   } else if (code === 'C') {
     box.classList.add('consult');
@@ -1921,7 +2071,7 @@ function ssUpdateCompat() {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// STEP 5 — CALENDAR, SLOT PICKER, SUMMARY, SUBMIT
+// STEP 3 — CALENDAR, SLOT PICKER
 // ══════════════════════════════════════════════════════════════════
 
 // ── Calendar state + constants ──
@@ -1960,6 +2110,11 @@ function ssInitApptToggle() {
   document.querySelectorAll('[name="ss_idosav[]"]').forEach(function(chk) {
     chk.addEventListener('change', ssBuildSummary);
   });
+
+  // wire consult slot checkboxes to rebuild summary
+  document.querySelectorAll('[name="ss_konzult_ido[]"]').forEach(function(chk) {
+    chk.addEventListener('change', ssBuildSummary);
+  });
 }
 
 // ── Calendar functions ──
@@ -1973,8 +2128,6 @@ function ssInitCal() {
   var m = ssGetMinDate();
   ssCal.year  = m.getFullYear();
   ssCal.month = m.getMonth();
-  var lbl = document.getElementById('ss-min-date');
-  if (lbl) lbl.textContent = m.toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric' });
   ssRenderCal();
 }
 
@@ -1992,7 +2145,7 @@ function ssRenderCal() {
   nav.style.cssText = 'grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-bottom:7px;';
 
   var prev = document.createElement('button');
-  prev.textContent = '‹'; prev.className = 'ss-cal-nav-btn'; prev.type = 'button';
+  prev.textContent = '\u2039'; prev.className = 'ss-cal-nav-btn'; prev.type = 'button';
   prev.onclick = function() {
     ssCal.month--;
     if (ssCal.month < 0) { ssCal.month = 11; ssCal.year--; }
@@ -2000,7 +2153,7 @@ function ssRenderCal() {
   };
 
   var next = document.createElement('button');
-  next.textContent = '›'; next.className = 'ss-cal-nav-btn'; next.type = 'button';
+  next.textContent = '\u203A'; next.className = 'ss-cal-nav-btn'; next.type = 'button';
   next.onclick = function() {
     ssCal.month++;
     if (ssCal.month > 11) { ssCal.month = 0; ssCal.year++; }
@@ -2052,7 +2205,7 @@ function ssRenderCal() {
         cell.onclick = function() {
           ssCal.selDate = iv;
           var selDateEl = document.getElementById('ss-sel-date');
-          if (selDateEl) selDateEl.textContent = '— ' + dobj.toLocaleDateString('hu-HU', { month: 'long', day: 'numeric', weekday: 'long' });
+          if (selDateEl) selDateEl.textContent = '\u2014 ' + dobj.toLocaleDateString('hu-HU', { month: 'long', day: 'numeric', weekday: 'long' });
           ssRenderCal();
           ssRenderTimes();
           var timeSlots = document.getElementById('ss-time-slots');
@@ -2084,6 +2237,10 @@ function ssRenderTimes() {
   });
 }
 
+// ══════════════════════════════════════════════════════════════════
+// STEP 4 — SUMMARY + SUBMIT
+// ══════════════════════════════════════════════════════════════════
+
 // ── Summary builder ──
 function ssBuildSummary() {
   var container = document.getElementById('ss-summary');
@@ -2092,55 +2249,70 @@ function ssBuildSummary() {
   function row(label, value, editStep) {
     return '<div class="ss-summary-row">'
       + '<div><span class="ss-summary-label">' + label + '</span></div>'
-      + '<div><span class="ss-summary-value">' + (value || '—') + '</span>'
+      + '<div><span class="ss-summary-value">' + (value || '\u2014') + '</span>'
       + (editStep !== undefined ? ' <span class="ss-summary-edit" onclick="ssWizard.goToStep(' + editStep + ')">Szerkesztés</span>' : '')
       + '</div></div>';
   }
 
   var html = '';
 
-  // Name
-  var ln = (document.getElementById('ss-lastname')  || {}).value || '';
-  var fn = (document.getElementById('ss-firstname') || {}).value || '';
-  html += row('Név', (ln + ' ' + fn).trim() || '—', 1);
-
-  // Email
-  var email = (document.getElementById('ss-email') || {}).value || '';
-  html += row('Email', email || '—', 1);
-
-  // Telefon
-  var phone = (document.getElementById('ss-phone') || {}).value || '';
-  html += row('Telefon', phone || '—', 1);
-
-  // Bőrtípus
-  var fitzLabel = ssWizard.selFitz ? SS_FITZ[ssWizard.selFitz - 1].type : '—';
+  // Bőrtípus + Szőrszín → edit step 0
+  var fitzLabel = ssWizard.selFitz ? SS_FITZ[ssWizard.selFitz - 1].type : '\u2014';
+  var hairLabel = ssWizard.selHair ? SS_HAIR[ssWizard.selHair - 1].type : '\u2014';
   html += row('Bőrtípus', fitzLabel, 0);
-
-  // Szőrszín
-  var hairLabel = ssWizard.selHair ? SS_HAIR[ssWizard.selHair - 1].type : '—';
   html += row('Szőrszín', hairLabel, 0);
 
-  // Kezelések
-  var checked = document.querySelectorAll('[name="ss_kezelesek[]"]:checked');
-  var kezelesek = [];
-  checked.forEach(function(chk) { kezelesek.push(chk.value); });
-  html += row('Kezelés', kezelesek.length ? kezelesek.join(', ') : '—', 3);
+  // Kérdések answers → edit step 1
+  var q1 = document.querySelector('[name="ss_szortelenites"]:checked');
+  var q2 = document.querySelector('[name="ss_fenyerzekeny"]:checked');
+  var q3 = document.querySelector('[name="ss_borbetegseg"]:checked');
+  var questionsVal = [
+    q1 ? 'Szőrtelenítés: ' + q1.value : '',
+    q2 ? 'Fényérzékeny gyógyszer: ' + q2.value : '',
+    q3 ? 'Bőrbetegség: ' + q3.value : ''
+  ].filter(function(s) { return s; }).join(', ');
+  html += row('Kérdések', questionsVal || '\u2014', 1);
 
-  // Időpont
-  if (ssApptMode === 'naptar') {
-    var apptVal = '';
-    if (ssCal.selDate) {
-      apptVal = ssCal.selDate;
-      if (ssCal.selTime) apptVal += ' ' + ssCal.selTime;
-    }
-    html += row('Preferált időpont', apptVal || '—', 4);
-  } else {
-    var slots = [];
-    document.querySelectorAll('[name="ss_idosav[]"]:checked').forEach(function(chk) {
-      slots.push(chk.value);
-    });
-    html += row('Elérhető időpontok', slots.length ? slots.join(', ') : '—', 4);
+  // Kezelés (only if full route) → edit step 2
+  if (ssWizard.hairRoute === 'full') {
+    var checked = document.querySelectorAll('[name="ss_kezelesek[]"]:checked');
+    var kezelesek = [];
+    checked.forEach(function(chk) { kezelesek.push(chk.value); });
+    html += row('Kezelés', kezelesek.length ? kezelesek.join(', ') : '\u2014', 2);
   }
+
+  // Időpont/Konzultáció preference → edit step 3
+  if (ssWizard.hairRoute === 'consult') {
+    var consultSlots = [];
+    document.querySelectorAll('[name="ss_konzult_ido[]"]:checked').forEach(function(chk) {
+      consultSlots.push(chk.value);
+    });
+    html += row('Konzultáció', consultSlots.length ? consultSlots.join(', ') : '\u2014', 3);
+  } else {
+    if (ssApptMode === 'naptar') {
+      var apptVal = '';
+      if (ssCal.selDate) {
+        apptVal = ssCal.selDate;
+        if (ssCal.selTime) apptVal += ' ' + ssCal.selTime;
+      }
+      html += row('Preferált időpont', apptVal || '\u2014', 3);
+    } else {
+      var slots = [];
+      document.querySelectorAll('[name="ss_idosav[]"]:checked').forEach(function(chk) {
+        slots.push(chk.value);
+      });
+      html += row('Elérhető időpontok', slots.length ? slots.join(', ') : '\u2014', 3);
+    }
+  }
+
+  // Név, Email, Telefon — no edit link (they're on the current step)
+  var ln = (document.getElementById('ss-lastname')  || {}).value || '';
+  var fn = (document.getElementById('ss-firstname') || {}).value || '';
+  html += row('Név', (ln + ' ' + fn).trim() || '\u2014');
+  var email = (document.getElementById('ss-email') || {}).value || '';
+  html += row('Email', email || '\u2014');
+  var phone = (document.getElementById('ss-phone') || {}).value || '';
+  html += row('Telefon', phone || '\u2014');
 
   container.innerHTML = html;
 }
@@ -2163,6 +2335,7 @@ function ssInitSubmit() {
     var payload = {
       fitzpatrick_type:      ssWizard.selFitz,
       hair_color:            ssWizard.selHair,
+      hair_route:            ssWizard.hairRoute,
       compatibility:         ssWizard.compatCode,
       vezeteknev:            (document.getElementById('ss-lastname')  || {}).value || '',
       keresztnev:            (document.getElementById('ss-firstname') || {}).value || '',
@@ -2177,12 +2350,13 @@ function ssInitSubmit() {
         document.querySelectorAll('[name="ss_kezelesek[]"]:checked').forEach(function(chk){ arr.push(chk.value); });
         return arr;
       })(),
-      idopont_tipus:         ssApptMode,
+      idopont_tipus:         ssWizard.hairRoute === 'consult' ? 'konzultacio' : ssApptMode,
       appointment_date:      ssCal.selDate  || '',
       appointment_time:      ssCal.selTime  || '',
       idosavok:              (function(){
         var arr = [];
-        document.querySelectorAll('[name="ss_idosav[]"]:checked').forEach(function(chk){ arr.push(chk.value); });
+        var selector = ssWizard.hairRoute === 'consult' ? '[name="ss_konzult_ido[]"]:checked' : '[name="ss_idosav[]"]:checked';
+        document.querySelectorAll(selector).forEach(function(chk){ arr.push(chk.value); });
         return arr;
       })(),
       bekuldes_datum:        new Date().toLocaleString('hu-HU'),
@@ -2193,7 +2367,7 @@ function ssInitSubmit() {
       console.log('WEBHOOK PAYLOAD:', JSON.stringify(payload, null, 2));
       alert('Preview mód — payload a konzolban látható.\n\nÉles beküldés csak beágyazott verzióban működik.');
       btn.disabled = false;
-      btn.textContent = ssWizard.isEligible ? 'Küldés →' : 'Konzultációt kérek →';
+      btn.textContent = 'Konzultációt kérek \u2192';
       return;
     }
 
@@ -2210,7 +2384,7 @@ function ssInitSubmit() {
     .catch(function(err) {
       if (errEl) errEl.textContent = 'Hiba történt a küldés során. Kérjük próbáld újra, vagy hívj minket!';
       btn.disabled = false;
-      btn.textContent = ssWizard.isEligible ? 'Küldés →' : 'Konzultációt kérek →';
+      btn.textContent = 'Konzultációt kérek \u2192';
     });
   });
 }
@@ -2238,14 +2412,7 @@ function ssInitSubmit() {
     nextBtn.setAttribute('data-wired', '1');
   }
 
-  // ── STEP 2 (data-step 1) VALIDATION LISTENERS ──
-  ['ss-lastname', 'ss-firstname', 'ss-email', 'ss-phone'].forEach(function(id) {
-    document.getElementById(id).addEventListener('input', function() {
-      ssWizard.refreshNextButton();
-    });
-  });
-
-  // ── STEP 3 (data-step 2) VALIDATION + ELIGIBILITY LISTENERS ──
+  // ── STEP 1 (Kérdések) VALIDATION + ELIGIBILITY LISTENERS ──
   ['ss_szortelenites', 'ss_fenyerzekeny', 'ss_borbetegseg'].forEach(function(name) {
     document.querySelectorAll('[name="' + name + '"]').forEach(function(el) {
       el.addEventListener('change', function() {
@@ -2253,13 +2420,13 @@ function ssInitSubmit() {
         var skin = document.querySelector('[name="ss_borbetegseg"]:checked');
         if (med && med.value === 'Igen') ssWizard.isEligible = false;
         else if (skin && skin.value === 'Igen') ssWizard.isEligible = false;
-        else if (ssWizard.compatCode !== 'X') ssWizard.isEligible = true;
+        else if (ssWizard.compatCode !== 'X' || ssWizard.selHair !== 1) ssWizard.isEligible = true;
         ssWizard.refreshNextButton();
       });
     });
   });
 
-  // ── STEP 4 (data-step 3) — Treatment Picker ──
+  // ── STEP 2 (Kezelés) — Treatment Picker ──
 
   // Session toggle buttons
   var sess6btn = document.getElementById('ss-sess-6');
@@ -2274,8 +2441,8 @@ function ssInitSubmit() {
       var treatNo    = document.getElementById('ss-treat-no');
       var treatFerfi = document.getElementById('ss-treat-ferfi');
       var sessWrap   = document.getElementById('ss-sess-wrap');
-      if (treatNo)    treatNo.classList.toggle('ss-visible',    v === 'Nő');
-      if (treatFerfi) treatFerfi.classList.toggle('ss-visible', v === 'Férfi');
+      if (treatNo)    treatNo.classList.toggle('ss-visible',    v === 'N\u0151');
+      if (treatFerfi) treatFerfi.classList.toggle('ss-visible', v === 'F\u00e9rfi');
       if (sessWrap)   sessWrap.style.display = 'block';
       ssWizard.refreshNextButton();
     });
@@ -2286,10 +2453,32 @@ function ssInitSubmit() {
   ssRenderTreatments(SS_TREAT_FERFI, 'ss-treat-ferfi');
   ssFetchPrices();
 
-  // ── goToStep override — step 4 (index 4) triggers calendar + summary ──
+  // ── STEP 4 (Adatok) — Personal details input listeners for live summary ──
+  ['ss-lastname', 'ss-firstname', 'ss-email', 'ss-phone'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', function() {
+        ssBuildSummary();
+      });
+    }
+  });
+
+  // ── goToStep override — step 4 triggers summary build, step 3 triggers calendar ──
   var _origGoToStep = ssWizard.goToStep.bind(ssWizard);
   ssWizard.goToStep = function(step) {
     _origGoToStep(step);
+
+    if (step === 3) {
+      // Update step 3 mode (full vs consult)
+      ssUpdateStep3Mode();
+      // Init calendar if in full mode
+      if (ssWizard.hairRoute !== 'consult') {
+        setTimeout(function() {
+          ssInitCal();
+        }, 260);
+      }
+    }
+
     if (step === 4) {
       // Hide Next button (Submit replaces it on step 4)
       var nextBtn = document.getElementById('ss-btn-next');
@@ -2297,20 +2486,15 @@ function ssInitSubmit() {
 
       // Delay to allow DOM transition to complete
       setTimeout(function() {
-        ssInitCal();
         ssBuildSummary();
-        // Update submit button label based on eligibility
-        var submitBtn = document.getElementById('ss-submit-btn');
-        if (submitBtn) {
-          submitBtn.textContent = ssWizard.isEligible ? 'Küldés →' : 'Konzultációt kérek →';
-        }
       }, 260);
     }
   };
 
-  // ── Step 5 init ──
+  // ── Init appointment toggle + submit ──
   ssInitApptToggle();
   ssInitSubmit();
+  ssUpdateStep3Mode();
 })();
 
 // ══════════════════════════════════════════════════════════════════
