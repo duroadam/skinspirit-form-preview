@@ -1045,7 +1045,7 @@
 
     /* ── MODAL ── */
     .ss-modal-backdrop {
-      display: none;
+      display: flex;
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,.45);
@@ -1054,10 +1054,14 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .2s ease, visibility .2s;
     }
 
-    .ss-modal-backdrop.visible {
-      display: flex;
+    .ss-modal-backdrop.ss-modal-open {
+      opacity: 1;
+      visibility: visible;
     }
 
     .ss-modal-inner {
@@ -1209,11 +1213,6 @@
         </div>
       </div>
 
-      <!-- NAV -->
-      <div class="ss-nav">
-        <button type="button" class="ss-nav-back" id="ss-btn-back" style="display:none;" onclick="ssWizard.prevStep()">← Vissza</button>
-        <button type="button" class="ss-nav-next" id="ss-btn-next" disabled onclick="ssWizard.nextStep()">Következő →</button>
-      </div>
     </div>
 
     <!-- ── STEP 1: Personal Details ── -->
@@ -1352,14 +1351,15 @@
         <p class="ss-submit-error" id="ss-submit-error"></p>
       </div>
 
-      <!-- NAV — back button only (Submit replaces Next) -->
-      <div class="ss-nav">
-        <button type="button" class="ss-nav-back" onclick="ssWizard.prevStep()">← Vissza</button>
-      </div>
-
     </div>
 
   </form>
+
+  <!-- GLOBAL NAV — lives outside all step containers -->
+  <div class="ss-nav">
+    <button type="button" class="ss-nav-back" id="ss-btn-back" style="display:none;" onclick="ssWizard.prevStep()">← Vissza</button>
+    <button type="button" class="ss-nav-next" id="ss-btn-next" disabled onclick="ssWizard.nextStep()">Következő →</button>
+  </div>
 
 </div><!-- /ss-page-wrap -->
 </div><!-- /ss-form-root -->
@@ -1367,7 +1367,7 @@
 <!-- MODAL BACKDROP -->
 <div class="ss-modal-backdrop" id="ss-modal-backdrop">
   <div class="ss-modal-inner" id="ss-modal-inner">
-    <button type="button" class="ss-modal-close" onclick="document.getElementById('ss-modal-backdrop').classList.remove('visible')">✕</button>
+    <button type="button" class="ss-modal-close" onclick="document.getElementById('ss-modal-backdrop').classList.remove('ss-modal-open')">✕</button>
     <!-- Modal content injected by JS -->
   </div>
 </div>
@@ -1516,8 +1516,15 @@ var ssWizard = {
 
     dots.forEach(function(dot, i) {
       dot.classList.remove('ss-active', 'ss-completed');
-      if (i < step)      dot.classList.add('ss-completed');
-      else if (i === step) dot.classList.add('ss-active');
+      if (i < step) {
+        dot.classList.add('ss-completed');
+        dot.innerHTML = '✓';
+      } else if (i === step) {
+        dot.classList.add('ss-active');
+        dot.innerHTML = String(i + 1);
+      } else {
+        dot.innerHTML = String(i + 1);
+      }
     });
 
     fills.forEach(function(fill, i) {
@@ -1831,11 +1838,10 @@ function ssFetchPrices() {
         .concat(SS_TREAT_FERFI.singles);
 
       allTreatments.forEach(function(t) {
-        for (var i = 0; i < ssPriceData.length; i++) {
-          var item = ssPriceData[i];
-          if (item.slug === t.slug6 && item.price) { t.p6 = item.price; }
-          if (item.slug === t.slug1 && item.price) { t.p1 = item.price; }
-        }
+        var entry6 = ssPriceData.find(function(p) { return p.slug === t.slug6; });
+        var entry1 = ssPriceData.find(function(p) { return p.slug === t.slug1; });
+        if (entry6) t.p6 = entry6.is_on_sale ? entry6.sale_price : entry6.base_price;
+        if (entry1) t.p1 = entry1.is_on_sale ? entry1.sale_price : entry1.base_price;
       });
 
       // Re-render with updated prices
@@ -1922,7 +1928,7 @@ function ssUpdateCompat() {
 var ssCal = { year: null, month: null, selDate: null, selTime: null };
 var SS_HU_MONTHS = ['Január','Február','Március','Április','Május','Június','Július','Augusztus','Szeptember','Október','November','December'];
 var SS_HU_DAYS   = ['H','K','Sze','Cs','P','Szo','V'];
-var ssApptMode   = 'calendar';
+var ssApptMode   = 'naptar';
 
 // ── Appointment mode toggle ──
 function ssInitApptToggle() {
@@ -1933,7 +1939,7 @@ function ssInitApptToggle() {
   if (!calBtn || !slotBtn) return;
 
   calBtn.addEventListener('click', function() {
-    ssApptMode = 'calendar';
+    ssApptMode = 'naptar';
     calBtn.classList.add('ss-active');
     slotBtn.classList.remove('ss-active');
     if (calMode)  calMode.style.display  = '';
@@ -1942,7 +1948,7 @@ function ssInitApptToggle() {
   });
 
   slotBtn.addEventListener('click', function() {
-    ssApptMode = 'slot';
+    ssApptMode = 'idosav';
     slotBtn.classList.add('ss-active');
     calBtn.classList.remove('ss-active');
     if (slotMode) slotMode.style.display = '';
@@ -2121,7 +2127,7 @@ function ssBuildSummary() {
   html += row('Kezelés', kezelesek.length ? kezelesek.join(', ') : '—', 3);
 
   // Időpont
-  if (ssApptMode === 'calendar') {
+  if (ssApptMode === 'naptar') {
     var apptVal = '';
     if (ssCal.selDate) {
       apptVal = ssCal.selDate;
@@ -2320,12 +2326,12 @@ function ssInitSubmit() {
 
   function openModal() {
     backdrop.appendChild(formRoot);
-    backdrop.style.display = 'flex';
+    backdrop.classList.add('ss-modal-open');
     document.body.style.overflow = 'hidden';
   }
 
   function closeModal() {
-    backdrop.style.display = 'none';
+    backdrop.classList.remove('ss-modal-open');
     document.body.style.overflow = '';
     document.body.insertBefore(formRoot, backdrop);
   }
@@ -2346,7 +2352,7 @@ function ssInitSubmit() {
   // ESC key — only close if modal is open
   document.addEventListener('keydown', function(e) {
     if ((e.key === 'Escape' || e.key === 'Esc') &&
-        backdrop.style.display === 'flex') {
+        backdrop.classList.contains('ss-modal-open')) {
       closeModal();
     }
   });
