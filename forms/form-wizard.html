@@ -1789,6 +1789,17 @@ function ssUpdateHairResult(d) {
   if (desc)   desc.textContent = d.desc;
   if (proto)  proto.textContent = d.proto;
   if (result) result.style.display = 'flex';
+
+  // White/grey hair - red warning style on proto text
+  if (proto) {
+    if (d.val === 1) {
+      proto.style.color = '#dc2626';
+      proto.style.fontWeight = '600';
+    } else {
+      proto.style.color = '';
+      proto.style.fontWeight = '';
+    }
+  }
 }
 
 // ── HAIR ROUTE UPDATE ──
@@ -2014,14 +2025,11 @@ function ssUpdateCompat() {
     ssWizard.isEligible = true;
 
   } else if (code === 'X') {
-    // Differentiate between white/grey (stop) and blonde (consult)
     if (ssWizard.selHair === 1) {
-      // White/grey - STOP
-      box.classList.add('notok');
-      if (icon)   icon.textContent = '\u2717';
-      if (status) status.textContent = 'Nem alkalmas';
-      if (detail) detail.textContent = 'Fehér vagy ősz szőrzetnél sajnos nem hatékony a lézer, mert nincs benne elég melanin.';
+      // White/grey - STOP, no compat box, proto text handles it
+      ph.style.display = 'none'; box.style.display = 'none';
       ssWizard.isEligible = false;
+      return;
     } else {
       // Blonde (val=2) - consult route
       box.classList.add('consult');
