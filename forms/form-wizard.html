@@ -948,6 +948,16 @@
       letter-spacing: .04em;
     }
 
+    /* ── TREATMENT SECTION ── */
+    .ss-treatment-section {
+      display: none;
+      animation: ssFadeIn .2s ease;
+    }
+
+    .ss-treatment-section.ss-visible {
+      display: block;
+    }
+
     /* ── NAVIGATION ── */
     .ss-nav {
       display: flex;
@@ -1256,9 +1266,32 @@
       </div>
     </div>
 
-    <!-- ── STEP 3: (placeholder) ── -->
+    <!-- ── STEP 3: Treatment Picker ── -->
     <div class="ss-step" data-step="3" id="step-3">
-      <!-- Content will be added in later task -->
+      <div class="ss-card">
+        <p class="ss-card-label">Kezelés</p>
+        <div class="ss-field-group">
+          <label class="ss-field-label">Nemed *</label>
+          <div class="ss-radio-group">
+            <input type="radio" class="ss-radio-pill" id="ss-nem-no" name="ss_nem" value="Nő" /><label for="ss-nem-no">Nő</label>
+            <input type="radio" class="ss-radio-pill" id="ss-nem-fi" name="ss_nem" value="Férfi" /><label for="ss-nem-fi">Férfi</label>
+          </div>
+        </div>
+
+        <div id="ss-sess-wrap" style="display:none;">
+          <hr class="ss-divider" />
+          <label class="ss-field-label">Melyik kezelés érdekel? <small>(több is választható)</small></label>
+          <div style="margin-bottom:14px;">
+            <div class="ss-session-toggle">
+              <button type="button" class="ss-sess-btn ss-active" id="ss-sess-6" data-sess="6">6 alkalom</button>
+              <button type="button" class="ss-sess-btn" id="ss-sess-1" data-sess="1">1 alkalom</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ss-treatment-section" id="ss-treat-no"></div>
+        <div class="ss-treatment-section" id="ss-treat-ferfi"></div>
+      </div>
     </div>
 
     <!-- ── STEP 4: (placeholder) ── -->
@@ -1326,6 +1359,46 @@ var SS_COMPAT_TEXT = {
   C_3:     'Vörös szőrzetnél a hatékonyság egyéni felmérést igényel — konzultáción pontosítjuk a lehetőségeket.',
   C_4f6:   'Barna szőr + mélybarna bőr kombinációhoz speciális beállítás szükséges — egyéni konzultáció ajánlott.',
   S:       'Szőke szőrzet + sötétebb bőrtónus esetén speciális protokoll szükséges — egyéni felmérés alapján dolgozunk.',
+};
+
+// ══════════════════════════════════════════════════════════════════
+// TREATMENT DATA
+// ══════════════════════════════════════════════════════════════════
+
+var SS_TREAT_NO = {
+  packages: [
+    { id:'no-soft',    name:'Soft bérlet',    tier:'soft',    areas:['Hónalj','Bikini'],                          p1:47000,  p6:240000,  slug6:'noi-soft-berlet-arak',    slug1:'noi-soft-1alk-arak' },
+    { id:'no-comfort', name:'Comfort bérlet', tier:'comfort', areas:['Hónalj','Bikini','Lábszár','Comb'],          p1:115000, p6:570000,  slug6:'noi-comfort-berlet-arak', slug1:'noi-comfort-1alk-arak' },
+    { id:'no-premium', name:'Prémium bérlet', tier:'premium', areas:['Teljes kar','Teljes láb','Bikini','Hónalj'], p1:147000, p6:720000,  slug6:'noi-premium-berlet-arak', slug1:'noi-premium-1alk-arak' },
+  ],
+  singles: [
+    { id:'no-honalj',  name:'Hónalj',  p1:23000,  p6:115000, slug6:'noi-honalj-berlet-arak',  slug1:'noi-honalj-1alk-arak' },
+    { id:'no-bikini',  name:'Bikini',  p1:27000,  p6:140000, slug6:'noi-bikini-berlet-arak',  slug1:'noi-bikini-1alk-arak' },
+    { id:'no-intim',   name:'Intim',   p1:35000,  p6:180000, slug6:'noi-intim-berlet-arak',   slug1:'noi-intim-1alk-arak' },
+    { id:'no-bajusz',  name:'Bajusz',  p1:17000,  p6:84000,  slug6:'noi-bajusz-berlet-arak',  slug1:'noi-bajusz-1alk-arak' },
+    { id:'no-labszar', name:'Lábszár', p1:54000,  p6:270000, slug6:'noi-labszar-berlet-arak', slug1:'noi-labszar-1alk-arak' },
+    { id:'no-comb',    name:'Comb',    p1:54000,  p6:270000, slug6:'noi-comb-berlet-arak',    slug1:'noi-comb-1alk-arak' },
+    { id:'no-alkar',   name:'Alkar',   p1:28000,  p6:138000, slug6:'noi-alkar-berlet-arak',   slug1:'noi-alkar-1alk-arak' },
+    { id:'no-fenek',   name:'Fenék',   p1:54000,  p6:270000, slug6:'noi-fenek-berlet-arak',   slug1:'noi-fenek-1alk-arak' },
+  ]
+};
+
+var SS_TREAT_FERFI = {
+  packages: [
+    { id:'fi-soft',    name:'Soft bérlet',    tier:'soft',    areas:['Hát','Nyak','Vállak'],               p1:76000,  p6:390000,  slug6:'ferfi-soft-berlet-arak',    slug1:'ferfi-soft-1alk-arak' },
+    { id:'fi-comfort', name:'Comfort bérlet', tier:'comfort', areas:['Hát','Nyak + váll','Mellkas','Has'], p1:108000, p6:540000,  slug6:'ferfi-comfort-berlet-arak', slug1:'ferfi-comfort-1alk-arak' },
+    { id:'fi-premium', name:'Prémium bérlet', tier:'premium', areas:['Láb','Kar','Törzs','Hónalj'],       p1:210000, p6:1120000, slug6:'ferfi-premium-berlet-arak', slug1:'ferfi-premium-1alk-arak' },
+  ],
+  singles: [
+    { id:'fi-hat',     name:'Hát',        p1:61000,  p6:300000, slug6:'ferfi-hat-berlet-arak',     slug1:'ferfi-hat-1alk-arak' },
+    { id:'fi-nyak',    name:'Nyak, váll', p1:50000,  p6:250000, slug6:'ferfi-nyak-berlet-arak',    slug1:'ferfi-nyak-1alk-arak' },
+    { id:'fi-intim',   name:'Intim',      p1:47000,  p6:240000, slug6:'ferfi-intim-berlet-arak',   slug1:'ferfi-intim-1alk-arak' },
+    { id:'fi-mellkas', name:'Mellkas',    p1:47000,  p6:240000, slug6:'ferfi-mellkas-berlet-arak', slug1:'ferfi-mellkas-1alk-arak' },
+    { id:'fi-has',     name:'Has',        p1:45000,  p6:225000, slug6:'ferfi-has-berlet-arak',     slug1:'ferfi-has-1alk-arak' },
+    { id:'fi-honalj',  name:'Hónalj',     p1:29000,  p6:145000, slug6:'ferfi-honalj-berlet-arak',  slug1:'ferfi-honalj-1alk-arak' },
+    { id:'fi-fenek',   name:'Fenék',      p1:54000,  p6:270000, slug6:'ferfi-fenek-berlet-arak',   slug1:'ferfi-fenek-1alk-arak' },
+    { id:'fi-comb',    name:'Comb',       p1:54000,  p6:280000, slug6:'ferfi-comb-berlet-arak',    slug1:'ferfi-comb-1alk-arak' },
+  ]
 };
 
 // ══════════════════════════════════════════════════════════════════
@@ -1450,7 +1523,12 @@ function ssWizardStep2Valid() {
   var q3 = document.querySelector('[name="ss_borbetegseg"]:checked');
   return q1 && q2 && q3;
 }
-function ssWizardStep3Valid() { return true; }
+function ssWizardStep3Valid() {
+  var gender = document.querySelector('[name="ss_nem"]:checked');
+  if (!gender) return false;
+  var checked = document.querySelectorAll('[name="ss_kezelesek[]"]:checked');
+  return checked.length > 0;
+}
 
 // ══════════════════════════════════════════════════════════════════
 // RENDER FUNCTIONS
@@ -1540,6 +1618,182 @@ function ssUpdateHairResult(d) {
   if (desc)   desc.textContent = d.desc;
   if (proto)  proto.textContent = d.proto;
   if (result) result.style.display = 'flex';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TREATMENT PICKER — state + functions
+// ══════════════════════════════════════════════════════════════════
+
+var ssCurrentSess = 6;
+var ssPriceData = null;
+
+function ssGetSalePrice(treatment, sess) {
+  if (!ssPriceData) return null;
+  var slug = sess === 1 ? treatment.slug1 : treatment.slug6;
+  if (!slug) return null;
+  for (var i = 0; i < ssPriceData.length; i++) {
+    var item = ssPriceData[i];
+    if (item.slug === slug && item.is_on_sale && item.sale_price) {
+      return item.sale_price;
+    }
+  }
+  return null;
+}
+
+function ssRenderTreatments(data, containerId) {
+  var cont = document.getElementById(containerId);
+  if (!cont) return;
+  cont.innerHTML = '';
+
+  // Bérletek label
+  var pkgLabel = document.createElement('p');
+  pkgLabel.className = 'ss-treat-group-label';
+  pkgLabel.textContent = 'Bérletek';
+  cont.appendChild(pkgLabel);
+
+  // Package grid
+  var pkgGrid = document.createElement('div');
+  pkgGrid.className = 'ss-pkg-grid';
+
+  data.packages.forEach(function(d) {
+    var sess = ssCurrentSess;
+    var basePrice = sess === 1 ? d.p1 : d.p6;
+    var salePrice = ssGetSalePrice(d, sess);
+    var sessLabel = sess === 1 ? '1 alkalom' : '6 alkalom';
+
+    var priceHtml;
+    if (salePrice) {
+      priceHtml = '<span class="ss-old-price">' + ssFmt(basePrice) + ' Ft</span> '
+                + ssFmt(salePrice) + ' Ft '
+                + '<span class="ss-pkg-per">/ ' + sessLabel + '</span>';
+    } else {
+      priceHtml = ssFmt(basePrice) + ' Ft '
+                + '<span class="ss-pkg-per">/ ' + sessLabel + '</span>';
+    }
+
+    var areas = d.areas.map(function(a) { return '<li>' + a + '</li>'; }).join('');
+    var checkVal = d.name + ' — ' + sessLabel + ' (' + ssFmt(basePrice) + ' Ft)';
+
+    var wrap = document.createElement('div');
+    wrap.innerHTML = '<input type="checkbox" class="ss-pkg-check" id="pkg-' + d.id + '-' + sess + '" name="ss_kezelesek[]" value="' + checkVal + '" data-id="' + d.id + '" />'
+      + '<label class="ss-pkg-lbl" for="pkg-' + d.id + '-' + sess + '">'
+      + '<div class="ss-pkg-checkmark"></div>'
+      + '<span class="ss-pkg-tier ' + d.tier + '">' + d.tier.toUpperCase() + '</span>'
+      + '<span class="ss-pkg-name">' + d.name + '</span>'
+      + '<ul class="ss-pkg-areas">' + areas + '</ul>'
+      + '<span class="ss-pkg-price">' + priceHtml + '</span>'
+      + '</label>';
+
+    var chk = wrap.querySelector('.ss-pkg-check');
+    chk.addEventListener('change', function() { ssWizard.refreshNextButton(); });
+    pkgGrid.appendChild(wrap);
+  });
+  cont.appendChild(pkgGrid);
+
+  // Egyedi kezelések label
+  var sLabel = document.createElement('p');
+  sLabel.className = 'ss-treat-group-label';
+  sLabel.style.marginTop = '20px';
+  sLabel.textContent = 'Egyedi kezelések';
+  cont.appendChild(sLabel);
+
+  // Singles grid
+  var sGrid = document.createElement('div');
+  sGrid.className = 'ss-single-grid';
+
+  data.singles.forEach(function(d) {
+    var sess = ssCurrentSess;
+    var basePrice = sess === 1 ? d.p1 : d.p6;
+    var salePrice = ssGetSalePrice(d, sess);
+    var sessLabel = sess === 1 ? '1 alkalom' : '6 alkalom';
+    var checkVal = d.name + ' — ' + sessLabel + ' (' + ssFmt(basePrice) + ' Ft)';
+
+    var priceDisplay;
+    if (salePrice) {
+      priceDisplay = '<span style="text-decoration:line-through;color:#978A73;">' + ssFmt(basePrice) + '</span> ' + ssFmt(salePrice) + ' Ft';
+    } else {
+      priceDisplay = ssFmt(basePrice) + ' Ft';
+    }
+
+    var wrap = document.createElement('div');
+    wrap.innerHTML = '<input type="checkbox" class="ss-single-check" id="single-' + d.id + '-' + sess + '" name="ss_kezelesek[]" value="' + checkVal + '" data-id="' + d.id + '" />'
+      + '<label class="ss-single-lbl" for="single-' + d.id + '-' + sess + '">'
+      + '<span class="ss-single-name">' + d.name + '</span>'
+      + '<span class="ss-single-price">' + priceDisplay + '</span>'
+      + '</label>';
+
+    var chk = wrap.querySelector('.ss-single-check');
+    chk.addEventListener('change', function() { ssWizard.refreshNextButton(); });
+    sGrid.appendChild(wrap);
+  });
+  cont.appendChild(sGrid);
+}
+
+function ssApplySession(sess) {
+  ssCurrentSess = sess;
+  document.querySelectorAll('#ss-sess-6, #ss-sess-1').forEach(function(b) {
+    b.classList.remove('ss-active');
+  });
+  var btn = document.getElementById('ss-sess-' + sess);
+  if (btn) btn.classList.add('ss-active');
+
+  // Re-render both sections
+  ssRenderTreatments(SS_TREAT_NO, 'ss-treat-no');
+  ssRenderTreatments(SS_TREAT_FERFI, 'ss-treat-ferfi');
+
+  // Restore visibility based on selected gender
+  var gender = document.querySelector('[name="ss_nem"]:checked');
+  if (gender) {
+    var treatNo    = document.getElementById('ss-treat-no');
+    var treatFerfi = document.getElementById('ss-treat-ferfi');
+    if (treatNo)    treatNo.classList.toggle('ss-visible',    gender.value === 'Nő');
+    if (treatFerfi) treatFerfi.classList.toggle('ss-visible', gender.value === 'Férfi');
+  }
+}
+
+function ssFetchPrices() {
+  if (window.location.protocol === 'file:') return; // standalone mode — use hardcoded prices
+  var url = '/wp-json/skinspirit/v1/prices';
+  fetch(url)
+    .then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function(json) {
+      ssPriceData = Array.isArray(json) ? json : (json.data || null);
+      if (!ssPriceData) return;
+
+      // Overwrite p1/p6 where matching slugs found
+      var allTreatments = []
+        .concat(SS_TREAT_NO.packages)
+        .concat(SS_TREAT_NO.singles)
+        .concat(SS_TREAT_FERFI.packages)
+        .concat(SS_TREAT_FERFI.singles);
+
+      allTreatments.forEach(function(t) {
+        for (var i = 0; i < ssPriceData.length; i++) {
+          var item = ssPriceData[i];
+          if (item.slug === t.slug6 && item.price) { t.p6 = item.price; }
+          if (item.slug === t.slug1 && item.price) { t.p1 = item.price; }
+        }
+      });
+
+      // Re-render with updated prices
+      ssRenderTreatments(SS_TREAT_NO, 'ss-treat-no');
+      ssRenderTreatments(SS_TREAT_FERFI, 'ss-treat-ferfi');
+
+      // Restore visibility
+      var gender = document.querySelector('[name="ss_nem"]:checked');
+      if (gender) {
+        var treatNo    = document.getElementById('ss-treat-no');
+        var treatFerfi = document.getElementById('ss-treat-ferfi');
+        if (treatNo)    treatNo.classList.toggle('ss-visible',    gender.value === 'Nő');
+        if (treatFerfi) treatFerfi.classList.toggle('ss-visible', gender.value === 'Férfi');
+      }
+    })
+    .catch(function() {
+      // Silently fall back to hardcoded prices — already rendered
+    });
 }
 
 // ── COMPATIBILITY UPDATE ──
@@ -1643,6 +1897,33 @@ function ssUpdateCompat() {
       });
     });
   });
+
+  // ── STEP 4 (data-step 3) — Treatment Picker ──
+
+  // Session toggle buttons
+  var sess6btn = document.getElementById('ss-sess-6');
+  var sess1btn = document.getElementById('ss-sess-1');
+  if (sess6btn) sess6btn.addEventListener('click', function() { ssApplySession(6); });
+  if (sess1btn) sess1btn.addEventListener('click', function() { ssApplySession(1); });
+
+  // Gender radio listeners
+  document.querySelectorAll('[name="ss_nem"]').forEach(function(el) {
+    el.addEventListener('change', function() {
+      var v = el.value;
+      var treatNo    = document.getElementById('ss-treat-no');
+      var treatFerfi = document.getElementById('ss-treat-ferfi');
+      var sessWrap   = document.getElementById('ss-sess-wrap');
+      if (treatNo)    treatNo.classList.toggle('ss-visible',    v === 'Nő');
+      if (treatFerfi) treatFerfi.classList.toggle('ss-visible', v === 'Férfi');
+      if (sessWrap)   sessWrap.style.display = 'block';
+      ssWizard.refreshNextButton();
+    });
+  });
+
+  // Init treatment data and fetch live prices
+  ssRenderTreatments(SS_TREAT_NO, 'ss-treat-no');
+  ssRenderTreatments(SS_TREAT_FERFI, 'ss-treat-ferfi');
+  ssFetchPrices();
 })();
 </script>
 
