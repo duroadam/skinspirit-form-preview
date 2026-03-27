@@ -1224,9 +1224,36 @@
       </div>
     </div>
 
-    <!-- ── STEP 2: (placeholder) ── -->
+    <!-- ── STEP 2: Eligibility Questions ── -->
     <div class="ss-step" data-step="2" id="step-2">
-      <!-- Content will be added in later task -->
+      <div class="ss-card">
+        <p class="ss-card-label">Néhány kérdés</p>
+        <div class="ss-field-group">
+          <label class="ss-field-label">Mivel szőrtelenítesz jelenleg? *</label>
+          <div class="ss-radio-group">
+            <input type="radio" class="ss-radio-pill" id="ss-sz-b" name="ss_szortelenites" value="Borotva" /><label for="ss-sz-b">Borotva</label>
+            <input type="radio" class="ss-radio-pill" id="ss-sz-e" name="ss_szortelenites" value="Epilátor" /><label for="ss-sz-e">Epilátor</label>
+            <input type="radio" class="ss-radio-pill" id="ss-sz-g" name="ss_szortelenites" value="Gyanta" /><label for="ss-sz-g">Gyanta</label>
+            <input type="radio" class="ss-radio-pill" id="ss-sz-c" name="ss_szortelenites" value="Csipesz" /><label for="ss-sz-c">Csipesz</label>
+            <input type="radio" class="ss-radio-pill" id="ss-sz-k" name="ss_szortelenites" value="Krém" /><label for="ss-sz-k">Krém</label>
+          </div>
+        </div>
+        <hr class="ss-divider" />
+        <div class="ss-field-group">
+          <label class="ss-field-label">Szedsz fényérzékeny gyógyszert? *</label>
+          <div class="ss-radio-group">
+            <input type="radio" class="ss-radio-pill" id="ss-fe-i" name="ss_fenyerzekeny" value="Igen" /><label for="ss-fe-i">Igen</label>
+            <input type="radio" class="ss-radio-pill" id="ss-fe-n" name="ss_fenyerzekeny" value="Nem szedek" /><label for="ss-fe-n">Nem szedek</label>
+          </div>
+        </div>
+        <div class="ss-field-group">
+          <label class="ss-field-label">Van-e aktív bőrbetegséged? <small>(kivéve szőrtüszőgyulladás)</small> *</label>
+          <div class="ss-radio-group">
+            <input type="radio" class="ss-radio-pill" id="ss-bb-i" name="ss_borbetegseg" value="Igen" /><label for="ss-bb-i">Igen</label>
+            <input type="radio" class="ss-radio-pill" id="ss-bb-n" name="ss_borbetegseg" value="Nem" /><label for="ss-bb-n">Nem</label>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ── STEP 3: (placeholder) ── -->
@@ -1417,7 +1444,12 @@ function ssWizardStep1Valid() {
     phone.value.trim() !== ''
   );
 }
-function ssWizardStep2Valid() { return true; }
+function ssWizardStep2Valid() {
+  var q1 = document.querySelector('[name="ss_szortelenites"]:checked');
+  var q2 = document.querySelector('[name="ss_fenyerzekeny"]:checked');
+  var q3 = document.querySelector('[name="ss_borbetegseg"]:checked');
+  return q1 && q2 && q3;
+}
 function ssWizardStep3Valid() { return true; }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1595,6 +1627,20 @@ function ssUpdateCompat() {
   ['ss-lastname', 'ss-firstname', 'ss-email', 'ss-phone'].forEach(function(id) {
     document.getElementById(id).addEventListener('input', function() {
       ssWizard.refreshNextButton();
+    });
+  });
+
+  // ── STEP 3 (data-step 2) VALIDATION + ELIGIBILITY LISTENERS ──
+  ['ss_szortelenites', 'ss_fenyerzekeny', 'ss_borbetegseg'].forEach(function(name) {
+    document.querySelectorAll('[name="' + name + '"]').forEach(function(el) {
+      el.addEventListener('change', function() {
+        var med  = document.querySelector('[name="ss_fenyerzekeny"]:checked');
+        var skin = document.querySelector('[name="ss_borbetegseg"]:checked');
+        if (med && med.value === 'Igen') ssWizard.isEligible = false;
+        else if (skin && skin.value === 'Igen') ssWizard.isEligible = false;
+        else if (ssWizard.compatCode !== 'X') ssWizard.isEligible = true;
+        ssWizard.refreshNextButton();
+      });
     });
   });
 })();
