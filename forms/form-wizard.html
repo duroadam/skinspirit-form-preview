@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SkinSpirit — Konzultációs kérdőív</title>
+  <title>SkinSpirit - Konzultációs kérdőív</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Playfair+Display:wght@500;800&display=swap" rel="stylesheet" />
   <style>
@@ -1178,7 +1178,7 @@
 <body>
 
 <!-- ════════════════════════════════════════════════
-     SS FORM ROOT — all wizard content lives here
+     SS FORM ROOT - all wizard content lives here
 ════════════════════════════════════════════════ -->
 <div id="ss-form-root">
 <div class="ss-page-wrap">
@@ -1202,7 +1202,7 @@
     <div class="ss-progress-line"><div class="ss-progress-fill" id="ss-fill-3"></div></div>
     <div class="ss-progress-dot" data-dot="4">5</div>
   </div>
-  <div class="ss-progress-label" id="ss-progress-label">1 / 5 — Bőrtípus</div>
+  <div class="ss-progress-label" id="ss-progress-label">1 / 5 - Bőrtípus</div>
 
   <!-- FORM -->
   <form id="ss-wizard-form" autocomplete="on" onsubmit="return false;">
@@ -1350,7 +1350,7 @@
           <!-- Calendar mode -->
           <div id="ss-calendar-mode">
             <p class="ss-section-title">Preferált nap</p>
-            <p class="ss-section-sub">Hétfőn és szerdán vagyunk nyitva — válassz egy preferált napot</p>
+            <p class="ss-section-sub">Hétfőn és szerdán vagyunk nyitva - válassz egy preferált napot</p>
             <div class="ss-cal-grid" id="ss-cal-grid"></div>
           </div>
 
@@ -1370,7 +1370,7 @@
         <!-- TELEFONOS KONZULTÁCIÓ panel -->
         <div id="ss-konsult-panel" style="display:none;">
           <p class="ss-section-title">Telefonos konzultáció</p>
-          <p class="ss-section-sub">Személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a lehetőségeket.</p>
+          <p class="ss-section-sub">Személyre szabott kezelési tervet állítunk össze - konzultáción pontosítjuk a lehetőségeket.</p>
           <p class="ss-section-title" style="margin-top:14px;">Mikor hívhatunk?</p>
           <p class="ss-section-sub">Több is választható</p>
           <div class="ss-slot-grid">
@@ -1426,7 +1426,7 @@
 
   </form>
 
-  <!-- GLOBAL NAV — lives outside all step containers -->
+  <!-- GLOBAL NAV - lives outside all step containers -->
   <div class="ss-nav">
     <button type="button" class="ss-nav-back" id="ss-btn-back" style="display:none;" onclick="ssWizard.prevStep()">&#8592; Vissza</button>
     <button type="button" class="ss-nav-next" id="ss-btn-next" disabled onclick="ssWizard.nextStep()">Következő &rarr;</button>
@@ -1456,40 +1456,40 @@ function ssFmt(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0
 
 // FITZPATRICK DATA
 var SS_FITZ = [
-  { val:1, swatch:'#F9EAE0', main:'Mindig leég',       sub:'Sosem barnul',          type:'Fitzpatrick I.',   desc:'Nagyon világos, szőke vagy vörös haj',  proto:'Világos bőrödre speciálisan kalibrált, alacsonyabb energiájú protokollt alkalmazunk — biztonságos és hatékony kezelés.' },
-  { val:2, swatch:'#F0C8A8', main:'Általában leég',    sub:'Néha barnul',            type:'Fitzpatrick II.',  desc:'Világos bőr, barnás vagy szőke haj',    proto:'Világos bőrtónusodhoz finomhangolt beállításokkal dolgozunk — a legjobb eredményt megbízható protokollal érjük el.' },
-  { val:3, swatch:'#D4956A', main:'Néha leég',         sub:'Fokozatosan barnul',     type:'Fitzpatrick III.', desc:'Közép bőrszín, barna haj',              proto:'Ideális bőrtípus lézer szőrtelenítéshez — optimalizált protokollal kiváló eredmény érhető el.' },
-  { val:4, swatch:'#A8693E', main:'Ritkán leég',       sub:'Könnyen megbarnul',      type:'Fitzpatrick IV.',  desc:'Olíva vagy közepes barna bőr',          proto:'Gazdag melanintartalmú bőröd kiválóan reagál a lézer kezelésre — professzionális protokollal hosszú tartós eredmény.' },
-  { val:5, swatch:'#7B4228', main:'Szinte sosem ég le',sub:'Mindig megbarnul',       type:'Fitzpatrick V.',   desc:'Sötétbarna bőr',                        proto:'Sötétebb bőrtónusodhoz egyedi energiabeállítással dolgozunk — a biztonság és a hatékonyság egyaránt garantált.' },
-  { val:6, swatch:'#3E1F0F', main:'Sosem ég le',       sub:'Mélybarna vagy fekete bőr', type:'Fitzpatrick VI.', desc:'Nagyon sötét, mélybarna bőr',        proto:'Mélybarna bőrödre specializált protokollt alkalmazunk — maximális biztonság és látható, tartós eredmény.' },
+  { val:1, swatch:'#F9EAE0', main:'Mindig leég',       sub:'Sosem barnul',          type:'Fitzpatrick I.',   desc:'Nagyon világos, szőke vagy vörös haj',  proto:'Világos bőrödre speciálisan kalibrált, alacsonyabb energiájú protokollt alkalmazunk - biztonságos és hatékony kezelés.' },
+  { val:2, swatch:'#F0C8A8', main:'Általában leég',    sub:'Néha barnul',            type:'Fitzpatrick II.',  desc:'Világos bőr, barnás vagy szőke haj',    proto:'Világos bőrtónusodhoz finomhangolt beállításokkal dolgozunk - a legjobb eredményt megbízható protokollal érjük el.' },
+  { val:3, swatch:'#D4956A', main:'Néha leég',         sub:'Fokozatosan barnul',     type:'Fitzpatrick III.', desc:'Közép bőrszín, barna haj',              proto:'Ideális bőrtípus lézer szőrtelenítéshez - optimalizált protokollal kiváló eredmény érhető el.' },
+  { val:4, swatch:'#A8693E', main:'Ritkán leég',       sub:'Könnyen megbarnul',      type:'Fitzpatrick IV.',  desc:'Olíva vagy közepes barna bőr',          proto:'Gazdag melanintartalmú bőröd kiválóan reagál a lézer kezelésre - professzionális protokollal hosszú tartós eredmény.' },
+  { val:5, swatch:'#7B4228', main:'Szinte sosem ég le',sub:'Mindig megbarnul',       type:'Fitzpatrick V.',   desc:'Sötétbarna bőr',                        proto:'Sötétebb bőrtónusodhoz egyedi energiabeállítással dolgozunk - a biztonság és a hatékonyság egyaránt garantált.' },
+  { val:6, swatch:'#3E1F0F', main:'Sosem ég le',       sub:'Mélybarna vagy fekete bőr', type:'Fitzpatrick VI.', desc:'Nagyon sötét, mélybarna bőr',        proto:'Mélybarna bőrödre specializált protokollt alkalmazunk - maximális biztonság és látható, tartós eredmény.' },
 ];
 
 // HAIR DATA
 var SS_HAIR = [
-  { val:1, swatch:'#ECEAE6', main:'Fehér / Ősz',  sub:'Fehér vagy ősz szőrzet',      type:'Fehér / Ősz szőrzet',  desc:'Fehér vagy ősz szőr',               proto:'Sajnos fehér és ősz szőrzet esetén a lézer szőrtelenítés nem elvégezhető — nincs elegendő melanintartalom a szőrzetben.' },
-  { val:2, swatch:'#C9A96E', main:'Szőke',        sub:'Szőke vagy aranyszőke',        type:'Szőke szőrzet',        desc:'Szőke vagy aranyszőke szőr',        proto:'Szőke szőrzetnél személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a várható eredményt.' },
-  { val:3, swatch:'#B5564D', main:'Vörös',        sub:'Vörös vagy rézvörös',          type:'Vörös szőrzet',        desc:'Vörös vagy rézvörös szőr',          proto:'Vörös szőrzetnél személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a várható eredményt.' },
-  { val:4, swatch:'#8B5E3C', main:'Barna',        sub:'Gesztenye vagy barna',         type:'Barna szőrzet',        desc:'Gesztenye vagy középbarna szőr',    proto:'Barna szőrzet esetén jó hatékonysággal végezhetjük a lézer szőrtelenítést — megfelelő melanintartalom, szép és tartós eredmény.' },
-  { val:5, swatch:'#3D1F0E', main:'Sötétbarna',   sub:'Mélybarna szőrzet',            type:'Sötétbarna szőrzet',   desc:'Mélybarna szőr',                    proto:'Sötétbarna szőrzet — kiváló jelölt vagy lézer szőrtelenítésre! Erős melanintartalom, nagyon hatékony kezelés és tartós eredmény.' },
-  { val:6, swatch:'#100808', main:'Fekete',       sub:'Fekete szőrzet',               type:'Fekete szőrzet',       desc:'Fekete szőr',                       proto:'Fekete szőrzet — a legjobb jelölt lézer szőrtelenítésre! Maximum melanintartalom, legjobb hatékonyság, leglátványosabb eredmény.' },
+  { val:1, swatch:'#ECEAE6', main:'Fehér / Ősz',  sub:'Fehér vagy ősz szőrzet',      type:'Fehér / Ősz szőrzet',  desc:'Fehér vagy ősz szőr',               proto:'Sajnos fehér és ősz szőrzet esetén a lézer szőrtelenítés nem elvégezhető - nincs elegendő melanintartalom a szőrzetben.' },
+  { val:2, swatch:'#C9A96E', main:'Szőke',        sub:'Szőke vagy aranyszőke',        type:'Szőke szőrzet',        desc:'Szőke vagy aranyszőke szőr',        proto:'Szőke szőrzetnél személyre szabott kezelési tervet állítunk össze - konzultáción pontosítjuk a várható eredményt.' },
+  { val:3, swatch:'#B5564D', main:'Vörös',        sub:'Vörös vagy rézvörös',          type:'Vörös szőrzet',        desc:'Vörös vagy rézvörös szőr',          proto:'Vörös szőrzetnél személyre szabott kezelési tervet állítunk össze - konzultáción pontosítjuk a várható eredményt.' },
+  { val:4, swatch:'#8B5E3C', main:'Barna',        sub:'Gesztenye vagy barna',         type:'Barna szőrzet',        desc:'Gesztenye vagy középbarna szőr',    proto:'Barna szőrzet esetén jó hatékonysággal végezhetjük a lézer szőrtelenítést - megfelelő melanintartalom, szép és tartós eredmény.' },
+  { val:5, swatch:'#3D1F0E', main:'Sötétbarna',   sub:'Mélybarna szőrzet',            type:'Sötétbarna szőrzet',   desc:'Mélybarna szőr',                    proto:'Sötétbarna szőrzet - kiváló jelölt vagy lézer szőrtelenítésre! Erős melanintartalom, nagyon hatékony kezelés és tartós eredmény.' },
+  { val:6, swatch:'#100808', main:'Fekete',       sub:'Fekete szőrzet',               type:'Fekete szőrzet',       desc:'Fekete szőr',                       proto:'Fekete szőrzet - a legjobb jelölt lézer szőrtelenítésre! Maximum melanintartalom, legjobb hatékonyság, leglátványosabb eredmény.' },
 ];
 
 // COMPATIBILITY MATRIX [hair-1][fitz-1]
 var SS_COMPAT_MATRIX = [
-  ['X','X','X','X','X','X'],        // hair 1 — Fehér/Ősz
-  ['X','X','X','X','X','X'],        // hair 2 — Szőke (nem kezelhető)
-  ['C','C','C','S','S','S'],        // hair 3 — Vörös (konzultáció / speciális)
-  ['OK','OK','OK','OK','OK','OK'],  // hair 4 — Barna
-  ['OK','OK','OK','OK','OK','OK'],  // hair 5 — Sötétbarna
-  ['OK','OK','OK','OK','OK','OK'],  // hair 6 — Fekete
+  ['X','X','X','X','X','X'],        // hair 1 - Fehér/Ősz
+  ['X','X','X','X','X','X'],        // hair 2 - Szőke (nem kezelhető)
+  ['C','C','C','S','S','S'],        // hair 3 - Vörös (konzultáció / speciális)
+  ['OK','OK','OK','OK','OK','OK'],  // hair 4 - Barna
+  ['OK','OK','OK','OK','OK','OK'],  // hair 5 - Sötétbarna
+  ['OK','OK','OK','OK','OK','OK'],  // hair 6 - Fekete
 ];
 
 var SS_COMPAT_TEXT = {
-  OK_gen:  'Ideális kombináció — a kezelés elvégezhető, szép és tartós eredmény várható.',
+  OK_gen:  'Ideális kombináció - a kezelés elvégezhető, szép és tartós eredmény várható.',
   OK_dark: 'Kezelés elvégezhető. Sötétebb bőrtípushoz egyedi energiabeállítással dolgozunk.',
-  C_3:     'Vörös szőrzetnél a hatékonyság egyéni felmérést igényel — konzultáción pontosítjuk a lehetőségeket.',
-  C_4f6:   'Barna szőr + mélybarna bőr kombinációhoz speciális beállítás szükséges — egyéni konzultáció ajánlott.',
-  S:       'Szőke szőrzet + sötétebb bőrtónus esetén speciális protokoll szükséges — egyéni felmérés alapján dolgozunk.',
+  C_3:     'Vörös szőrzetnél a hatékonyság egyéni felmérést igényel - konzultáción pontosítjuk a lehetőségeket.',
+  C_4f6:   'Barna szőr + mélybarna bőr kombinációhoz speciális beállítás szükséges - egyéni konzultáció ajánlott.',
+  S:       'Szőke szőrzet + sötétebb bőrtónus esetén speciális protokoll szükséges - egyéni felmérés alapján dolgozunk.',
 };
 
 // ══════════════════════════════════════════════════════════════════
@@ -1678,7 +1678,7 @@ var ssWizard = {
         return (this.selFitz !== null && this.selHair !== null && this.hairRoute !== 'stop');
       case 1: return ssWizardStep1Valid ? ssWizardStep1Valid() : true;
       case 2: return ssWizardStep2Valid ? ssWizardStep2Valid() : true;
-      case 3: return true; // Appointment/consult step — no mandatory fields
+      case 3: return true; // Appointment/consult step - no mandatory fields
       default: return true;
     }
   },
@@ -1816,7 +1816,7 @@ function ssUpdateHairRoute() {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// TREATMENT PICKER — state + functions
+// TREATMENT PICKER - state + functions
 // ══════════════════════════════════════════════════════════════════
 
 var ssCurrentSess = 6;
@@ -1947,7 +1947,7 @@ function ssApplySession(sess) {
 }
 
 function ssFetchPrices() {
-  if (window.location.protocol === 'file:') return; // standalone mode — use hardcoded prices
+  if (window.location.protocol === 'file:') return; // standalone mode - use hardcoded prices
   var url = '/wp-json/skinspirit/v1/prices';
   fetch(url)
     .then(function(res) {
@@ -1986,7 +1986,7 @@ function ssFetchPrices() {
       }
     })
     .catch(function() {
-      // Silently fall back to hardcoded prices — already rendered
+      // Silently fall back to hardcoded prices - already rendered
     });
 }
 
@@ -2025,18 +2025,18 @@ function ssUpdateCompat() {
   } else if (code === 'X') {
     // Differentiate between white/grey (stop) and blonde (consult)
     if (ssWizard.selHair === 1) {
-      // White/grey — STOP
+      // White/grey - STOP
       box.classList.add('notok');
       if (icon)   icon.textContent = '\u2717';
       if (status) status.textContent = 'Nem alkalmas';
       if (detail) detail.textContent = 'Sajnos fehér és ősz szőrzet esetén a lézer szőrtelenítés nem elvégezhető.';
       ssWizard.isEligible = false;
     } else {
-      // Blonde (val=2) — consult route
+      // Blonde (val=2) - consult route
       box.classList.add('consult');
       if (icon)   icon.textContent = '~';
       if (status) status.textContent = 'Egyéni konzultáció ajánlott';
-      if (detail) detail.textContent = 'Szőke szőrzetnél személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a lehetőségeket.';
+      if (detail) detail.textContent = 'Szőke szőrzetnél személyre szabott kezelési tervet állítunk össze - konzultáción pontosítjuk a lehetőségeket.';
       ssWizard.isEligible = true;
     }
 
@@ -2057,15 +2057,15 @@ function ssUpdateCompat() {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// STEP 3 — CALENDAR, SLOT PICKER
+// STEP 3 - CALENDAR, SLOT PICKER
 // ══════════════════════════════════════════════════════════════════
 
 // ── Calendar state + constants ──
 var ssCal = { year: null, month: null, selDate: null };
 var SS_HU_MONTHS = ['Január','Február','Március','Április','Május','Június','Július','Augusztus','Szeptember','Október','November','December'];
 var SS_HU_DAYS   = ['H','K','Sze','Cs','P','Szo','V'];
-var ssApptMode   = 'naptar';   // 'naptar' | 'idosav' — sub-mode within Időpontot foglalnék
-var ssIntentMode = 'idopont';  // 'idopont' | 'konzultacio' — top-level intent
+var ssApptMode   = 'naptar';   // 'naptar' | 'idosav' - sub-mode within Időpontot foglalnék
+var ssIntentMode = 'idopont';  // 'idopont' | 'konzultacio' - top-level intent
 
 // ── Appointment mode toggle ──
 function ssInitApptToggle() {
@@ -2235,7 +2235,7 @@ function ssRenderCal() {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// STEP 4 — SUMMARY + SUBMIT
+// STEP 4 - SUMMARY + SUBMIT
 // ══════════════════════════════════════════════════════════════════
 
 // ── Summary builder ──
@@ -2299,7 +2299,7 @@ function ssBuildSummary() {
     }
   }
 
-  // Név, Email, Telefon — no edit link (they're on the current step)
+  // Név, Email, Telefon - no edit link (they're on the current step)
   var ln = (document.getElementById('ss-lastname')  || {}).value || '';
   var fn = (document.getElementById('ss-firstname') || {}).value || '';
   html += row('Név', (ln + ' ' + fn).trim() || '\u2014');
@@ -2356,10 +2356,10 @@ function ssInitSubmit() {
       bekuldes_datum:        new Date().toLocaleString('hu-HU'),
     };
 
-    // File protocol — preview mode
+    // File protocol - preview mode
     if (window.location.protocol === 'file:') {
       console.log('WEBHOOK PAYLOAD:', JSON.stringify(payload, null, 2));
-      alert('Preview mód — payload a konzolban látható.\n\nÉles beküldés csak beágyazott verzióban működik.');
+      alert('Preview mód - payload a konzolban látható.\n\nÉles beküldés csak beágyazott verzióban működik.');
       btn.disabled = false;
       btn.textContent = 'Konzultációt kérek \u2192';
       return;
@@ -2420,7 +2420,7 @@ function ssInitSubmit() {
     });
   });
 
-  // ── STEP 2 (Kezelés) — Treatment Picker ──
+  // ── STEP 2 (Kezelés) - Treatment Picker ──
 
   // Session toggle buttons
   var sess6btn = document.getElementById('ss-sess-6');
@@ -2447,7 +2447,7 @@ function ssInitSubmit() {
   ssRenderTreatments(SS_TREAT_FERFI, 'ss-treat-ferfi');
   ssFetchPrices();
 
-  // ── STEP 4 (Adatok) — Personal details input listeners for live summary ──
+  // ── STEP 4 (Adatok) - Personal details input listeners for live summary ──
   ['ss-lastname', 'ss-firstname', 'ss-email', 'ss-phone'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el) {
@@ -2457,7 +2457,7 @@ function ssInitSubmit() {
     }
   });
 
-  // ── goToStep override — step 4 triggers summary build, step 3 triggers calendar ──
+  // ── goToStep override - step 4 triggers summary build, step 3 triggers calendar ──
   var _origGoToStep = ssWizard.goToStep.bind(ssWizard);
   ssWizard.goToStep = function(step) {
     _origGoToStep(step);
@@ -2524,7 +2524,7 @@ function ssInitSubmit() {
     if (e.target === backdrop) closeModal();
   });
 
-  // ESC key — only close if modal is open
+  // ESC key - only close if modal is open
   document.addEventListener('keydown', function(e) {
     if ((e.key === 'Escape' || e.key === 'Esc') &&
         backdrop.classList.contains('ss-modal-open')) {
