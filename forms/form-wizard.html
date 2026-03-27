@@ -1325,12 +1325,21 @@
     <!-- ── STEP 3: Appointment / Consultation ── -->
     <div class="ss-step" data-step="3" id="step-3">
 
-      <!-- Full route: Calendar/Slot appointment picker -->
-      <div id="ss-appt-full">
-        <div class="ss-card">
-          <p class="ss-card-label">Időpont-preferencia</p>
-          <p class="ss-section-sub">Visszaigazolást küldünk telefonon vagy emailben</p>
+      <div class="ss-card">
+        <p class="ss-card-label">Foglalás</p>
+        <p class="ss-section-sub">Visszaigazolást küldünk telefonon vagy emailben</p>
 
+        <!-- Top-level toggle: Időpont vs Telefonos -->
+        <div style="margin-bottom:18px;">
+          <div class="ss-session-toggle">
+            <button type="button" class="ss-sess-btn ss-active" id="ss-intent-appt">Időpontot foglalnék</button>
+            <button type="button" class="ss-sess-btn" id="ss-intent-konsult">Telefonos konzultációt kérek</button>
+          </div>
+        </div>
+
+        <!-- IDŐPONT FOGLALÁS panel -->
+        <div id="ss-appt-panel">
+          <!-- Sub-toggle: konkrét nap vs időszáv -->
           <div style="margin-bottom:14px;">
             <div class="ss-session-toggle">
               <button type="button" class="ss-sess-btn ss-active" id="ss-appt-cal">Válassz konkrét napot</button>
@@ -1340,13 +1349,9 @@
 
           <!-- Calendar mode -->
           <div id="ss-calendar-mode">
-            <p class="ss-section-title">Preferált időpont</p>
-            <p class="ss-section-sub">Válassz egy preferált napot</p>
+            <p class="ss-section-title">Preferált nap</p>
+            <p class="ss-section-sub">Hétfőn és szerdán vagyunk nyitva — válassz egy preferált napot</p>
             <div class="ss-cal-grid" id="ss-cal-grid"></div>
-            <div id="ss-time-slots" style="display:none;">
-              <p class="ss-section-title" style="margin-top:16px;">Szabad időpontok <span id="ss-sel-date"></span></p>
-              <div class="ss-time-grid" id="ss-time-grid"></div>
-            </div>
           </div>
 
           <!-- Slot mode -->
@@ -1354,27 +1359,25 @@
             <p class="ss-section-title">Mikor tudsz jönni?</p>
             <p class="ss-section-sub">Több is választható</p>
             <div class="ss-slot-grid">
-              <input type="checkbox" class="ss-slot-check" id="ss-sl-hde"  name="ss_idosav[]" value="Hétköznap délelőtt (9-12)" /><label for="ss-sl-hde">Hétköznap délelőtt (9-12)</label>
-              <input type="checkbox" class="ss-slot-check" id="ss-sl-hdu"  name="ss_idosav[]" value="Hétköznap délután (12-17)" /><label for="ss-sl-hdu">Hétköznap délután (12-17)</label>
-              <input type="checkbox" class="ss-slot-check" id="ss-sl-hes"  name="ss_idosav[]" value="Hétköznap este (17-20)" /><label for="ss-sl-hes">Hétköznap este (17-20)</label>
-              <input type="checkbox" class="ss-slot-check" id="ss-sl-hev"  name="ss_idosav[]" value="Hétvége" /><label for="ss-sl-hev">Hétvége</label>
+              <input type="checkbox" class="ss-slot-check" id="ss-sl-hde" name="ss_idosav[]" value="Hétköznap délelőtt (9-12)" /><label for="ss-sl-hde">Hétköznap délelőtt (9-12)</label>
+              <input type="checkbox" class="ss-slot-check" id="ss-sl-hdu" name="ss_idosav[]" value="Hétköznap délután (12-17)" /><label for="ss-sl-hdu">Hétköznap délután (12-17)</label>
+              <input type="checkbox" class="ss-slot-check" id="ss-sl-hes" name="ss_idosav[]" value="Hétköznap este (17-20)" /><label for="ss-sl-hes">Hétköznap este (17-20)</label>
+              <input type="checkbox" class="ss-slot-check" id="ss-sl-hev" name="ss_idosav[]" value="Hétvége" /><label for="ss-sl-hev">Hétvége</label>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Consult route: Phone consultation -->
-      <div id="ss-appt-consult" style="display:none;">
-        <div class="ss-card">
-          <p class="ss-card-label">Telefonos konzultáció</p>
+        <!-- TELEFONOS KONZULTÁCIÓ panel -->
+        <div id="ss-konsult-panel" style="display:none;">
+          <p class="ss-section-title">Telefonos konzultáció</p>
           <p class="ss-section-sub">Személyre szabott kezelési tervet állítunk össze — konzultáción pontosítjuk a lehetőségeket.</p>
-          <p class="ss-section-title">Mikor hívhatunk?</p>
+          <p class="ss-section-title" style="margin-top:14px;">Mikor hívhatunk?</p>
           <p class="ss-section-sub">Több is választható</p>
           <div class="ss-slot-grid">
-            <input type="checkbox" class="ss-slot-check" id="ss-cl-hde"  name="ss_konzult_ido[]" value="Hétköznap délelőtt (9-12)" /><label for="ss-cl-hde">Hétköznap délelőtt (9-12)</label>
-            <input type="checkbox" class="ss-slot-check" id="ss-cl-hdu"  name="ss_konzult_ido[]" value="Hétköznap délután (12-17)" /><label for="ss-cl-hdu">Hétköznap délután (12-17)</label>
-            <input type="checkbox" class="ss-slot-check" id="ss-cl-hes"  name="ss_konzult_ido[]" value="Hétköznap este (17-20)" /><label for="ss-cl-hes">Hétköznap este (17-20)</label>
-            <input type="checkbox" class="ss-slot-check" id="ss-cl-hev"  name="ss_konzult_ido[]" value="Hétvége" /><label for="ss-cl-hev">Hétvége</label>
+            <input type="checkbox" class="ss-slot-check" id="ss-cl-hde" name="ss_konzult_ido[]" value="Hétköznap délelőtt (9-12)" /><label for="ss-cl-hde">Hétköznap délelőtt (9-12)</label>
+            <input type="checkbox" class="ss-slot-check" id="ss-cl-hdu" name="ss_konzult_ido[]" value="Hétköznap délután (12-17)" /><label for="ss-cl-hdu">Hétköznap délután (12-17)</label>
+            <input type="checkbox" class="ss-slot-check" id="ss-cl-hes" name="ss_konzult_ido[]" value="Hétköznap este (17-20)" /><label for="ss-cl-hes">Hétköznap este (17-20)</label>
+            <input type="checkbox" class="ss-slot-check" id="ss-cl-hev" name="ss_konzult_ido[]" value="Hétvége" /><label for="ss-cl-hev">Hétvége</label>
           </div>
         </div>
       </div>
@@ -1390,20 +1393,20 @@
         <div class="ss-name-row">
           <div class="ss-field-group">
             <label class="ss-field-label" for="ss-lastname">Vezetéknév *</label>
-            <input type="text" id="ss-lastname" class="ss-field-input" placeholder="Kovács" autocomplete="family-name" />
+            <input type="text" id="ss-lastname" class="ss-field-input" placeholder="Kovács" autocomplete="family-name" name="family-name" />
           </div>
           <div class="ss-field-group">
             <label class="ss-field-label" for="ss-firstname">Keresztnév *</label>
-            <input type="text" id="ss-firstname" class="ss-field-input" placeholder="Anna" autocomplete="given-name" />
+            <input type="text" id="ss-firstname" class="ss-field-input" placeholder="Anna" autocomplete="given-name" name="given-name" />
           </div>
         </div>
         <div class="ss-field-group">
           <label class="ss-field-label" for="ss-email">Email cím *</label>
-          <input type="email" id="ss-email" class="ss-field-input" placeholder="kovacs.anna@email.hu" autocomplete="email" />
+          <input type="email" id="ss-email" class="ss-field-input" placeholder="kovacs.anna@email.hu" autocomplete="email" name="email" />
         </div>
         <div class="ss-field-group">
           <label class="ss-field-label" for="ss-phone">Telefonszám *</label>
-          <input type="tel" id="ss-phone" class="ss-field-input" placeholder="+36 30 123 4567" autocomplete="tel" />
+          <input type="tel" id="ss-phone" class="ss-field-input" placeholder="+36 30 123 4567" autocomplete="tel" name="tel" />
         </div>
       </div>
 
@@ -1810,23 +1813,6 @@ function ssUpdateHairRoute() {
     ssWizard.hairRoute = null;
     if (stopMsg) stopMsg.style.display = 'none';
   }
-
-  // Update step 3 visibility based on route
-  ssUpdateStep3Mode();
-}
-
-// ── Update Step 3 to show correct mode ──
-function ssUpdateStep3Mode() {
-  var fullEl = document.getElementById('ss-appt-full');
-  var consultEl = document.getElementById('ss-appt-consult');
-
-  if (ssWizard.hairRoute === 'consult') {
-    if (fullEl) fullEl.style.display = 'none';
-    if (consultEl) consultEl.style.display = '';
-  } else {
-    if (fullEl) fullEl.style.display = '';
-    if (consultEl) consultEl.style.display = 'none';
-  }
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -2075,36 +2061,71 @@ function ssUpdateCompat() {
 // ══════════════════════════════════════════════════════════════════
 
 // ── Calendar state + constants ──
-var ssCal = { year: null, month: null, selDate: null, selTime: null };
+var ssCal = { year: null, month: null, selDate: null };
 var SS_HU_MONTHS = ['Január','Február','Március','Április','Május','Június','Július','Augusztus','Szeptember','Október','November','December'];
 var SS_HU_DAYS   = ['H','K','Sze','Cs','P','Szo','V'];
-var ssApptMode   = 'naptar';
+var ssApptMode   = 'naptar';   // 'naptar' | 'idosav' — sub-mode within Időpontot foglalnék
+var ssIntentMode = 'idopont';  // 'idopont' | 'konzultacio' — top-level intent
 
 // ── Appointment mode toggle ──
 function ssInitApptToggle() {
+  // Top-level intent toggle
+  var intentApptBtn    = document.getElementById('ss-intent-appt');
+  var intentKonsultBtn = document.getElementById('ss-intent-konsult');
+  var apptPanel        = document.getElementById('ss-appt-panel');
+  var konsultPanel     = document.getElementById('ss-konsult-panel');
+
+  if (intentApptBtn) {
+    intentApptBtn.addEventListener('click', function() {
+      ssIntentMode = 'idopont';
+      intentApptBtn.classList.add('ss-active');
+      intentKonsultBtn.classList.remove('ss-active');
+      if (apptPanel)    apptPanel.style.display    = '';
+      if (konsultPanel) konsultPanel.style.display = 'none';
+      // Init calendar when switching to appointment mode
+      setTimeout(function() { ssInitCal(); }, 50);
+      ssBuildSummary();
+    });
+  }
+
+  if (intentKonsultBtn) {
+    intentKonsultBtn.addEventListener('click', function() {
+      ssIntentMode = 'konzultacio';
+      intentKonsultBtn.classList.add('ss-active');
+      intentApptBtn.classList.remove('ss-active');
+      if (konsultPanel) konsultPanel.style.display = '';
+      if (apptPanel)    apptPanel.style.display    = 'none';
+      ssBuildSummary();
+    });
+  }
+
+  // Sub-toggle: konkrét nap vs időszáv (within Időpont panel)
   var calBtn  = document.getElementById('ss-appt-cal');
   var slotBtn = document.getElementById('ss-appt-slot');
   var calMode  = document.getElementById('ss-calendar-mode');
   var slotMode = document.getElementById('ss-slot-mode');
-  if (!calBtn || !slotBtn) return;
 
-  calBtn.addEventListener('click', function() {
-    ssApptMode = 'naptar';
-    calBtn.classList.add('ss-active');
-    slotBtn.classList.remove('ss-active');
-    if (calMode)  calMode.style.display  = '';
-    if (slotMode) slotMode.style.display = 'none';
-    ssBuildSummary();
-  });
+  if (calBtn) {
+    calBtn.addEventListener('click', function() {
+      ssApptMode = 'naptar';
+      calBtn.classList.add('ss-active');
+      slotBtn.classList.remove('ss-active');
+      if (calMode)  calMode.style.display  = '';
+      if (slotMode) slotMode.style.display = 'none';
+      ssBuildSummary();
+    });
+  }
 
-  slotBtn.addEventListener('click', function() {
-    ssApptMode = 'idosav';
-    slotBtn.classList.add('ss-active');
-    calBtn.classList.remove('ss-active');
-    if (slotMode) slotMode.style.display = '';
-    if (calMode)  calMode.style.display  = 'none';
-    ssBuildSummary();
-  });
+  if (slotBtn) {
+    slotBtn.addEventListener('click', function() {
+      ssApptMode = 'idosav';
+      slotBtn.classList.add('ss-active');
+      calBtn.classList.remove('ss-active');
+      if (slotMode) slotMode.style.display = '';
+      if (calMode)  calMode.style.display  = 'none';
+      ssBuildSummary();
+    });
+  }
 
   // wire slot checkboxes to rebuild summary
   document.querySelectorAll('[name="ss_idosav[]"]').forEach(function(chk) {
@@ -2201,40 +2222,16 @@ function ssRenderCal() {
       cell.classList.add('ss-disabled');
     } else {
       if (iso === ssCal.selDate) cell.classList.add('ss-selected');
-      (function(iv, dobj) {
+      (function(iv) {
         cell.onclick = function() {
           ssCal.selDate = iv;
-          var selDateEl = document.getElementById('ss-sel-date');
-          if (selDateEl) selDateEl.textContent = '\u2014 ' + dobj.toLocaleDateString('hu-HU', { month: 'long', day: 'numeric', weekday: 'long' });
           ssRenderCal();
-          ssRenderTimes();
-          var timeSlots = document.getElementById('ss-time-slots');
-          if (timeSlots) timeSlots.style.display = '';
           ssBuildSummary();
         };
-      })(iso, date);
+      })(iso);
     }
     grid.appendChild(cell);
   }
-}
-
-function ssRenderTimes() {
-  var grid = document.getElementById('ss-time-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
-  ['09:00','10:00','11:00','12:00','14:00','15:00','16:00','17:00'].forEach(function(t) {
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = t;
-    btn.className = 'ss-time-btn';
-    if (t === ssCal.selTime) btn.classList.add('ss-time-sel');
-    btn.onclick = function() {
-      ssCal.selTime = t;
-      ssRenderTimes();
-      ssBuildSummary();
-    };
-    grid.appendChild(btn);
-  });
 }
 
 // ══════════════════════════════════════════════════════════════════
@@ -2282,20 +2279,17 @@ function ssBuildSummary() {
   }
 
   // Időpont/Konzultáció preference → edit step 3
-  if (ssWizard.hairRoute === 'consult') {
+  if (ssIntentMode === 'konzultacio') {
+    html += row('Szándék', 'Telefonos konzultáció', 3);
     var consultSlots = [];
     document.querySelectorAll('[name="ss_konzult_ido[]"]:checked').forEach(function(chk) {
       consultSlots.push(chk.value);
     });
-    html += row('Konzultáció', consultSlots.length ? consultSlots.join(', ') : '\u2014', 3);
+    html += row('Visszahívás', consultSlots.length ? consultSlots.join(', ') : '\u2014', 3);
   } else {
+    html += row('Szándék', 'Időpont foglalás', 3);
     if (ssApptMode === 'naptar') {
-      var apptVal = '';
-      if (ssCal.selDate) {
-        apptVal = ssCal.selDate;
-        if (ssCal.selTime) apptVal += ' ' + ssCal.selTime;
-      }
-      html += row('Preferált időpont', apptVal || '\u2014', 3);
+      html += row('Preferált nap', ssCal.selDate || '\u2014', 3);
     } else {
       var slots = [];
       document.querySelectorAll('[name="ss_idosav[]"]:checked').forEach(function(chk) {
@@ -2350,12 +2344,12 @@ function ssInitSubmit() {
         document.querySelectorAll('[name="ss_kezelesek[]"]:checked').forEach(function(chk){ arr.push(chk.value); });
         return arr;
       })(),
-      idopont_tipus:         ssWizard.hairRoute === 'consult' ? 'konzultacio' : ssApptMode,
-      appointment_date:      ssCal.selDate  || '',
-      appointment_time:      ssCal.selTime  || '',
+      szandek:               ssIntentMode === 'konzultacio' ? 'Telefonos konzultáció' : 'Időpont foglalás',
+      idopont_tipus:         ssIntentMode === 'konzultacio' ? null : ssApptMode,
+      appointment_date:      ssIntentMode === 'idopont' && ssApptMode === 'naptar' ? (ssCal.selDate || '') : '',
       idosavok:              (function(){
         var arr = [];
-        var selector = ssWizard.hairRoute === 'consult' ? '[name="ss_konzult_ido[]"]:checked' : '[name="ss_idosav[]"]:checked';
+        var selector = ssIntentMode === 'konzultacio' ? '[name="ss_konzult_ido[]"]:checked' : '[name="ss_idosav[]"]:checked';
         document.querySelectorAll(selector).forEach(function(chk){ arr.push(chk.value); });
         return arr;
       })(),
@@ -2469,10 +2463,8 @@ function ssInitSubmit() {
     _origGoToStep(step);
 
     if (step === 3) {
-      // Update step 3 mode (full vs consult)
-      ssUpdateStep3Mode();
-      // Init calendar if in full mode
-      if (ssWizard.hairRoute !== 'consult') {
+      // Init calendar if appointment mode is active
+      if (ssIntentMode === 'idopont' && ssApptMode === 'naptar') {
         setTimeout(function() {
           ssInitCal();
         }, 260);
@@ -2494,7 +2486,6 @@ function ssInitSubmit() {
   // ── Init appointment toggle + submit ──
   ssInitApptToggle();
   ssInitSubmit();
-  ssUpdateStep3Mode();
 })();
 
 // ══════════════════════════════════════════════════════════════════
