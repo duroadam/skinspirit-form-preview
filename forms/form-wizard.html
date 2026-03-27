@@ -800,6 +800,13 @@
       display: none;
     }
 
+    .ss-slot-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
     .ss-slot-check + label {
       display: inline-flex;
       align-items: center;
@@ -1294,9 +1301,62 @@
       </div>
     </div>
 
-    <!-- ── STEP 4: (placeholder) ── -->
+    <!-- ── STEP 4: Appointment, Summary, Submit ── -->
     <div class="ss-step" data-step="4" id="step-4">
-      <!-- Content will be added in later task -->
+
+      <!-- Card 1: Appointment Preference -->
+      <div class="ss-card">
+        <p class="ss-card-label">Időpont-preferencia</p>
+        <p class="ss-section-sub">Visszaigazolást küldünk telefonon vagy emailben</p>
+
+        <div style="margin-bottom:14px;">
+          <div class="ss-session-toggle">
+            <button type="button" class="ss-sess-btn ss-active" id="ss-appt-cal">Válassz konkrét napot</button>
+            <button type="button" class="ss-sess-btn" id="ss-appt-slot">Jelöld mikor érsz rá</button>
+          </div>
+        </div>
+
+        <!-- Calendar mode -->
+        <div id="ss-calendar-mode">
+          <p class="ss-section-title">Preferált időpont</p>
+          <p class="ss-section-sub">Hétfő és Szerda, legkorábban <strong id="ss-min-date"></strong></p>
+          <div class="ss-cal-grid" id="ss-cal-grid"></div>
+          <div id="ss-time-slots" style="display:none;">
+            <p class="ss-section-title" style="margin-top:16px;">Szabad időpontok <span id="ss-sel-date"></span></p>
+            <div class="ss-time-grid" id="ss-time-grid"></div>
+          </div>
+        </div>
+
+        <!-- Slot mode -->
+        <div id="ss-slot-mode" style="display:none;">
+          <p class="ss-section-title">Mikor tudsz jönni?</p>
+          <p class="ss-section-sub">Több is választható</p>
+          <div class="ss-slot-grid">
+            <input type="checkbox" class="ss-slot-check" id="ss-sl-hd"   name="ss_idosav[]" value="Hétfő délelőtt (9-12)" /><label for="ss-sl-hd">Hétfő délelőtt</label>
+            <input type="checkbox" class="ss-slot-check" id="ss-sl-hdu"  name="ss_idosav[]" value="Hétfő délután (13-17)" /><label for="ss-sl-hdu">Hétfő délután</label>
+            <input type="checkbox" class="ss-slot-check" id="ss-sl-szd"  name="ss_idosav[]" value="Szerda délelőtt (9-12)" /><label for="ss-sl-szd">Szerda délelőtt</label>
+            <input type="checkbox" class="ss-slot-check" id="ss-sl-szdu" name="ss_idosav[]" value="Szerda délután (13-17)" /><label for="ss-sl-szdu">Szerda délután</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Summary -->
+      <div class="ss-card">
+        <p class="ss-card-label">Összegző</p>
+        <div class="ss-summary" id="ss-summary"></div>
+      </div>
+
+      <!-- Card 3: Submit -->
+      <div class="ss-card">
+        <button type="button" class="ss-submit-btn" id="ss-submit-btn">Küldés →</button>
+        <p class="ss-submit-error" id="ss-submit-error"></p>
+      </div>
+
+      <!-- NAV — back button only (Submit replaces Next) -->
+      <div class="ss-nav">
+        <button type="button" class="ss-nav-back" onclick="ssWizard.prevStep()">← Vissza</button>
+      </div>
+
     </div>
 
   </form>
@@ -1855,6 +1915,301 @@ function ssUpdateCompat() {
 }
 
 // ══════════════════════════════════════════════════════════════════
+// STEP 5 — CALENDAR, SLOT PICKER, SUMMARY, SUBMIT
+// ══════════════════════════════════════════════════════════════════
+
+// ── Calendar state + constants ──
+var ssCal = { year: null, month: null, selDate: null, selTime: null };
+var SS_HU_MONTHS = ['Január','Február','Március','Április','Május','Június','Július','Augusztus','Szeptember','Október','November','December'];
+var SS_HU_DAYS   = ['H','K','Sze','Cs','P','Szo','V'];
+var ssApptMode   = 'calendar';
+
+// ── Appointment mode toggle ──
+function ssInitApptToggle() {
+  var calBtn  = document.getElementById('ss-appt-cal');
+  var slotBtn = document.getElementById('ss-appt-slot');
+  var calMode  = document.getElementById('ss-calendar-mode');
+  var slotMode = document.getElementById('ss-slot-mode');
+  if (!calBtn || !slotBtn) return;
+
+  calBtn.addEventListener('click', function() {
+    ssApptMode = 'calendar';
+    calBtn.classList.add('ss-active');
+    slotBtn.classList.remove('ss-active');
+    if (calMode)  calMode.style.display  = '';
+    if (slotMode) slotMode.style.display = 'none';
+    ssBuildSummary();
+  });
+
+  slotBtn.addEventListener('click', function() {
+    ssApptMode = 'slot';
+    slotBtn.classList.add('ss-active');
+    calBtn.classList.remove('ss-active');
+    if (slotMode) slotMode.style.display = '';
+    if (calMode)  calMode.style.display  = 'none';
+    ssBuildSummary();
+  });
+
+  // wire slot checkboxes to rebuild summary
+  document.querySelectorAll('[name="ss_idosav[]"]').forEach(function(chk) {
+    chk.addEventListener('change', ssBuildSummary);
+  });
+}
+
+// ── Calendar functions ──
+function ssGetMinDate() {
+  var d = new Date();
+  d.setDate(d.getDate() + 14);
+  return d;
+}
+
+function ssInitCal() {
+  var m = ssGetMinDate();
+  ssCal.year  = m.getFullYear();
+  ssCal.month = m.getMonth();
+  var lbl = document.getElementById('ss-min-date');
+  if (lbl) lbl.textContent = m.toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric' });
+  ssRenderCal();
+}
+
+function ssRenderCal() {
+  var grid = document.getElementById('ss-cal-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  var y = ssCal.year, m = ssCal.month;
+  var min = ssGetMinDate();
+  min.setHours(0, 0, 0, 0);
+
+  // Nav row
+  var nav = document.createElement('div');
+  nav.style.cssText = 'grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-bottom:7px;';
+
+  var prev = document.createElement('button');
+  prev.textContent = '‹'; prev.className = 'ss-cal-nav-btn'; prev.type = 'button';
+  prev.onclick = function() {
+    ssCal.month--;
+    if (ssCal.month < 0) { ssCal.month = 11; ssCal.year--; }
+    ssRenderCal();
+  };
+
+  var next = document.createElement('button');
+  next.textContent = '›'; next.className = 'ss-cal-nav-btn'; next.type = 'button';
+  next.onclick = function() {
+    ssCal.month++;
+    if (ssCal.month > 11) { ssCal.month = 0; ssCal.year++; }
+    ssRenderCal();
+  };
+
+  var ml = document.createElement('span');
+  ml.className = 'ss-month-label';
+  ml.textContent = y + '. ' + SS_HU_MONTHS[m];
+
+  nav.appendChild(prev); nav.appendChild(ml); nav.appendChild(next);
+  grid.appendChild(nav);
+
+  // Day headers
+  SS_HU_DAYS.forEach(function(d) {
+    var h = document.createElement('div');
+    h.className = 'ss-cal-hdr';
+    h.textContent = d;
+    grid.appendChild(h);
+  });
+
+  // Offset empty cells (Mon=0 offset)
+  var fd = new Date(y, m, 1).getDay();
+  var off = (fd === 0) ? 6 : fd - 1;
+  for (var i = 0; i < off; i++) {
+    var e = document.createElement('div');
+    e.className = 'ss-cal-day ss-empty';
+    grid.appendChild(e);
+  }
+
+  // Day cells
+  var dim = new Date(y, m + 1, 0).getDate();
+  for (var dd = 1; dd <= dim; dd++) {
+    var date = new Date(y, m, dd);
+    var wd   = date.getDay();
+    var ok     = (wd === 1 || wd === 3);
+    var before = date < min;
+    var iso = y + '-' + String(m + 1).padStart(2, '0') + '-' + String(dd).padStart(2, '0');
+
+    var cell = document.createElement('div');
+    cell.textContent = dd;
+    cell.className = 'ss-cal-day';
+
+    if (!ok || before) {
+      cell.classList.add('ss-disabled');
+    } else {
+      if (iso === ssCal.selDate) cell.classList.add('ss-selected');
+      (function(iv, dobj) {
+        cell.onclick = function() {
+          ssCal.selDate = iv;
+          var selDateEl = document.getElementById('ss-sel-date');
+          if (selDateEl) selDateEl.textContent = '— ' + dobj.toLocaleDateString('hu-HU', { month: 'long', day: 'numeric', weekday: 'long' });
+          ssRenderCal();
+          ssRenderTimes();
+          var timeSlots = document.getElementById('ss-time-slots');
+          if (timeSlots) timeSlots.style.display = '';
+          ssBuildSummary();
+        };
+      })(iso, date);
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function ssRenderTimes() {
+  var grid = document.getElementById('ss-time-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  ['09:00','10:00','11:00','12:00','14:00','15:00','16:00','17:00'].forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = t;
+    btn.className = 'ss-time-btn';
+    if (t === ssCal.selTime) btn.classList.add('ss-time-sel');
+    btn.onclick = function() {
+      ssCal.selTime = t;
+      ssRenderTimes();
+      ssBuildSummary();
+    };
+    grid.appendChild(btn);
+  });
+}
+
+// ── Summary builder ──
+function ssBuildSummary() {
+  var container = document.getElementById('ss-summary');
+  if (!container) return;
+
+  function row(label, value, editStep) {
+    return '<div class="ss-summary-row">'
+      + '<div><span class="ss-summary-label">' + label + '</span></div>'
+      + '<div><span class="ss-summary-value">' + (value || '—') + '</span>'
+      + (editStep !== undefined ? ' <span class="ss-summary-edit" onclick="ssWizard.goToStep(' + editStep + ')">Szerkesztés</span>' : '')
+      + '</div></div>';
+  }
+
+  var html = '';
+
+  // Name
+  var ln = (document.getElementById('ss-lastname')  || {}).value || '';
+  var fn = (document.getElementById('ss-firstname') || {}).value || '';
+  html += row('Név', (ln + ' ' + fn).trim() || '—', 1);
+
+  // Email
+  var email = (document.getElementById('ss-email') || {}).value || '';
+  html += row('Email', email || '—', 1);
+
+  // Telefon
+  var phone = (document.getElementById('ss-phone') || {}).value || '';
+  html += row('Telefon', phone || '—', 1);
+
+  // Bőrtípus
+  var fitzLabel = ssWizard.selFitz ? SS_FITZ[ssWizard.selFitz - 1].type : '—';
+  html += row('Bőrtípus', fitzLabel, 0);
+
+  // Szőrszín
+  var hairLabel = ssWizard.selHair ? SS_HAIR[ssWizard.selHair - 1].type : '—';
+  html += row('Szőrszín', hairLabel, 0);
+
+  // Kezelések
+  var checked = document.querySelectorAll('[name="ss_kezelesek[]"]:checked');
+  var kezelesek = [];
+  checked.forEach(function(chk) { kezelesek.push(chk.value); });
+  html += row('Kezelés', kezelesek.length ? kezelesek.join(', ') : '—', 3);
+
+  // Időpont
+  if (ssApptMode === 'calendar') {
+    var apptVal = '';
+    if (ssCal.selDate) {
+      apptVal = ssCal.selDate;
+      if (ssCal.selTime) apptVal += ' ' + ssCal.selTime;
+    }
+    html += row('Preferált időpont', apptVal || '—', 4);
+  } else {
+    var slots = [];
+    document.querySelectorAll('[name="ss_idosav[]"]:checked').forEach(function(chk) {
+      slots.push(chk.value);
+    });
+    html += row('Elérhető időpontok', slots.length ? slots.join(', ') : '—', 4);
+  }
+
+  container.innerHTML = html;
+}
+
+// ── Webhook URL ──
+var SS_WEBHOOK_URL = 'https://YOUR-N8N-INSTANCE.com/webhook/PLACEHOLDER';
+
+// ── Submit handler ──
+function ssInitSubmit() {
+  var btn = document.getElementById('ss-submit-btn');
+  if (!btn) return;
+  btn.addEventListener('click', function() {
+    btn.disabled = true;
+    btn.textContent = 'Küldés...';
+
+    var errEl = document.getElementById('ss-submit-error');
+    if (errEl) errEl.textContent = '';
+
+    // Gather payload
+    var payload = {
+      fitzpatrick_type:      ssWizard.selFitz,
+      hair_color:            ssWizard.selHair,
+      compatibility:         ssWizard.compatCode,
+      vezeteknev:            (document.getElementById('ss-lastname')  || {}).value || '',
+      keresztnev:            (document.getElementById('ss-firstname') || {}).value || '',
+      email:                 (document.getElementById('ss-email')     || {}).value || '',
+      telefon:               (document.getElementById('ss-phone')     || {}).value || '',
+      szortelenites:         (function(){ var el = document.querySelector('[name="ss_szortelenites"]:checked'); return el ? el.value : ''; })(),
+      fenyerzekeny:          (function(){ var el = document.querySelector('[name="ss_fenyerzekeny"]:checked');  return el ? el.value : ''; })(),
+      borbetegseg:           (function(){ var el = document.querySelector('[name="ss_borbetegseg"]:checked');   return el ? el.value : ''; })(),
+      nem:                   (function(){ var el = document.querySelector('[name="ss_nem"]:checked');           return el ? el.value : ''; })(),
+      kivalasztott_kezelesek: (function(){
+        var arr = [];
+        document.querySelectorAll('[name="ss_kezelesek[]"]:checked').forEach(function(chk){ arr.push(chk.value); });
+        return arr;
+      })(),
+      idopont_tipus:         ssApptMode,
+      appointment_date:      ssCal.selDate  || '',
+      appointment_time:      ssCal.selTime  || '',
+      idosavok:              (function(){
+        var arr = [];
+        document.querySelectorAll('[name="ss_idosav[]"]:checked').forEach(function(chk){ arr.push(chk.value); });
+        return arr;
+      })(),
+      bekuldes_datum:        new Date().toLocaleString('hu-HU'),
+    };
+
+    // File protocol — preview mode
+    if (window.location.protocol === 'file:') {
+      console.log('WEBHOOK PAYLOAD:', JSON.stringify(payload, null, 2));
+      alert('Preview mód — payload a konzolban látható.\n\nÉles beküldés csak beágyazott verzióban működik.');
+      btn.disabled = false;
+      btn.textContent = ssWizard.isEligible ? 'Küldés →' : 'Konzultációt kérek →';
+      return;
+    }
+
+    // Live POST
+    fetch(SS_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      window.location.href = '/koszonjuk';
+    })
+    .catch(function(err) {
+      if (errEl) errEl.textContent = 'Hiba történt a küldés során. Kérjük próbáld újra, vagy hívj minket!';
+      btn.disabled = false;
+      btn.textContent = ssWizard.isEligible ? 'Küldés →' : 'Konzultációt kérek →';
+    });
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════════
 (function ssInit() {
@@ -1924,6 +2279,32 @@ function ssUpdateCompat() {
   ssRenderTreatments(SS_TREAT_NO, 'ss-treat-no');
   ssRenderTreatments(SS_TREAT_FERFI, 'ss-treat-ferfi');
   ssFetchPrices();
+
+  // ── goToStep override — step 4 (index 4) triggers calendar + summary ──
+  var _origGoToStep = ssWizard.goToStep.bind(ssWizard);
+  ssWizard.goToStep = function(step) {
+    _origGoToStep(step);
+    if (step === 4) {
+      // Hide Next button (Submit replaces it on step 4)
+      var nextBtn = document.getElementById('ss-btn-next');
+      if (nextBtn) nextBtn.style.display = 'none';
+
+      // Delay to allow DOM transition to complete
+      setTimeout(function() {
+        ssInitCal();
+        ssBuildSummary();
+        // Update submit button label based on eligibility
+        var submitBtn = document.getElementById('ss-submit-btn');
+        if (submitBtn) {
+          submitBtn.textContent = ssWizard.isEligible ? 'Küldés →' : 'Konzultációt kérek →';
+        }
+      }, 260);
+    }
+  };
+
+  // ── Step 5 init ──
+  ssInitApptToggle();
+  ssInitSubmit();
 })();
 </script>
 
