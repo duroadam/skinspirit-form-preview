@@ -1199,9 +1199,29 @@
       </div>
     </div>
 
-    <!-- ── STEP 1: (placeholder) ── -->
+    <!-- ── STEP 1: Personal Details ── -->
     <div class="ss-step" data-step="1" id="step-1">
-      <!-- Content will be added in later task -->
+      <div class="ss-card">
+        <p class="ss-card-label">Személyes adatok</p>
+        <div class="ss-name-row">
+          <div class="ss-field-group">
+            <label class="ss-field-label" for="ss-lastname">Vezetéknév *</label>
+            <input type="text" id="ss-lastname" class="ss-field-input" placeholder="Kovács" autocomplete="family-name" />
+          </div>
+          <div class="ss-field-group">
+            <label class="ss-field-label" for="ss-firstname">Keresztnév *</label>
+            <input type="text" id="ss-firstname" class="ss-field-input" placeholder="Anna" autocomplete="given-name" />
+          </div>
+        </div>
+        <div class="ss-field-group">
+          <label class="ss-field-label" for="ss-email">Email cím *</label>
+          <input type="email" id="ss-email" class="ss-field-input" placeholder="kovacs.anna@email.hu" autocomplete="email" />
+        </div>
+        <div class="ss-field-group">
+          <label class="ss-field-label" for="ss-phone">Telefonszám *</label>
+          <input type="tel" id="ss-phone" class="ss-field-input" placeholder="+36 30 123 4567" autocomplete="tel" />
+        </div>
+      </div>
     </div>
 
     <!-- ── STEP 2: (placeholder) ── -->
@@ -1382,8 +1402,21 @@ var ssWizard = {
   },
 };
 
-// Placeholder validation functions for future steps
-function ssWizardStep1Valid() { return true; }
+// Validation functions for wizard steps
+function ssWizardStep1Valid() {
+  var lastname  = document.getElementById('ss-lastname');
+  var firstname = document.getElementById('ss-firstname');
+  var email     = document.getElementById('ss-email');
+  var phone     = document.getElementById('ss-phone');
+  if (!lastname || !firstname || !email || !phone) return false;
+  return (
+    lastname.value.trim() !== '' &&
+    firstname.value.trim() !== '' &&
+    email.value.trim() !== '' &&
+    email.value.indexOf('@') !== -1 &&
+    phone.value.trim() !== ''
+  );
+}
 function ssWizardStep2Valid() { return true; }
 function ssWizardStep3Valid() { return true; }
 
@@ -1557,6 +1590,13 @@ function ssUpdateCompat() {
     nextBtn.addEventListener('click', function() { ssWizard.nextStep(); });
     nextBtn.setAttribute('data-wired', '1');
   }
+
+  // ── STEP 2 (data-step 1) VALIDATION LISTENERS ──
+  ['ss-lastname', 'ss-firstname', 'ss-email', 'ss-phone'].forEach(function(id) {
+    document.getElementById(id).addEventListener('input', function() {
+      ssWizard.refreshNextButton();
+    });
+  });
 })();
 </script>
 
