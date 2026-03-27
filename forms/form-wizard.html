@@ -79,14 +79,14 @@
       position: relative;
     }
 
-    .ss-progress-dot.active {
+    .ss-progress-dot.ss-active {
       border-color: #bb9f6d;
       background: #bb9f6d;
       color: #fff;
       box-shadow: 0 0 0 3px rgba(187,159,109,.2);
     }
 
-    .ss-progress-dot.completed {
+    .ss-progress-dot.ss-completed {
       border-color: #627476;
       background: #627476;
       color: #fff;
@@ -125,12 +125,12 @@
       display: none;
     }
 
-    .ss-step.active {
+    .ss-step.ss-active {
       display: block;
       animation: ssSlideIn .3s ease;
     }
 
-    .ss-step.slide-out {
+    .ss-step.ss-slide-out {
       display: block;
       animation: ssSlideOut .25s ease forwards;
     }
@@ -485,7 +485,7 @@
       font-family: 'Oswald', sans-serif;
     }
 
-    .ss-sess-btn.active {
+    .ss-sess-btn.ss-active {
       background: #627476;
       color: #fff;
     }
@@ -1129,7 +1129,7 @@
 
   <!-- PROGRESS BAR -->
   <div class="ss-progress" id="ss-progress-bar">
-    <div class="ss-progress-dot active" data-dot="0">1</div>
+    <div class="ss-progress-dot ss-active" data-dot="0">1</div>
     <div class="ss-progress-line"><div class="ss-progress-fill" id="ss-fill-0"></div></div>
     <div class="ss-progress-dot" data-dot="1">2</div>
     <div class="ss-progress-line"><div class="ss-progress-fill" id="ss-fill-1"></div></div>
@@ -1145,7 +1145,7 @@
   <form id="ss-wizard-form" autocomplete="on" onsubmit="return false;">
 
     <!-- ── STEP 0: Fitzpatrick + Hair + Compatibility ── -->
-    <div class="ss-step active" data-step="0" id="step-0">
+    <div class="ss-step ss-active" data-step="0" id="step-0">
 
       <div class="ss-card">
         <p class="ss-card-label">Bőrtípus &amp; szőrszín</p>
@@ -1305,12 +1305,12 @@ var ssWizard = {
     if (!target) return;
 
     // animate out
-    current.classList.add('slide-out');
+    current.classList.add('ss-slide-out');
     var self = this;
     setTimeout(function() {
-      current.classList.remove('active', 'slide-out');
+      current.classList.remove('ss-active', 'ss-slide-out');
       self.currentStep = step;
-      target.classList.add('active');
+      target.classList.add('ss-active');
       self.updateProgress();
       self.updateNav();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1335,9 +1335,9 @@ var ssWizard = {
     var fills = document.querySelectorAll('.ss-progress-fill');
 
     dots.forEach(function(dot, i) {
-      dot.classList.remove('active', 'completed');
-      if (i < step)      dot.classList.add('completed');
-      else if (i === step) dot.classList.add('active');
+      dot.classList.remove('ss-active', 'ss-completed');
+      if (i < step)      dot.classList.add('ss-completed');
+      else if (i === step) dot.classList.add('ss-active');
     });
 
     fills.forEach(function(fill, i) {
