@@ -1255,8 +1255,7 @@
 
         <!-- STOP message for white/grey hair -->
         <div class="ss-stop-msg" id="ss-stop-msg" style="display:none;">
-          <p>Sajnos fehér és ősz szőrzet esetén a lézer szőrtelenítés nem elvégezhető, mivel nincs elegendő melanintartalom a szőrzetben.</p>
-          <a class="ss-cta-btn" href="tel:+36301234567">Hívj minket</a>
+          <p>Fehér vagy ősz szőrzetnél sajnos nem hatékony a lézer, mert nincs benne elég melanin.</p>
         </div>
       </div>
 
@@ -2029,7 +2028,7 @@ function ssUpdateCompat() {
       box.classList.add('notok');
       if (icon)   icon.textContent = '\u2717';
       if (status) status.textContent = 'Nem alkalmas';
-      if (detail) detail.textContent = 'Sajnos fehér és ősz szőrzet esetén a lézer szőrtelenítés nem elvégezhető.';
+      if (detail) detail.textContent = 'Fehér vagy ősz szőrzetnél sajnos nem hatékony a lézer, mert nincs benne elég melanin.';
       ssWizard.isEligible = false;
     } else {
       // Blonde (val=2) - consult route
