@@ -1462,7 +1462,7 @@ var SS_FITZ = [
 
 // HAIR DATA
 var SS_HAIR = [
-  { val:1, swatch:'#ECEAE6', main:'Fehér / Ősz',  sub:'Fehér vagy ősz szőrzet',      type:'Fehér / Ősz szőrzet',  desc:'Fehér vagy ősz szőr',               proto:'Fehér vagy ősz szőrzetnél sajnos nem hatékony a lézer, mert nincs benne elég melanin.' },
+  { val:1, swatch:'#ECEAE6', main:'Fehér / Ősz',  sub:'Fehér vagy ősz szőrzet',      type:'Fehér / Ősz szőrzet',  desc:'Fehér vagy ősz szőr',               proto:'Nincs elegendő melanin a szőrzetben.' },
   { val:2, swatch:'#C9A96E', main:'Szőke',        sub:'Szőke vagy aranyszőke',        type:'Szőke szőrzet',        desc:'Szőke vagy aranyszőke szőr',        proto:'Szőke szőrzetnél egyéni felmérés szükséges - konzultáción megbeszéljük a lehetőségeket.' },
   { val:3, swatch:'#B5564D', main:'Vörös',        sub:'Vörös vagy rézvörös',          type:'Vörös szőrzet',        desc:'Vörös vagy rézvörös szőr',          proto:'Vörös szőrzetnél egyéni felmérés szükséges - konzultáción megbeszéljük a lehetőségeket.' },
   { val:4, swatch:'#8B5E3C', main:'Barna',        sub:'Gesztenye vagy barna',         type:'Barna szőrzet',        desc:'Gesztenye vagy középbarna szőr',    proto:'Barna szőrzet jól reagál a lézerre, szép eredmény várható.' },
@@ -1790,16 +1790,6 @@ function ssUpdateHairResult(d) {
   if (proto)  proto.textContent = d.proto;
   if (result) result.style.display = 'flex';
 
-  // White/grey hair - red warning style on proto text
-  if (proto) {
-    if (d.val === 1) {
-      proto.style.color = '#dc2626';
-      proto.style.fontWeight = '600';
-    } else {
-      proto.style.color = '';
-      proto.style.fontWeight = '';
-    }
-  }
 }
 
 // ── HAIR ROUTE UPDATE ──
@@ -2026,10 +2016,12 @@ function ssUpdateCompat() {
 
   } else if (code === 'X') {
     if (ssWizard.selHair === 1) {
-      // White/grey - STOP, no compat box, proto text handles it
-      ph.style.display = 'none'; box.style.display = 'none';
+      // White/grey - STOP
+      box.classList.add('notok');
+      if (icon)   icon.textContent = '✗';
+      if (status) status.textContent = 'Nem alkalmas';
+      if (detail) detail.textContent = 'Fehér vagy ősz szőrzetnél sajnos nem hatékony a lézer, mert nincs benne elég melanin.';
       ssWizard.isEligible = false;
-      return;
     } else {
       // Blonde (val=2) - consult route
       box.classList.add('consult');
